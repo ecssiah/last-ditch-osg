@@ -6,6 +6,7 @@ set(
   HEADERS
   ./LastDitch.h
   ./src/InputAdapter.h
+  ./src/systems/CameraSystem.h
   ./src/systems/MapSystem.h
   ./src/systems/RenderSystem.h
   ./src/Constants.h)
@@ -14,6 +15,7 @@ set(
   SOURCES
   ./LastDitch.cc
   ./src/InputAdapter.cc
+  ./src/systems/CameraSystem.cc
   ./src/systems/MapSystem.cc
   ./src/systems/RenderSystem.cc
   ./src/Constants.cc)

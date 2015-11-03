@@ -11,22 +11,13 @@ using namespace ld;
 
 LastDitch::LastDitch()
   : root(new osg::Group),
-    viewer(),
+    camera_system(root),
     map_system(),
     render_system(root, map_system)
 {
-  using namespace osg;
-
-  map_system.init();
-  render_system.init();
-
-  viewer.setSceneData(root);
-  viewer.addEventHandler(new InputAdapter);
-  viewer.setCameraManipulator(new osgGA::TrackballManipulator);
-
-  while (!viewer.done())
+  while (camera_system.is_running())
   {
-    viewer.frame();
+    camera_system.update();
   }
 }
 

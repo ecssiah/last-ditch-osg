@@ -3,6 +3,7 @@
 
 #include <osg/Group>
 #include <osgViewer/Viewer>
+#include "src/systems/CameraSystem.h"
 #include "src/systems/MapSystem.h"
 #include "src/systems/RenderSystem.h"
 
@@ -17,8 +18,8 @@ public:
 
 private:
   osg::ref_ptr<osg::Group> root;
-  osgViewer::Viewer viewer;
 
+  CameraSystem camera_system;
   MapSystem map_system;
   RenderSystem render_system;
 };

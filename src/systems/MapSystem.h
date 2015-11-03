@@ -13,8 +13,10 @@ class MapSystem
 public:
   MapSystem();
 
-  void init();
-  void update();
+  void build_map();
+  void build_room(
+    int x, int y, int z,
+    unsigned size_x, unsigned size_y, unsigned size_z);
 
   const Tile& get_tile(int x, int y, int z) const { return tiles[x][y][z]; }
 

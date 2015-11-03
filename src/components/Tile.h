@@ -7,7 +7,7 @@ namespace ld
 struct Tile
 {
   std::string type = "a";
-  std::string name = "wall";
+  std::string name = "";
 
   float rotation = 0;
 

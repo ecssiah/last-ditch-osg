@@ -16,18 +16,10 @@ class RenderSystem
 public:
   RenderSystem(osg::ref_ptr<osg::Group> root, MapSystem& map_system);
 
-  void init();
-  void update();
-
 private:
+  void build_map();
   void setup_materials();
   osg::ref_ptr<osg::Group> setup_character(const std::string& name);
-  osg::ref_ptr<osg::Node> setup_tile(
-    const std::string& type, const std::string& name);
-  osg::ref_ptr<osg::Group> setup_room(
-    const std::string& type,
-    int x, int y, int floor,
-    unsigned x_size, unsigned y_size, unsigned num_floors);
   osg::ref_ptr<osg::Node> setup_accessory(const std::string& name);
 
   osg::ref_ptr<osg::Group> root;

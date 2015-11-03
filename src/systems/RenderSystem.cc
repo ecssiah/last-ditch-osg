@@ -6,6 +6,7 @@
 #include <osgDB/ReadFile>
 #include <osgGA/TrackballManipulator>
 #include "../Constants.h"
+#include "../components/Tile.h"
 
 using namespace ld;
 
@@ -13,10 +14,6 @@ using namespace ld;
 RenderSystem::RenderSystem(osg::ref_ptr<osg::Group> root_, MapSystem& map_system_)
   : root(root_),
     map_system(map_system_)
-{}
-
-
-void RenderSystem::init()
 {
   using namespace osg;
 
@@ -33,15 +30,9 @@ void RenderSystem::init()
 
   root->addChild(node);
 
-  root->addChild(setup_room("a", 0, 0, 0, 10, 10, 1));
-  // root->addChild(setup_character("kadijah"));
+  root->addChild(setup_character("kadijah"));
 
-  std::cout << map_system.get_tile(10, 10, 0).type << std::endl;
-}
-
-
-void RenderSystem::update()
-{
+  build_map();
 }
 
 
@@ -84,43 +75,6 @@ osg::ref_ptr<osg::Node> RenderSystem::setup_accessory(const std::string& name)
 }
 
 
-osg::ref_ptr<osg::Node> RenderSystem::setup_tile(
-  const std::string& type, const std::string& name)
-{
-  using namespace osg;
-
-  ref_ptr<Node> node = osgDB::readNodeFile("models/" + type + "-" + name + ".fbx");
-
-  StateSet* state_set = node->getOrCreateStateSet();
-  state_set->setTextureAttributeAndModes(
-    0, textures["buildings"],StateAttribute::ON | StateAttribute::OVERRIDE);
-  state_set->setAttribute(materials["buildings"]);
-
-  return node;
-}
-
-osg::ref_ptr<osg::Group> RenderSystem::setup_room(
-  const std::string& type,
-  int x, int y, int floor,
-  unsigned x_size, unsigned y_size, unsigned num_floors)
-{
-  using namespace osg;
-
-  ref_ptr<Group> group = new Group;
-
-  for (unsigned i = 0; i < x_size; ++i)
-  {
-    ref_ptr<Node> node = setup_tile(type, "wall");
-
-    ref_ptr<PositionAttitudeTransform> xform = new PositionAttitudeTransform;
-    xform->setPosition(Vec3(i * TILE_SIZE, 0, 0));
-    xform->addChild(node);
-    group->addChild(xform);
-  }
-
-  return group;
-}
-
 void RenderSystem::setup_materials()
 {
   using namespace osg;
@@ -158,4 +112,36 @@ void RenderSystem::setup_materials()
   materials["buildings"]->setDiffuse(Material::FRONT, Vec4(.2f, .9f, .9f, 1.f));
   materials["buildings"]->setSpecular(Material::FRONT, Vec4(1.f, 1.f, 1.f, 1.f));
   materials["buildings"]->setShininess(Material::FRONT, 96.f);
+}
+
+
+void RenderSystem::build_map()
+{
+  using namespace osg;
+
+  for (unsigned x = 0; x < MAP_SIZE_X; ++x)
+  {
+    for (unsigned y = 0; y < MAP_SIZE_Y; ++y)
+    {
+      const Tile& tile = map_system.get_tile(x, y, 0);
+
+      if (tile.name == "") continue;
+
+      std::cout << tile.name << std::endl;
+
+      ref_ptr<Node> node = osgDB::readNodeFile(
+	"models/" + tile.type + "-" + tile.name + ".fbx");
+
+      StateSet* state_set = node->getOrCreateStateSet();
+      state_set->setTextureAttributeAndModes(
+	0, textures["buildings"], StateAttribute::ON | StateAttribute::OVERRIDE);
+      state_set->setAttribute(materials["buildings"]);
+
+      ref_ptr<PositionAttitudeTransform> xform = new PositionAttitudeTransform;
+      xform->setPosition(Vec3(x * TILE_SIZE, y * TILE_SIZE, 0));
+
+      xform->addChild(node);
+      root->addChild(xform);
+    }
+  }
 }
