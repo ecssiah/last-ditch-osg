@@ -1,0 +1,209 @@
+Last Ditch - Design Document
+
+* Game Engine
+** Setting
+The planet has enormous skyscrapers with large abandoned sections that are now
+filled with small settlements. The playable sections will be dwarfed by much
+larger surrounding buildings. The planet had an advanced civilization that
+built the buildings and left behind all kinds of machinery. The settlements
+do not have the knowledge to repair the ruins, and instead live a much more
+primitive life of salvaging.
+** Gameplay
+The player attempts to build and manage a settlement in the world. This is
+done by influencing NPCs to join the settlement to provide resources and
+useful abilities and then managing them when they join. The player will
+also be able to individually contribute to the settlement based on their
+class.
+*** Notes
+- No stairs, small elevators.
+** Characters
+*** Kadijah
+The main character. A refugee from a collapsed settlement on another
+part of the planet.
+*** Katharine
+Kadijah's best friend. She introduces Kadijah to life in the ruins.
+She's the only permanent member of the settlement. She will never
+abandon for morale or alignment issues.
+*** Ravaillac
+A crimelord in Kadijah's district.
+** Classes
+*** Security
+This class provides armed support for settlements and trade routes.
+**** Close Combat Specialist
+**** Ranged Combat Specialist
+**** Explosives Specialist
+*** Economic
+This faction establishes trade between cities and retail operations.
+*** Production
+This faction produces goods.
+**** Craftsman
+Craftsman produce high-quality individualized goods like jewelry.
+**** Manufacturers
+Manufacturers mass-produce stock items like energy cells or food.
+** Status
+*** Alignment
+A record of moral actions taken in the world with range [-1000, 1000]
+*** Reputation
+A record of the player's relationship with NPCs with range [0, inf).
+**** Individual
+Individual reputation reflects how the character has treated a particular
+NPC.
+**** Settlement
+Settlement repuation reflects how loyal the player has been to a settlement.
+*** Attributes
+Core character traits that range from 0.1 - 9.9
+**** Strength
+**** Dexterity
+**** Speed
+**** Willpower
+**** Intelligence
+**** Charisma
+*** Skills
+Aquired skills that allow a player to proficiently perform certain actions
+with range [0.0 - 10.0)
+**** Agriculture
+**** Firearms
+**** Shields
+**** Explosives
+**** Finance
+**** Metalwork
+**** Molding
+**** Electronics
+**** Programming
+**** Artistry
+**** Speechcraft
+*** Inventory
+The player's inventory has volume and weight restrictions. Volume
+restrictions are enforced by a grid system and differently sized item
+icons. Weight restrictions are enforced by a maximum weight limit and
+stages of encumberance.
+** Settlements
+The main drive of the game is to develop the settlement. The settlement will be
+under constant stress from surrounding settlements. Some of the more agreeable
+settlements and "free agents" are also a source of economic interaction.
+Settlements can join together or individuals can change allegiance with potential
+consequences.
+*** Members
+The settlement will always have at least two members (Kadijah and Katharine).
+But others can be enlisted by influencing them with resources, reputation, and
+skills. Members can choose to leave or shirk their duties due to a number of
+factors like their satisfaction with the settlement or competing interests.
+*** Laws
+Settlements can establish laws and regulations to be enforced. These can include
+agreements with other settlements about territory or taxation laws.
+*** Positions
+The settlement is partially managed by assigning your members positions that
+come with a set of responsibilities. The positions are entirely customizable.
+A position is simply a title with a list of responsibilities. Various things
+will affect how well a member carries out their responsibilities.
+*** Worksites
+For members to perform most of their duties the related worksite needs to be
+set up. Through the combination of worksites and positions, the player can
+manage the intended workflow of the settlement's members.
+*** Territory
+A settlement will have a series of buildings, areas, and objects considered to be
+their property. Depending on how secure the settlement is, violations of
+property will result in consequences. Violations can range from destruction
+of property to trespassing based on the agreements in place between
+settlements.
+** Combat
+Combat is realtime and tick-based. Actions are placed into a queue and then
+executed based on character stats. The use of personal field-generating shields
+has lead to the increased usefulness of hand-to-hand combat. With a strong
+shield, a well-trained individual can get in close and do significant damage,
+even in a ranged weapon fight.
+** Trading
+For a settlement to really grow it will have to establish trade. Other settlements
+will desire resources and products and they will also attempt to establish trade
+with the player. No single settlement will be able to produce the variety of goods
+needed to grow.
+*** Black Market
+Some settlements will outlaw certain goods or put limits on trade. Providing these
+resources will lead to criminal conduct, but also higher profits since the goods
+will be harder to produce. If other settlements produce and funnel contraband goods
+into your settlement, it will reduce morale among a percentage of the members.
+** Production
+The crafting system involves gathering/producing the necessary ingredients and then
+using a number of skills to construct something. The quality of the construction is
+determined by the outcome of the very quick "mini-games".
+*** Construction Games
+- Dancing lights - the player must click when two lights cross paths
+- TODO
+** Interface
+*** HUD
+**** TODO everything
+*** Inventory
+*** Equipment
+*** Skills
+*** Trading
+*** Settlement
+*** Status
+*** Settings
+** AI
+*** TODO Everything!
+* Media
+** Characters
+*** Kadijah
+**** TODO Model
+*** Katharine
+**** TODO Model
+*** Ravaillac
+**** TODO Model
+*** NPCs
+**** TODO Model 1
+**** TODO Model 2
+**** TODO Model 3
+**** TODO Model 4
+**** TODO Model 5
+**** TODO Model 6
+*** Security Class
+**** TODO Equipment 1
+**** TODO Equipment 2
+*** Economic Class
+**** TODO Equipment 1
+**** TODO Equipment 2
+*** Production Class
+**** TODO Equipment 1
+**** TODO Equipment 2
+** Environment
+*** Scenery
+**** Foundations
+***** TODO Building 1
+***** TODO Building 2
+***** TODO Building 3
+**** Surrounding cityscape
+*** Building Tilesets
+**** TODO Tileset 1
+**** TODO Tileset 2
+**** TODO Tileset 3
+** Items
+*** Weapons
+**** Firearms
+***** Pistol
+***** SMG
+***** Rifle
+**** Explosives
+***** Grenade
+****** Frag
+****** Flash
+****** Concussion
+****** EMP
+***** Mine
+****** Frag
+****** Flash
+****** Concussion
+****** EMP
+*** Apparel
+**** Headgear
+**** Shirts
+**** Jackets
+**** Pants
+**** Shoes
+*** Cyberware
+**** Head
+**** Arms
+**** Body
+**** Legs
+** Pictures
+*** Title Screen
+*** Item/resource icons
