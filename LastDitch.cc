@@ -5,29 +5,26 @@
 #include <osgDB/WriteFile>
 #include <osgGA/TrackballManipulator>
 #include "src/Constants.h"
-#include "src/InputAdapter.h"
 
 using namespace ld;
 
 LastDitch::LastDitch()
   : root(new osg::Group),
-    camera_system(root),
+    input(),
     map_system(),
-    render_system(root, map_system)
+    render_system(root, map_system),
+    physics_system(input, render_system),
+    camera_system(root, input)
 {
   while (camera_system.is_running())
   {
+    physics_system.update();
     camera_system.update();
   }
 }
 
-LastDitch::~LastDitch()
-{
-}
 
 int main()
 {
   LastDitch app;
-
-  return 0;
 }

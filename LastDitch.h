@@ -3,9 +3,12 @@
 
 #include <osg/Group>
 #include <osgViewer/Viewer>
-#include "src/systems/CameraSystem.h"
+#include "src/InputAdapter.h"
+#include "src/components/Input.h"
 #include "src/systems/MapSystem.h"
 #include "src/systems/RenderSystem.h"
+#include "src/systems/PhysicsSystem.h"
+#include "src/systems/CameraSystem.h"
 
 namespace ld
 {
@@ -14,14 +17,16 @@ class LastDitch
 {
 public:
   LastDitch();
-  ~LastDitch();
 
 private:
   osg::ref_ptr<osg::Group> root;
 
-  CameraSystem camera_system;
+  Input input;
+
   MapSystem map_system;
   RenderSystem render_system;
+  PhysicsSystem physics_system;
+  CameraSystem camera_system;
 };
 
 }

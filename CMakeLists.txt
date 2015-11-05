@@ -6,8 +6,10 @@ set(
   HEADERS
   ./LastDitch.h
   ./src/InputAdapter.h
+  ./src/ThirdPersonManipulator.h
   ./src/systems/CameraSystem.h
   ./src/systems/MapSystem.h
+  ./src/systems/PhysicsSystem.h
   ./src/systems/RenderSystem.h
   ./src/Constants.h)
 
@@ -15,8 +17,10 @@ set(
   SOURCES
   ./LastDitch.cc
   ./src/InputAdapter.cc
+  ./src/ThirdPersonManipulator.cc
   ./src/systems/CameraSystem.cc
   ./src/systems/MapSystem.cc
+  ./src/systems/PhysicsSystem.cc
   ./src/systems/RenderSystem.cc
   ./src/Constants.cc)
 

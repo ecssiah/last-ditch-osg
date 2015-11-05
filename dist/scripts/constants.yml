@@ -1,6 +1,4 @@
 # Map
-map size x: 100
-map size y: 100
-map size z: 2
-
+map size: 101
+num floors: 3
 tile size: 2

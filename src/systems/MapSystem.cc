@@ -8,33 +8,55 @@ using namespace ld;
 
 MapSystem::MapSystem()
   : tiles(
-      MAP_SIZE_X, std::vector<std::vector<Tile>>(
-	MAP_SIZE_Y, std::vector<Tile>(
-	  MAP_SIZE_Z, Tile())))
+      MAP_SIZE, std::vector<std::vector<Tile>>(
+	MAP_SIZE, std::vector<Tile>(
+	  NUM_FLOORS, Tile())))
 {
-  build_map();
+  layout_map();
 }
 
 
-void MapSystem::build_map()
+void MapSystem::layout_map()
 {
-  build_room(0, 0, 0, 10, 10, 1);
+  layout_room(2, 2, 4, 4, 0);
 
 }
 
-void MapSystem::build_room(
-  int x_, int y_, int z_,
-  unsigned size_x, unsigned size_y, unsigned size_z)
+void MapSystem::layout_room(
+  int x_, int y_,
+  unsigned size_x, unsigned size_y,
+  int floor)
 {
-  for (int x = x_; x < size_x; ++x)
+  for (int x = x_ + 1; x < x_ + size_x - 1; ++x)
   {
-    tiles[x][y_][z_].type = "a";
-    tiles[x][y_][z_].name = "wall";
-    tiles[x][y_][z_].rotation = 90.f;
+    int xx = x + MAP_SIZE / 2;
+    int yy = y_ + MAP_SIZE / 2;
 
-    for (int y = y_; y < size_y; ++y)
-    {
+    tiles[xx][yy + size_y][floor].type = "a";
+    tiles[xx][yy + size_y][floor].name = "wall";
+    tiles[xx][yy + size_y][floor].rotation = 0;
 
-    }
+    tiles[xx][yy][floor].type = "a";
+    tiles[xx][yy][floor].name = "wall";
+    tiles[xx][yy][floor].rotation = 180;
   }
+
+  for (int y = y_ + 1; y < y_ + size_y - 1; ++y)
+  {
+    int xx = x_ + MAP_SIZE / 2;
+    int yy = y + MAP_SIZE / 2;
+
+    tiles[xx][yy][floor].type = "a";
+    tiles[xx][yy][floor].name = "wall";
+    tiles[xx][yy][floor].rotation = 90;
+
+    tiles[xx + size_x][yy][floor].type = "a";
+    tiles[xx + size_x][yy][floor].name = "wall";
+    tiles[xx + size_x][yy][floor].rotation = 270;
+  }
+}
+
+const Tile& MapSystem::get_tile(int x, int y, int floor) const
+{
+  return tiles[x + MAP_SIZE / 2][y + MAP_SIZE / 2][floor];
 }

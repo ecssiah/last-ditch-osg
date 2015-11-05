@@ -1,10 +1,8 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
-extern const int MAP_SIZE_X;
-extern const int MAP_SIZE_Y;
-extern const int MAP_SIZE_Z;
-
+extern const int MAP_SIZE;
 extern const int TILE_SIZE;
+extern const int NUM_FLOORS;
 
 #endif /* CONSTANTS_H */

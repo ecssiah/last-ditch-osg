@@ -13,12 +13,13 @@ class MapSystem
 public:
   MapSystem();
 
-  void build_map();
-  void build_room(
-    int x, int y, int z,
-    unsigned size_x, unsigned size_y, unsigned size_z);
+  void layout_map();
+  void layout_room(
+    int x, int y,
+    unsigned size_x, unsigned size_y,
+    int floor);
 
-  const Tile& get_tile(int x, int y, int z) const { return tiles[x][y][z]; }
+  const Tile& get_tile(int x, int y, int floor) const;
 
 private:
   std::vector<std::vector<std::vector<Tile>>> tiles;
