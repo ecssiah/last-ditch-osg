@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include <osgGA/TrackballManipulator>
-#include "../InputAdapter.h"
 #include "../ThirdPersonManipulator.h"
 
 using namespace ld;
@@ -17,9 +16,14 @@ CameraSystem::CameraSystem(osg::ref_ptr<osg::Group> root, Input& input_)
 
   viewer.setSceneData(root);
   viewer.setCameraManipulator(new ThirdPersonManipulator(*this));
-  viewer.addEventHandler(new InputAdapter(input, *this));
   viewer.getCamera()->setProjectionMatrixAsPerspective(40, 1, .1, 100);
   viewer.realize();
+}
+
+
+void CameraSystem::set_input_adapter(InputAdapter* input_adapter_)
+{
+
 }
 
 

@@ -4,6 +4,7 @@
 #include <string>
 #include <osg/Group>
 #include <osg/Material>
+#include <osg/PositionAttitudeTransform>
 #include <osg/Texture2D>
 #include <osgViewer/Viewer>
 #include "MapSystem.h"
@@ -16,6 +17,9 @@ class RenderSystem
 public:
   RenderSystem(osg::ref_ptr<osg::Group> root, MapSystem& map_system);
 
+  osg::ref_ptr<osg::PositionAttitudeTransform> get_user_xform()
+    { return user_xform; }
+
 private:
   void build_map();
   void setup_materials();
@@ -23,6 +27,8 @@ private:
   osg::ref_ptr<osg::Node> setup_accessory(const std::string& name);
 
   osg::ref_ptr<osg::Group> root;
+  osg::ref_ptr<osg::PositionAttitudeTransform> user_xform;
+
   MapSystem& map_system;
 
   std::map<std::string, osg::ref_ptr<osg::Texture2D>> textures;

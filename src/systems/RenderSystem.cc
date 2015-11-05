@@ -10,7 +10,6 @@
 
 using namespace ld;
 
-
 RenderSystem::RenderSystem(osg::ref_ptr<osg::Group> root_, MapSystem& map_system_)
   : root(root_),
     map_system(map_system_)
@@ -30,7 +29,10 @@ RenderSystem::RenderSystem(osg::ref_ptr<osg::Group> root_, MapSystem& map_system
 
   root->addChild(node);
 
-  root->addChild(setup_character("kadijah"));
+  user_xform = new PositionAttitudeTransform;
+  user_xform->setAttitude(Quat(M_PI, Vec3(0, 0, 1)));
+  user_xform->addChild(setup_character("kadijah"));
+  root->addChild(user_xform);
 
   build_map();
 }
@@ -119,15 +121,15 @@ void RenderSystem::build_map()
 {
   using namespace osg;
 
-  for (unsigned x = 0; x < MAP_SIZE_X; ++x)
+  for (int x = -MAP_SIZE / 2; x < MAP_SIZE / 2; ++x)
   {
-    for (unsigned y = 0; y < MAP_SIZE_Y; ++y)
+    for (int y = -MAP_SIZE / 2; y < MAP_SIZE / 2; ++y)
     {
       const Tile& tile = map_system.get_tile(x, y, 0);
 
       if (tile.name == "") continue;
 
-      std::cout << tile.name << std::endl;
+      std::cout << x << " " << y << ":" << tile.name << std::endl;
 
       ref_ptr<Node> node = osgDB::readNodeFile(
 	"models/" + tile.type + "-" + tile.name + ".fbx");
@@ -139,6 +141,7 @@ void RenderSystem::build_map()
 
       ref_ptr<PositionAttitudeTransform> xform = new PositionAttitudeTransform;
       xform->setPosition(Vec3(x * TILE_SIZE, y * TILE_SIZE, 0));
+      xform->setAttitude(Quat(osg::inDegrees(tile.rotation), Vec3(0, 0, 1)));
 
       xform->addChild(node);
       root->addChild(xform);
