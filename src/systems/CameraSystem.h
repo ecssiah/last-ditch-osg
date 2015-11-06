@@ -4,6 +4,7 @@
 #include <osg/Group>
 #include <osgViewer/Viewer>
 #include "../components/Input.h"
+#include "../systems/RenderSystem.h"
 
 namespace ld
 {
@@ -11,7 +12,10 @@ namespace ld
 class CameraSystem
 {
 public:
-  CameraSystem(osg::ref_ptr<osg::Group> root, Input& input);
+  CameraSystem(
+    osg::ref_ptr<osg::Group> root,
+    RenderSystem& render_system,
+    Input& input);
 
   void update();
 
@@ -25,6 +29,7 @@ private:
   bool active_cursor;
 
   Input& input;
+  RenderSystem& render_system;
 
   osgViewer::Viewer viewer;
 };

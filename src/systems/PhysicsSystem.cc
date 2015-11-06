@@ -9,7 +9,6 @@ PhysicsSystem::PhysicsSystem(Input& input_, RenderSystem& render_system_)
     render_system(render_system_)
 {
   user_xform = render_system.get_user_xform();
-
 }
 
 
@@ -34,7 +33,7 @@ void PhysicsSystem::update()
     dir += Vec3(0, 0, -1);
 
   dir.normalize();
-  dir *= .01;
+  dir *= .08;
 
   user_xform->setPosition(position + dir);
 }
