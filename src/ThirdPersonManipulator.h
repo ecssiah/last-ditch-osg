@@ -1,14 +1,14 @@
 #ifndef THIRDPERSONMANIPULATOR_H
 #define THIRDPERSONMANIPULATOR_H
 
-#include <osgGA/StandardManipulator>
+#include <osgGA/CameraManipulator>
 #include "components/Input.h"
 #include "systems/CameraSystem.h"
 
 namespace ld
 {
 
-class ThirdPersonManipulator : public osgGA::StandardManipulator
+class ThirdPersonManipulator : public osgGA::CameraManipulator
 {
 public:
   ThirdPersonManipulator(CameraSystem& camera_system);
@@ -18,23 +18,23 @@ public:
   virtual osg::Matrixd getMatrix() const;
   virtual osg::Matrixd getInverseMatrix() const;
 
-  virtual void setTransformation(
-    const osg::Vec3d& eye, const osg::Quat& rotation);
-  virtual void setTransformation(
-    const osg::Vec3d& eye, const osg::Vec3d& center, const osg::Vec3d& up);
-  virtual void getTransformation(
-    osg::Vec3d& eye, osg::Quat& rotation) const;
-  virtual void getTransformation(
-    osg::Vec3d& eye, osg::Vec3d& center, osg::Vec3d& up) const;
+  virtual bool handle(
+    const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa);
+
+  bool handle_mouse_move(
+    const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa);
+  bool handle_mouse_delta_movement(
+    const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa);
+
+  bool perform_mouse_delta_movement(const float dx, const float dy);
+
+  void center_mouse_pointer(
+    const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa);
 
 protected:
-  virtual bool handleMouseMove(
-    const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa);
-  virtual bool performMouseDeltaMovement(const float dx, const float dy);
-
   osg::Matrix matrix;
+  osg::Vec2 mouse_center;
 
-private:
   CameraSystem& camera_system;
 };
 

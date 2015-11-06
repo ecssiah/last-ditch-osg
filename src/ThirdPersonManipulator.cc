@@ -6,7 +6,9 @@
 using namespace ld;
 
 ThirdPersonManipulator::ThirdPersonManipulator(CameraSystem& camera_system_)
-  : osgGA::StandardManipulator(DEFAULT_SETTINGS),
+  : osgGA::CameraManipulator(),
+    matrix(),
+    mouse_center(0, 0),
     camera_system(camera_system_)
 {
   osg::Matrix r;
@@ -43,37 +45,44 @@ osg::Matrixd ThirdPersonManipulator::getInverseMatrix() const
 }
 
 
-void ThirdPersonManipulator::setTransformation(
-  const osg::Vec3d& eye, const osg::Quat& rotation)
-{}
+bool ThirdPersonManipulator::handle(
+  const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa)
+{
+  switch (ea.getEventType())
+  {
+  case osgGA::GUIEventAdapter::MOVE:
+    return handle_mouse_move(ea, aa);
+  default:
+    return false;
+  }
+}
 
 
-void ThirdPersonManipulator::setTransformation(
-  const osg::Vec3d& eye, const osg::Vec3d& center, const osg::Vec3d& up)
-{}
-
-
-void ThirdPersonManipulator::getTransformation(
-  osg::Vec3d& eye, osg::Quat& rotation) const
-{}
-
-
-void ThirdPersonManipulator::getTransformation(
-  osg::Vec3d& eye, osg::Vec3d& center, osg::Vec3d& up) const
-{}
-
-
-bool ThirdPersonManipulator::handleMouseMove(
+bool ThirdPersonManipulator::handle_mouse_move(
   const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa)
 {
   if (camera_system.has_active_cursor())
     return false;
   else
-    return handleMouseDeltaMovement(ea, aa);
+    return handle_mouse_delta_movement(ea, aa);
 }
 
 
-bool ThirdPersonManipulator::performMouseDeltaMovement(
+bool ThirdPersonManipulator::handle_mouse_delta_movement(
+  const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa)
+{
+    float dx = ea.getX() - mouse_center.x();
+    float dy = ea.getY() - mouse_center.y();
+
+    if (dx == 0 && dy == 0) return false;
+
+    center_mouse_pointer(ea, aa);
+
+    return perform_mouse_delta_movement(dx, dy);
+}
+
+
+bool ThirdPersonManipulator::perform_mouse_delta_movement(
   const float dx, const float dy)
 {
   using namespace osg;
@@ -84,4 +93,15 @@ bool ThirdPersonManipulator::performMouseDeltaMovement(
   matrix *= m;
 
   return true;
+}
+
+
+void ThirdPersonManipulator::center_mouse_pointer(
+  const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa )
+{
+  mouse_center.set(
+    (ea.getXmin() + ea.getXmax()) / 2.0f,
+    (ea.getYmin() + ea.getYmax()) / 2.0f);
+
+  aa.requestWarpPointer(mouse_center.x(), mouse_center.y());
 }
