@@ -39,18 +39,14 @@ public:
 
   void update_matrix();
 
-  void setNode(osg::Node*);
-  osg::Node* getNode();
-  const osg::Node* getNode() const;
-
 protected:
-  osg::ref_ptr<osg::PositionAttitudeTransform> user_xform;
-  osg::ref_ptr<osg::Node> node;
-  osg::Matrix matrix;
   osg::Vec2 mouse_center;
 
-  osg::Matrix base_rotation;
-  osg::Matrix base_translate;
+  double heading;
+  osg::Matrix offset;
+  osg::Matrix matrix;
+
+  osg::ref_ptr<osg::PositionAttitudeTransform> user_xform;
 
   CameraSystem& camera_system;
 };

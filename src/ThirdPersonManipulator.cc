@@ -10,20 +10,27 @@ ThirdPersonManipulator::ThirdPersonManipulator(
   osg::ref_ptr<osg::PositionAttitudeTransform> user_xform_
 )
   : osgGA::CameraManipulator(),
-    user_xform(user_xform_),
-    matrix(),
     mouse_center(0, 0),
+    heading(0),
+    offset(),
+    matrix(),
+    user_xform(user_xform_),
     camera_system(camera_system_)
 {
   using namespace osg;
 
-  base_rotation.makeRotate(M_PI / 2, Vec3(1, 0, 0));
-  base_translate.makeTranslate(Vec3(0, -2.3, 1.4));
+  Matrix base_rotate;
+  base_rotate.makeRotate(M_PI / 2, Vec3(1, 0, 0));
+
+  Matrix base_translate;
+  base_translate.makeTranslate(Vec3(0, -2.3, 1.3));
+
+  offset = base_rotate * base_translate;
 
   Matrix t;
   t.makeTranslate(user_xform->getPosition());
 
-  matrix = base_rotation * base_translate * t;
+  matrix = offset * t;
 }
 
 
@@ -60,8 +67,6 @@ bool ThirdPersonManipulator::handle(
     return handle_frame(ea, aa);
   case osgGA::GUIEventAdapter::MOVE:
     return handle_mouse_move(ea, aa);
-  case osgGA::GUIEventAdapter::KEYDOWN:
-    return handle_key_down(ea, aa);
   default:
     return false;
   }
@@ -115,12 +120,9 @@ bool ThirdPersonManipulator::perform_mouse_delta_movement(
 {
   using namespace osg;
 
-  Matrix m;
-  m.makeRotate(dx * .001, Vec3(0, 0, 1));
+  heading += .001 * dx;
 
-  matrix *= m;
-
-  return true;
+  return false;
 }
 
 
@@ -139,26 +141,11 @@ void ThirdPersonManipulator::update_matrix()
 {
   using namespace osg;
 
+  Matrix r;
+  r.makeRotate(heading, Vec3(0, 0, 1));
+
   Matrix t;
   t.makeTranslate(user_xform->getPosition());
 
-  matrix = base_rotation * base_translate * t;
-}
-
-
-void ThirdPersonManipulator::setNode(osg::Node* node_)
-{
-  node = node_;
-}
-
-
-osg::Node* ThirdPersonManipulator::getNode()
-{
-  return node;
-}
-
-
-const osg::Node* ThirdPersonManipulator::getNode() const
-{
-  return node;
+  matrix = offset * r * t;
 }
