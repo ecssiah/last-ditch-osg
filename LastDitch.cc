@@ -1,6 +1,7 @@
 #include "LastDitch.h"
 
 #include <osg/Group>
+#include <osg/PositionAttitudeTransform>
 #include <osgDB/ReadFile>
 #include <osgDB/WriteFile>
 #include <osgGA/TrackballManipulator>
@@ -13,9 +14,11 @@ LastDitch::LastDitch()
     input(),
     map_system(),
     render_system(root, map_system),
-    physics_system(input, render_system),
-    camera_system(root, render_system, input)
+    physics_system(input),
+    camera_system(root, input)
 {
+  using namespace osg;
+
   while (camera_system.is_running())
   {
     physics_system.update();

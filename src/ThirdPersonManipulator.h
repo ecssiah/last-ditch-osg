@@ -11,9 +11,7 @@ namespace ld
 class ThirdPersonManipulator : public osgGA::CameraManipulator
 {
 public:
-  ThirdPersonManipulator(
-    CameraSystem& camera_system,
-    osg::ref_ptr<osg::PositionAttitudeTransform> user_xform);
+  ThirdPersonManipulator(CameraSystem& camera_system);
 
   virtual void setByMatrix(const osg::Matrixd& matrix);
   virtual void setByInverseMatrix(const osg::Matrixd& matrix);
@@ -40,13 +38,11 @@ public:
   void update_matrix();
 
 protected:
-  osg::Vec2 mouse_center;
+  osg::ref_ptr<osg::Node> node;
 
-  double heading;
-  osg::Matrix offset;
   osg::Matrix matrix;
 
-  osg::ref_ptr<osg::PositionAttitudeTransform> user_xform;
+  osg::Vec2 mouse_center;
 
   CameraSystem& camera_system;
 };

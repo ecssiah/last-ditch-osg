@@ -29,11 +29,6 @@ RenderSystem::RenderSystem(osg::ref_ptr<osg::Group> root_, MapSystem& map_system
 
   root->addChild(node);
 
-  user_xform = new PositionAttitudeTransform;
-  user_xform->setAttitude(Quat(M_PI, Vec3(0, 0, 1)));
-  user_xform->addChild(setup_character("kadijah"));
-  root->addChild(user_xform);
-
   build_map();
 }
 

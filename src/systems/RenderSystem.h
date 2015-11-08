@@ -17,17 +17,14 @@ class RenderSystem
 public:
   RenderSystem(osg::ref_ptr<osg::Group> root, MapSystem& map_system);
 
-  osg::ref_ptr<osg::PositionAttitudeTransform> get_user_xform()
-    { return user_xform; }
+  osg::ref_ptr<osg::Group> setup_character(const std::string& name);
 
 private:
   void build_map();
   void setup_materials();
-  osg::ref_ptr<osg::Group> setup_character(const std::string& name);
   osg::ref_ptr<osg::Node> setup_accessory(const std::string& name);
 
   osg::ref_ptr<osg::Group> root;
-  osg::ref_ptr<osg::PositionAttitudeTransform> user_xform;
 
   MapSystem& map_system;
 
