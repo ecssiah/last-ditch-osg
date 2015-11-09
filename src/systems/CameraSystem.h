@@ -12,11 +12,7 @@ class InputAdapter;
 class CameraSystem
 {
 public:
-<<<<<<< HEAD
   CameraSystem(osg::ref_ptr<osg::Group> root);
-=======
-  CameraSystem(osg::ref_ptr<osg::Group> root, Input& input);
->>>>>>> b3522d9cbabef47e9f42d6e8c51d8a1ecb9d1fc1
 
   void update();
 
@@ -31,11 +27,6 @@ private:
   bool running;
   bool active_cursor;
 
-<<<<<<< HEAD
-=======
-  Input& input;
-
->>>>>>> b3522d9cbabef47e9f42d6e8c51d8a1ecb9d1fc1
   osgViewer::Viewer viewer;
 };
 
