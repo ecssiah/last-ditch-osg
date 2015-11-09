@@ -2,9 +2,8 @@
 #define LASTDITCH_H
 
 #include <osg/Group>
-#include <osgViewer/Viewer>
-#include "src/InputAdapter.h"
 #include "src/components/Input.h"
+#include "src/systems/EntitySystem.h"
 #include "src/systems/MapSystem.h"
 #include "src/systems/RenderSystem.h"
 #include "src/systems/PhysicsSystem.h"
@@ -23,6 +22,7 @@ private:
 
   Input input;
 
+  EntitySystem entity_system;
   MapSystem map_system;
   RenderSystem render_system;
   PhysicsSystem physics_system;

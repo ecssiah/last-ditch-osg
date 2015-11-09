@@ -4,7 +4,6 @@
 #include <osg/Image>
 #include <osg/PositionAttitudeTransform>
 #include <osgDB/ReadFile>
-#include <osgGA/TrackballManipulator>
 #include "../Constants.h"
 #include "../components/Tile.h"
 
@@ -19,6 +18,19 @@ RenderSystem::RenderSystem(osg::ref_ptr<osg::Group> root_, MapSystem& map_system
   osgDB::Registry::instance()->getDataFilePathList().push_back("media/");
 
   setup_materials();
+  root->addChild(setup_test_grid());
+
+  const std::string name = "kadijah";
+  users[name] = setup_character(name);
+  root->addChild(users[name]);
+
+  build_map();
+}
+
+
+osg::ref_ptr<osg::Node> RenderSystem::setup_test_grid()
+{
+  using namespace osg;
 
   ref_ptr<Node> node = osgDB::readNodeFile("models/grid.fbx");
 
@@ -27,18 +39,12 @@ RenderSystem::RenderSystem(osg::ref_ptr<osg::Group> root_, MapSystem& map_system
     0, textures["buildings"],StateAttribute::ON | StateAttribute::OVERRIDE);
   state_set->setAttribute(materials["buildings"]);
 
-  root->addChild(node);
-
-  user_xform = new PositionAttitudeTransform;
-  user_xform->setAttitude(Quat(M_PI, Vec3(0, 0, 1)));
-  user_xform->addChild(setup_character("kadijah"));
-  root->addChild(user_xform);
-
-  build_map();
+  return node;
 }
 
 
-osg::ref_ptr<osg::Group> RenderSystem::setup_character(const std::string& name)
+osg::ref_ptr<osg::MatrixTransform> RenderSystem::setup_character(
+  const std::string& name)
 {
   using namespace osg;
 
@@ -58,7 +64,10 @@ osg::ref_ptr<osg::Group> RenderSystem::setup_character(const std::string& name)
   character_group->addChild(setup_accessory("pants"));
   character_group->addChild(setup_accessory("boots"));
 
-  return character_group;
+  ref_ptr<MatrixTransform> xform = new MatrixTransform;
+  xform->addChild(character_group);
+
+  return xform;
 }
 
 

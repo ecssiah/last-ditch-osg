@@ -3,19 +3,16 @@
 
 #include <osg/Group>
 #include <osgViewer/Viewer>
-#include "../components/Input.h"
-#include "../systems/RenderSystem.h"
 
 namespace ld
 {
 
+class InputAdapter;
+
 class CameraSystem
 {
 public:
-  CameraSystem(
-    osg::ref_ptr<osg::Group> root,
-    RenderSystem& render_system,
-    Input& input);
+  CameraSystem(osg::ref_ptr<osg::Group> root);
 
   void update();
 
@@ -24,12 +21,11 @@ public:
   void show_cursor(bool show);
   void toggle_cursor();
 
+  void add_event_handler(InputAdapter* input_adapter);
+
 private:
   bool running;
   bool active_cursor;
-
-  Input& input;
-  RenderSystem& render_system;
 
   osgViewer::Viewer viewer;
 };

@@ -5,24 +5,24 @@ project(LastDitch)
 set(
   HEADERS
   ./LastDitch.h
+  ./src/Constants.h
   ./src/InputAdapter.h
-  ./src/ThirdPersonManipulator.h
+  ./src/systems/EntitySystem.h
   ./src/systems/CameraSystem.h
   ./src/systems/MapSystem.h
   ./src/systems/PhysicsSystem.h
-  ./src/systems/RenderSystem.h
-  ./src/Constants.h)
+  ./src/systems/RenderSystem.h)
 
 set(
   SOURCES
   ./LastDitch.cc
+  ./src/Constants.cc
   ./src/InputAdapter.cc
-  ./src/ThirdPersonManipulator.cc
+  ./src/systems/EntitySystem.cc
   ./src/systems/CameraSystem.cc
   ./src/systems/MapSystem.cc
   ./src/systems/PhysicsSystem.cc
-  ./src/systems/RenderSystem.cc
-  ./src/Constants.cc)
+  ./src/systems/RenderSystem.cc)
 
 add_executable(LastDitch ${HEADERS} ${SOURCES})
 
