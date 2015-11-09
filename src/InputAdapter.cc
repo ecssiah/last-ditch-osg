@@ -4,6 +4,7 @@
 
 using namespace ld;
 
+
 bool InputAdapter::handle(
   const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa)
 {
@@ -62,21 +63,20 @@ bool InputAdapter::handle_key_down(
   switch (ea.getKey())
   {
   case 'w':
-    input.forward = true; break;
+    input.forward = true; return false;
   case 'a':
-    input.left = true; break;
+    input.left = true; return false;
   case 's':
-    input.backward = true; break;
+    input.backward = true; return false;
   case 'd':
-    input.right = true; break;
+    input.right = true; return false;
   case 'e':
-    input.up = true; break;
+    input.up = true; return false;
   case 'q':
-    input.down = true; break;
+    input.down = true; return false;
   default:
-    break;
+    return false;
   }
-  return false;
 }
 
 
@@ -86,21 +86,20 @@ bool InputAdapter::handle_key_up(
   switch (ea.getKey())
   {
   case 'w':
-    input.forward = false; break;
+    input.forward = false; return false;
   case 'a':
-    input.left = false; break;
+    input.left = false; return false;
   case 's':
-    input.backward = false; break;
+    input.backward = false; return false;
   case 'd':
-    input.right = false; break;
+    input.right = false; return false;
   case 'e':
-    input.up = false; break;
+    input.up = false; return false;
   case 'q':
-    input.down = false; break;
+    input.down = false; return false;
   default:
-    break;
+    return false;
   }
-  return false;
 }
 
 
