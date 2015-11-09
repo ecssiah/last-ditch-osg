@@ -18,63 +18,48 @@ MapSystem::MapSystem()
 
 void MapSystem::layout_map()
 {
-  layout_room(3, 3, 3, 3, 0);
-  layout_room(-3, 3, 3, 3, 0);
-  layout_room(3, -3, 3, 3, 0);
-  layout_room(-3, -3, 3, 3, 0);
+  // layout_room(0, 0, 5, 5, 0);
+  set_tile(0, 0, 0, "a", "corner", 0);
 }
 
-void MapSystem::layout_room(
-  int x_, int y_,
-  unsigned size_x, unsigned size_y,
-  int floor)
+void MapSystem::layout_room(int x_, int y_, int size_x, int size_y, int floor)
 {
-  int xx = x_ + MAP_SIZE / 2;
-  int yy = y_ + MAP_SIZE / 2;
-
-  tiles[xx][yy][floor].type = "a";
-  tiles[xx][yy][floor].name = "corner";
-  tiles[xx][yy][floor].rotation = 90;
-
-  tiles[xx + size_x - 1][yy][floor].type = "a";
-  tiles[xx + size_x - 1][yy][floor].name = "corner";
-  tiles[xx + size_x - 1][yy][floor].rotation = 180;
-
-  tiles[xx][yy + size_y - 1][floor].type = "a";
-  tiles[xx][yy + size_y - 1][floor].name = "corner";
-  tiles[xx][yy + size_y - 1][floor].rotation = 270;
-
-  tiles[xx + size_x - 1][yy + size_y - 1][floor].type = "a";
-  tiles[xx + size_x - 1][yy + size_y - 1][floor].name = "corner";
-  tiles[xx + size_x - 1][yy + size_y - 1][floor].rotation = 0;
-
   for (int x = x_ + 1; x < x_ + size_x - 1; ++x)
   {
-    xx = x + MAP_SIZE / 2;
-
-    tiles[xx][yy + size_y - 1][floor].type = "a";
-    tiles[xx][yy + size_y - 1][floor].name = "wall";
-    tiles[xx][yy + size_y - 1][floor].rotation = 0;
-
-    tiles[xx][yy][floor].type = "a";
-    tiles[xx][yy][floor].name = "wall";
-    tiles[xx][yy][floor].rotation = 180;
+    set_tile(x, y_, floor, "a", "wall", 180);
+    set_tile(x, y_ + size_y - 1, floor, "a", "wall", 0);
   }
 
   for (int y = y_ + 1; y < y_ + size_y - 1; ++y)
   {
-    xx = x_ + MAP_SIZE / 2;
-    yy = y + MAP_SIZE / 2;
-
-    tiles[xx][yy][floor].type = "a";
-    tiles[xx][yy][floor].name = "wall";
-    tiles[xx][yy][floor].rotation = 90;
-
-    tiles[xx + size_x - 1][yy][floor].type = "a";
-    tiles[xx + size_x - 1][yy][floor].name = "wall";
-    tiles[xx + size_x - 1][yy][floor].rotation = 270;
+    set_tile(x_, y, floor, "a", "wall", 90);
+    set_tile(x_ + size_x - 1, y, floor, "a", "wall", 270);
   }
+
+  set_tile(x_, y_ + 1, floor, "a", "corner", 90);
+  set_tile(x_, y_ + size_y - 1, floor, "a", "corner", 90);
+  set_tile(x_ + size_x - 1, y_, floor, "a", "corner", 180);
+  set_tile(x_ + size_x - 1, y_ + size_y - 1, floor, "a", "corner", 270);
 }
+
+
+void MapSystem::set_tile(
+  int x, int y, int floor,
+  const std::string& type, const std::string& name, double rotation)
+{
+  Tile& tile = get_tile(x, y, floor);
+
+  tile.type = type;
+  tile.name = name;
+  tile.rotation = rotation;
+}
+
+
+Tile& MapSystem::get_tile(int x, int y, int floor)
+{
+  return tiles[x + MAP_SIZE / 2][y + MAP_SIZE / 2][floor];
+}
+
 
 const Tile& MapSystem::get_tile(int x, int y, int floor) const
 {

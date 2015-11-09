@@ -14,11 +14,13 @@ public:
   MapSystem();
 
   void layout_map();
-  void layout_room(
-    int x, int y,
-    unsigned size_x, unsigned size_y,
-    int floor);
+  void layout_room(int x, int y, int size_x, int size_y, int floor);
 
+  void set_tile(
+    int x, int y, int floor,
+    const std::string& type, const std::string& name, double rotation);
+
+  Tile& get_tile(int x, int y, int floor);
   const Tile& get_tile(int x, int y, int floor) const;
 
 private:
