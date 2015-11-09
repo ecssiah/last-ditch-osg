@@ -39,7 +39,13 @@ osg::ref_ptr<osg::Node> RenderSystem::setup_test_grid()
     0, textures["buildings"],StateAttribute::ON | StateAttribute::OVERRIDE);
   state_set->setAttribute(materials["buildings"]);
 
+<<<<<<< HEAD
   return node;
+=======
+  root->addChild(node);
+
+  build_map();
+>>>>>>> b3522d9cbabef47e9f42d6e8c51d8a1ecb9d1fc1
 }
 
 
