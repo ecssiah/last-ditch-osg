@@ -29,11 +29,20 @@ bool InputAdapter::handle_mouse_click(
   switch (ea.getButtonMask())
   {
   case osgGA::GUIEventAdapter::RIGHT_MOUSE_BUTTON:
-    camera_system.toggle_cursor(); break;
-  default:
-    break;
+  {
+    if (camera_system.has_active_cursor())
+    {
+      camera_system.show_cursor(false);
+      center_mouse(ea, aa);
+    }
+    else
+      camera_system.show_cursor(true);
+
+    return false;
   }
-  return false;
+  default:
+    return false;
+  }
 }
 
 
