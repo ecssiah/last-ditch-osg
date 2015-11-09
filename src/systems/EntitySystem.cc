@@ -6,8 +6,7 @@ EntitySystem::EntitySystem()
 }
 
 
-void EntitySystem::add_user(
-  const std::string& name, DynamicEntity entity)
+void EntitySystem::add_user(DynamicEntity user)
 {
-  users[name] = entity;
+  users[user.name] = user;
 }

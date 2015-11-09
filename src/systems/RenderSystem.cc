@@ -8,13 +8,12 @@
 #include "../components/Tile.h"
 
 using namespace ld;
+using namespace osg;
 
 RenderSystem::RenderSystem(osg::ref_ptr<osg::Group> root_, MapSystem& map_system_)
   : root(root_),
     map_system(map_system_)
 {
-  using namespace osg;
-
   osgDB::Registry::instance()->getDataFilePathList().push_back("media/");
 
   setup_materials();
@@ -30,8 +29,6 @@ RenderSystem::RenderSystem(osg::ref_ptr<osg::Group> root_, MapSystem& map_system
 
 osg::ref_ptr<osg::Node> RenderSystem::setup_test_grid()
 {
-  using namespace osg;
-
   ref_ptr<Node> node = osgDB::readNodeFile("models/grid.fbx");
 
   StateSet* state_set = node->getOrCreateStateSet();
@@ -46,8 +43,6 @@ osg::ref_ptr<osg::Node> RenderSystem::setup_test_grid()
 osg::ref_ptr<osg::MatrixTransform> RenderSystem::setup_character(
   const std::string& name)
 {
-  using namespace osg;
-
   ref_ptr<Group> character_group = new Group;
 
   ref_ptr<Node> character = osgDB::readNodeFile("models/" + name + ".fbx");
@@ -73,8 +68,6 @@ osg::ref_ptr<osg::MatrixTransform> RenderSystem::setup_character(
 
 osg::ref_ptr<osg::Node> RenderSystem::setup_accessory(const std::string& name)
 {
-  using namespace osg;
-
   ref_ptr<Node> node = osgDB::readNodeFile("models/" + name + ".fbx");
 
   StateSet* state_set = node->getOrCreateStateSet();
@@ -88,48 +81,29 @@ osg::ref_ptr<osg::Node> RenderSystem::setup_accessory(const std::string& name)
 
 void RenderSystem::setup_materials()
 {
-  using namespace osg;
+  setup_material("kadijah");
+  setup_material("clothing1");
+  setup_material("buildings");
+}
 
-  ref_ptr<Image> image;
-  image = osgDB::readImageFile("textures/kadijah.png");
 
-  textures["kadijah"] = new Texture2D;
-  textures["kadijah"]->setImage(image);
-  textures["kadijah"]->setUnRefImageDataAfterApply(true);
+void RenderSystem::setup_material(const std::string& name)
+{
+  ref_ptr<Image> image = osgDB::readImageFile("textures/" + name + ".png");
 
-  materials["kadijah"] = new Material;
-  materials["kadijah"]->setDiffuse(Material::FRONT, Vec4(.2f, .9f, .9f, 1.f));
-  materials["kadijah"]->setSpecular(Material::FRONT, Vec4(1.f, 1.f, 1.f, 1.f));
-  materials["kadijah"]->setShininess(Material::FRONT, 96.f);
+  textures[name] = new Texture2D;
+  textures[name]->setImage(image);
+  textures[name]->setUnRefImageDataAfterApply(true);
 
-  image = osgDB::readImageFile("textures/clothing1.png");
-
-  textures["clothing1"] = new Texture2D;
-  textures["clothing1"]->setImage(image);
-  textures["clothing1"]->setUnRefImageDataAfterApply(true);
-
-  materials["clothing1"] = new Material;
-  materials["clothing1"]->setDiffuse(Material::FRONT, Vec4(.2f, .9f, .9f, 1.f));
-  materials["clothing1"]->setSpecular(Material::FRONT, Vec4(1.f, 1.f, 1.f, 1.f));
-  materials["clothing1"]->setShininess(Material::FRONT, 96.f);
-
-  image = osgDB::readImageFile("textures/buildings.png");
-
-  textures["buildings"] = new Texture2D;
-  textures["buildings"]->setImage(image);
-  textures["buildings"]->setUnRefImageDataAfterApply(true);
-
-  materials["buildings"] = new Material;
-  materials["buildings"]->setDiffuse(Material::FRONT, Vec4(.2f, .9f, .9f, 1.f));
-  materials["buildings"]->setSpecular(Material::FRONT, Vec4(1.f, 1.f, 1.f, 1.f));
-  materials["buildings"]->setShininess(Material::FRONT, 96.f);
+  materials[name] = new Material;
+  materials[name]->setDiffuse(Material::FRONT, Vec4(.2f, .9f, .9f, 1.f));
+  materials[name]->setSpecular(Material::FRONT, Vec4(1.f, 1.f, 1.f, 1.f));
+  materials[name]->setShininess(Material::FRONT, 96.f);
 }
 
 
 void RenderSystem::build_map()
 {
-  using namespace osg;
-
   for (int x = -MAP_SIZE / 2; x < MAP_SIZE / 2; ++x)
   {
     for (int y = -MAP_SIZE / 2; y < MAP_SIZE / 2; ++y)

@@ -1,8 +1,6 @@
 #include "InputAdapter.h"
 
 #include <iostream>
-#include <osgDB/ReadFile>
-#include "systems/CameraSystem.h"
 
 using namespace ld;
 
@@ -12,23 +10,9 @@ bool InputAdapter::handle(
   switch(ea.getEventType())
   {
   case osgGA::GUIEventAdapter::PUSH:
-  {
-    switch (ea.getButtonMask())
-    {
-    case osgGA::GUIEventAdapter::RIGHT_MOUSE_BUTTON:
-      camera_system.toggle_cursor(); break;
-    default:
-      break;
-    }
-    return false;
-  }
+    return handle_mouse_click(ea, aa);
   case osgGA::GUIEventAdapter::MOVE:
-  {
-    if (camera_system.has_active_cursor())
-      return false;
-    else
-      return handle_mouse_delta(ea, aa);
-  }
+    return handle_mouse_move(ea, aa);
   case osgGA::GUIEventAdapter::KEYDOWN:
     return handle_key_down(ea, aa);
   case osgGA::GUIEventAdapter::KEYUP:
@@ -36,6 +20,30 @@ bool InputAdapter::handle(
   default:
     return false;
   }
+}
+
+
+bool InputAdapter::handle_mouse_click(
+  const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa)
+{
+  switch (ea.getButtonMask())
+  {
+  case osgGA::GUIEventAdapter::RIGHT_MOUSE_BUTTON:
+    camera_system.toggle_cursor(); break;
+  default:
+    break;
+  }
+  return false;
+}
+
+
+bool InputAdapter::handle_mouse_move(
+  const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa)
+{
+  if (camera_system.has_active_cursor())
+    return false;
+  else
+    return handle_mouse_delta(ea, aa);
 }
 
 
@@ -96,6 +104,10 @@ bool InputAdapter::handle_mouse_delta(
   if (dx == 0 && dy == 0) return false;
 
   center_mouse(ea, aa);
+
+  DynamicEntity& user = entity_system.get_user("kadijah");
+  user.heading += user.x_rot_speed * dx;
+  user.pitch += user.y_rot_speed * dy;
 
   return false;
 }

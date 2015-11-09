@@ -19,12 +19,13 @@ public:
 
   osg::ref_ptr<osg::MatrixTransform> setup_character(const std::string& name);
 
-  osg::ref_ptr<osg::MatrixTransform> get_user(const std::string& name)
+  osg::ref_ptr<osg::MatrixTransform> get_user_xform(const std::string& name)
     { return users[name]; }
 
 private:
   void build_map();
   void setup_materials();
+  void setup_material(const std::string& name);
 
   osg::ref_ptr<osg::Node> setup_test_grid();
   osg::ref_ptr<osg::Node> setup_accessory(const std::string& name);
