@@ -3,6 +3,7 @@
 #include <iostream>
 
 using namespace ld;
+using namespace osg;
 
 PhysicsSystem::PhysicsSystem(Input& input_, EntitySystem& entity_system_)
   : input(input_),
@@ -13,8 +14,6 @@ PhysicsSystem::PhysicsSystem(Input& input_, EntitySystem& entity_system_)
 
 void PhysicsSystem::update()
 {
-  using namespace osg;
-
   DynamicEntity& user = entity_system.get_user("kadijah");
   Vec3 direction;
 
@@ -27,7 +26,7 @@ void PhysicsSystem::update()
 
   direction.normalize();
 
-  user.position += direction * user.speed;
+  user.position += Quat(user.heading, Vec3(0, 0, 1)) * direction * user.speed;
 
   Matrix r;
   r.makeRotate(user.heading, Vec3(0, 0, 1));
