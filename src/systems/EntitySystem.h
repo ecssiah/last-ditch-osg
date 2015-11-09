@@ -9,10 +9,11 @@ class EntitySystem
 public:
   EntitySystem();
 
-  void add_entity(const std::string& name, DynamicEntity entity);
+  void add_user(const std::string& name, DynamicEntity entity);
+  DynamicEntity& get_user(const std::string& name) { return users[name]; }
 
 private:
-  std::map<std::string, DynamicEntity> dynamic_entities;
+  std::map<std::string, DynamicEntity> users;
 
 };
 

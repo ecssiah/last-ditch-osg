@@ -10,7 +10,7 @@ LastDitch::LastDitch()
     entity_system(),
     map_system(),
     render_system(root, map_system),
-    physics_system(input),
+    physics_system(input, entity_system),
     camera_system(root)
 {
   using namespace osg;
@@ -19,7 +19,7 @@ LastDitch::LastDitch()
   user.name = "kadijah";
   user.xform = render_system.get_user(user.name);
 
-  entity_system.add_entity(user.name, user);
+  entity_system.add_user(user.name, user);
 
   camera_system.add_event_handler(new InputAdapter(input, camera_system));
 

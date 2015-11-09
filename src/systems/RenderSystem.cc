@@ -138,8 +138,6 @@ void RenderSystem::build_map()
 
       if (tile.name == "") continue;
 
-      std::cout << x << " " << y << ":" << tile.name << std::endl;
-
       ref_ptr<Node> node = osgDB::readNodeFile(
 	"models/" + tile.type + "-" + tile.name + ".fbx");
 

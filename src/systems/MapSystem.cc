@@ -18,8 +18,10 @@ MapSystem::MapSystem()
 
 void MapSystem::layout_map()
 {
-  layout_room(2, 2, 4, 4, 0);
-
+  layout_room(3, 3, 3, 3, 0);
+  layout_room(-3, 3, 3, 3, 0);
+  layout_room(3, -3, 3, 3, 0);
+  layout_room(-3, -3, 3, 3, 0);
 }
 
 void MapSystem::layout_room(
@@ -27,14 +29,32 @@ void MapSystem::layout_room(
   unsigned size_x, unsigned size_y,
   int floor)
 {
+  int xx = x_ + MAP_SIZE / 2;
+  int yy = y_ + MAP_SIZE / 2;
+
+  tiles[xx][yy][floor].type = "a";
+  tiles[xx][yy][floor].name = "corner";
+  tiles[xx][yy][floor].rotation = 90;
+
+  tiles[xx + size_x - 1][yy][floor].type = "a";
+  tiles[xx + size_x - 1][yy][floor].name = "corner";
+  tiles[xx + size_x - 1][yy][floor].rotation = 180;
+
+  tiles[xx][yy + size_y - 1][floor].type = "a";
+  tiles[xx][yy + size_y - 1][floor].name = "corner";
+  tiles[xx][yy + size_y - 1][floor].rotation = 270;
+
+  tiles[xx + size_x - 1][yy + size_y - 1][floor].type = "a";
+  tiles[xx + size_x - 1][yy + size_y - 1][floor].name = "corner";
+  tiles[xx + size_x - 1][yy + size_y - 1][floor].rotation = 0;
+
   for (int x = x_ + 1; x < x_ + size_x - 1; ++x)
   {
-    int xx = x + MAP_SIZE / 2;
-    int yy = y_ + MAP_SIZE / 2;
+    xx = x + MAP_SIZE / 2;
 
-    tiles[xx][yy + size_y][floor].type = "a";
-    tiles[xx][yy + size_y][floor].name = "wall";
-    tiles[xx][yy + size_y][floor].rotation = 0;
+    tiles[xx][yy + size_y - 1][floor].type = "a";
+    tiles[xx][yy + size_y - 1][floor].name = "wall";
+    tiles[xx][yy + size_y - 1][floor].rotation = 0;
 
     tiles[xx][yy][floor].type = "a";
     tiles[xx][yy][floor].name = "wall";
@@ -43,16 +63,16 @@ void MapSystem::layout_room(
 
   for (int y = y_ + 1; y < y_ + size_y - 1; ++y)
   {
-    int xx = x_ + MAP_SIZE / 2;
-    int yy = y + MAP_SIZE / 2;
+    xx = x_ + MAP_SIZE / 2;
+    yy = y + MAP_SIZE / 2;
 
     tiles[xx][yy][floor].type = "a";
     tiles[xx][yy][floor].name = "wall";
     tiles[xx][yy][floor].rotation = 90;
 
-    tiles[xx + size_x][yy][floor].type = "a";
-    tiles[xx + size_x][yy][floor].name = "wall";
-    tiles[xx + size_x][yy][floor].rotation = 270;
+    tiles[xx + size_x - 1][yy][floor].type = "a";
+    tiles[xx + size_x - 1][yy][floor].name = "wall";
+    tiles[xx + size_x - 1][yy][floor].rotation = 270;
   }
 }
 
