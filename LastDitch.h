@@ -3,9 +3,9 @@
 
 #include <osg/Group>
 #include "src/components/Input.h"
-#include "src/systems/EntitySystem.h"
 #include "src/systems/MapSystem.h"
 #include "src/systems/RenderSystem.h"
+#include "src/systems/EntitySystem.h"
 #include "src/systems/PhysicsSystem.h"
 #include "src/systems/CameraSystem.h"
 
@@ -22,9 +22,9 @@ private:
 
   Input input;
 
-  EntitySystem entity_system;
   MapSystem map_system;
   RenderSystem render_system;
+  EntitySystem entity_system;
   PhysicsSystem physics_system;
   CameraSystem camera_system;
 };

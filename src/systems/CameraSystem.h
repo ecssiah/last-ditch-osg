@@ -2,17 +2,19 @@
 #define CAMERASYSTEM_H
 
 #include <osg/Group>
+#include <osg/PositionAttitudeTransform>
 #include <osgViewer/Viewer>
+#include "EntitySystem.h"
+#include "../components/Input.h"
 
 namespace ld
 {
 
-class InputAdapter;
-
 class CameraSystem
 {
 public:
-  CameraSystem(osg::ref_ptr<osg::Group> root);
+  CameraSystem(
+    osg::ref_ptr<osg::Group> root, Input& input, EntitySystem& entity_system);
 
   void update();
 
@@ -21,11 +23,11 @@ public:
   void show_cursor(bool show);
   void toggle_cursor();
 
-  void add_event_handler(InputAdapter* input_adapter);
-
 private:
   bool running;
   bool active_cursor;
+
+  EntitySystem& entity_system;
 
   osgViewer::Viewer viewer;
 };

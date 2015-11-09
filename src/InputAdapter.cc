@@ -114,7 +114,7 @@ bool InputAdapter::handle_mouse_delta(
   center_mouse(ea, aa);
 
   DynamicEntity& user = entity_system.get_user("kadijah");
-  user.heading += user.x_rot_speed * dx;
+  user.heading -= user.x_rot_speed * dx;
   user.pitch += user.y_rot_speed * dy;
 
   return false;
