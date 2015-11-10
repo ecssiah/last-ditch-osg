@@ -1,6 +1,8 @@
 #ifndef TILE_H
 #define TILE_H
 
+#include <iostream>
+
 namespace ld
 {
 
@@ -10,7 +12,6 @@ struct Tile
   std::string name = "";
 
   float rotation = 0;
-
 };
 
 }

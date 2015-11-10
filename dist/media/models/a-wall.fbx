@@ -10,10 +10,10 @@ FBXHeaderExtension:  {
 		Version: 1000
 		Year: 2015
 		Month: 11
-		Day: 02
+		Day: 10
 		Hour: 00
-		Minute: 59
-		Second: 57
+		Minute: 23
+		Second: 33
 		Millisecond: 0
 	}
 	Creator: "FBX SDK/FBX Plugins build 20070228"
@@ -21,7 +21,7 @@ FBXHeaderExtension:  {
 		FlagPLE: 0
 	}
 }
-CreationTime: "2015-11-02 00:59:57:000"
+CreationTime: "2015-11-10 00:23:33:000"
 Creator: "Blender version 2.76 (sub 0)"
 
 ; Object definitions
@@ -57,7 +57,7 @@ Definitions:  {
 ;------------------------------------------------------------------
 
 Objects:  {
-	Model: "Model::wall1", "Mesh" {
+	Model: "Model::a_wall", "Mesh" {
 		Version: 232
 		Properties60:  {
 			Property: "QuaternionInterpolate", "bool", "",0
@@ -297,7 +297,7 @@ Objects:  {
 		}
 		NbPoseNodes: 1
 		PoseNode:  {
-			Node: "Model::wall1"
+			Node: "Model::a_wall"
 			Matrix: -0.000000043711388,1.000000000000000,0.000000000000000,0.000000000000000,-1.000000000000000,-0.000000043711388,0.000000000000000,0.000000000000000,0.000000000000000,0.000000000000000,1.000000000000000,0.000000000000000,0.000000000000000,0.000000000000000,0.000000000000000,1.000000000000000
 		}
 	}
@@ -319,7 +319,7 @@ Objects:  {
 ;------------------------------------------------------------------
 
 Relations:  {
-	Model: "Model::wall1", "Mesh" {
+	Model: "Model::a_wall", "Mesh" {
 	}
 	Model: "Model::Producer Perspective", "Camera" {
 	}
@@ -349,9 +349,9 @@ Relations:  {
 ;------------------------------------------------------------------
 
 Connections:  {
-	Connect: "OO", "Model::wall1", "Model::Scene"
-	Connect: "OO", "Material::buildings__buildings", "Model::wall1"
-	Connect: "OO", "Texture::buildings", "Model::wall1"
+	Connect: "OO", "Model::a_wall", "Model::Scene"
+	Connect: "OO", "Material::buildings__buildings", "Model::a_wall"
+	Connect: "OO", "Texture::buildings", "Model::a_wall"
 	Connect: "OO", "Video::buildings", "Texture::buildings"
 }
 ;Takes and animation section
@@ -366,7 +366,7 @@ Takes:  {
 
 		;Models animation
 		;----------------------------------------------------
-		Model: "Model::wall1" {
+		Model: "Model::a_wall" {
 			Version: 1.1
 			Channel: "Transform" {
 				Channel: "T" {

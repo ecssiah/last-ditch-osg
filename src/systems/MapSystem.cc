@@ -18,9 +18,9 @@ MapSystem::MapSystem()
 
 void MapSystem::layout_map()
 {
-  // layout_room(0, 0, 5, 5, 0);
-  set_tile(0, 0, 0, "a", "corner", 0);
+  layout_room(-3, -3, 7, 7, 0);
 }
+
 
 void MapSystem::layout_room(int x_, int y_, int size_x, int size_y, int floor)
 {
@@ -36,16 +36,17 @@ void MapSystem::layout_room(int x_, int y_, int size_x, int size_y, int floor)
     set_tile(x_ + size_x - 1, y, floor, "a", "wall", 270);
   }
 
-  set_tile(x_, y_ + 1, floor, "a", "corner", 90);
-  set_tile(x_, y_ + size_y - 1, floor, "a", "corner", 90);
+  set_tile(x_, y_, floor, "a", "corner", 90);
   set_tile(x_ + size_x - 1, y_, floor, "a", "corner", 180);
   set_tile(x_ + size_x - 1, y_ + size_y - 1, floor, "a", "corner", 270);
+  set_tile(x_, y_ + size_y - 1, floor, "a", "corner", 0);
 }
 
 
 void MapSystem::set_tile(
   int x, int y, int floor,
-  const std::string& type, const std::string& name, double rotation)
+  const std::string& type, const std::string& name,
+  double rotation)
 {
   Tile& tile = get_tile(x, y, floor);
 

@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <osg/Image>
+#include <osg/MatrixTransform>
 #include <osg/PositionAttitudeTransform>
 #include <osgDB/ReadFile>
 #include "../Constants.h"
@@ -19,7 +20,7 @@ RenderSystem::RenderSystem(osg::ref_ptr<osg::Group> root_, MapSystem& map_system
   setup_materials();
   root->addChild(setup_test_grid());
 
-  const std::string name = "kadijah";
+  const std::string& name = "kadijah";
   users[name] = setup_character(name);
   root->addChild(users[name]);
 
@@ -104,9 +105,9 @@ void RenderSystem::setup_material(const std::string& name)
 
 void RenderSystem::build_map()
 {
-  for (int x = -MAP_SIZE / 2; x < MAP_SIZE / 2; ++x)
+  for (int x = -MAP_SIZE / 2; x < MAP_SIZE / 2 + 1; ++x)
   {
-    for (int y = -MAP_SIZE / 2; y < MAP_SIZE / 2; ++y)
+    for (int y = -MAP_SIZE / 2; y < MAP_SIZE / 2 + 1; ++y)
     {
       const Tile& tile = map_system.get_tile(x, y, 0);
 
@@ -120,9 +121,14 @@ void RenderSystem::build_map()
 	0, textures["buildings"], StateAttribute::ON | StateAttribute::OVERRIDE);
       state_set->setAttribute(materials["buildings"]);
 
-      ref_ptr<PositionAttitudeTransform> xform = new PositionAttitudeTransform;
-      xform->setPosition(Vec3(x * TILE_SIZE, y * TILE_SIZE, 0));
-      xform->setAttitude(Quat(osg::inDegrees(tile.rotation), Vec3(0, 0, 1)));
+      ref_ptr<MatrixTransform> xform = new MatrixTransform;
+
+      Matrix t;
+      t.makeTranslate(Vec3(TILE_SIZE * x, TILE_SIZE * y, 0));
+      Matrix r;
+      r.makeRotate(osg::inDegrees(tile.rotation), Vec3(0, 0, 1));
+
+      xform->setMatrix(r * t);
 
       xform->addChild(node);
       root->addChild(xform);

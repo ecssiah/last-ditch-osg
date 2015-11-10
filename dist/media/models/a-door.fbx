@@ -10,10 +10,10 @@ FBXHeaderExtension:  {
 		Version: 1000
 		Year: 2015
 		Month: 11
-		Day: 02
+		Day: 10
 		Hour: 00
-		Minute: 59
-		Second: 45
+		Minute: 22
+		Second: 24
 		Millisecond: 0
 	}
 	Creator: "FBX SDK/FBX Plugins build 20070228"
@@ -21,7 +21,7 @@ FBXHeaderExtension:  {
 		FlagPLE: 0
 	}
 }
-CreationTime: "2015-11-02 00:59:45:000"
+CreationTime: "2015-11-10 00:22:24:000"
 Creator: "Blender version 2.76 (sub 0)"
 
 ; Object definitions
@@ -57,12 +57,12 @@ Definitions:  {
 ;------------------------------------------------------------------
 
 Objects:  {
-	Model: "Model::wall1_001", "Mesh" {
+	Model: "Model::a_door", "Mesh" {
 		Version: 232
 		Properties60:  {
 			Property: "QuaternionInterpolate", "bool", "",0
 			Property: "Visibility", "Visibility", "A+",1
-			Property: "Lcl Translation", "Lcl Translation", "A+",2.000000000000000,0.000000000000000,0.000000000000000
+			Property: "Lcl Translation", "Lcl Translation", "A+",0.000000000000000,0.000000000000000,0.000000000000000
 			Property: "Lcl Rotation", "Lcl Rotation", "A+",0.000000000000000,-0.000000000000000,0.000000000000000
 			Property: "Lcl Scaling", "Lcl Scaling", "A+",1.000000000000000,1.000000000000000,1.000000000000000
 			Property: "RotationOffset", "Vector3D", "",0,0,0
@@ -353,8 +353,8 @@ Objects:  {
 		}
 		NbPoseNodes: 1
 		PoseNode:  {
-			Node: "Model::wall1_001"
-			Matrix: -0.000000043711388,1.000000000000000,0.000000000000000,0.000000000000000,-1.000000000000000,-0.000000043711388,0.000000000000000,0.000000000000000,0.000000000000000,0.000000000000000,1.000000000000000,0.000000000000000,2.000000000000000,0.000000000000000,0.000000000000000,1.000000000000000
+			Node: "Model::a_door"
+			Matrix: -0.000000043711388,1.000000000000000,0.000000000000000,0.000000000000000,-1.000000000000000,-0.000000043711388,0.000000000000000,0.000000000000000,0.000000000000000,0.000000000000000,1.000000000000000,0.000000000000000,0.000000000000000,0.000000000000000,0.000000000000000,1.000000000000000
 		}
 	}
 	GlobalSettings:  {
@@ -375,7 +375,7 @@ Objects:  {
 ;------------------------------------------------------------------
 
 Relations:  {
-	Model: "Model::wall1_001", "Mesh" {
+	Model: "Model::a_door", "Mesh" {
 	}
 	Model: "Model::Producer Perspective", "Camera" {
 	}
@@ -405,9 +405,9 @@ Relations:  {
 ;------------------------------------------------------------------
 
 Connections:  {
-	Connect: "OO", "Model::wall1_001", "Model::Scene"
-	Connect: "OO", "Material::buildings__buildings", "Model::wall1_001"
-	Connect: "OO", "Texture::buildings", "Model::wall1_001"
+	Connect: "OO", "Model::a_door", "Model::Scene"
+	Connect: "OO", "Material::buildings__buildings", "Model::a_door"
+	Connect: "OO", "Texture::buildings", "Model::a_door"
 	Connect: "OO", "Video::buildings", "Texture::buildings"
 }
 ;Takes and animation section
@@ -422,16 +422,16 @@ Takes:  {
 
 		;Models animation
 		;----------------------------------------------------
-		Model: "Model::wall1_001" {
+		Model: "Model::a_door" {
 			Version: 1.1
 			Channel: "Transform" {
 				Channel: "T" {
 					Channel: "X" {
-						Default: 2.000000000000000
+						Default: 0.000000000000000
 						KeyVer: 4005
 						KeyCount: 1
 						Key: 
-							1924423250,2.000000000000000,L
+							1924423250,0.000000000000000,L
 						Color: 1,0,0
 					}
 					Channel: "Y" {
