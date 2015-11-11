@@ -1,6 +1,7 @@
 #ifndef PHYSICSSYSTEM_H
 #define PHYSICSSYSTEM_H
 
+#include "../Constants.h"
 #include "../components/Input.h"
 #include "../systems/EntitySystem.h"
 
@@ -12,7 +13,7 @@ class PhysicsSystem
 public:
   PhysicsSystem(Input& input, EntitySystem& entity_system);
 
-  void update();
+  void update(double dt);
 
 private:
   Input& input;

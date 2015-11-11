@@ -1,3 +1,6 @@
+# Rendering
+fixed timestep: .032
+
 # Map
 map size: 101
 num floors: 3

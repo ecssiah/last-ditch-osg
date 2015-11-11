@@ -7,6 +7,7 @@ set(
   ./LastDitch.h
   ./src/Constants.h
   ./src/InputAdapter.h
+  ./src/systems/TimeSystem.h
   ./src/systems/EntitySystem.h
   ./src/systems/CameraSystem.h
   ./src/systems/MapSystem.h
@@ -18,6 +19,7 @@ set(
   ./LastDitch.cc
   ./src/Constants.cc
   ./src/InputAdapter.cc
+  ./src/systems/TimeSystem.cc
   ./src/systems/EntitySystem.cc
   ./src/systems/CameraSystem.cc
   ./src/systems/MapSystem.cc

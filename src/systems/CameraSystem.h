@@ -3,6 +3,7 @@
 
 #include <osg/Group>
 #include <osg/PositionAttitudeTransform>
+#include <osg/Timer>
 #include <osgViewer/Viewer>
 #include "EntitySystem.h"
 #include "../components/Input.h"

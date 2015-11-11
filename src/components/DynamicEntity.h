@@ -10,7 +10,7 @@ struct DynamicEntity
     : name(""),
       xform(),
       position(),
-      speed(.05),
+      speed(1),
       x_rot_speed(.003),
       y_rot_speed(.003),
       heading(0),

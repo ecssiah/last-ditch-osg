@@ -13,7 +13,9 @@ class InputAdapter : public osgGA::GUIEventHandler
 {
 public:
   InputAdapter(
-    Input& input_, EntitySystem& entity_system_, CameraSystem& camera_system_
+    Input& input_,
+    EntitySystem& entity_system_,
+    CameraSystem& camera_system_
   )
     : input(input_),
       entity_system(entity_system_),

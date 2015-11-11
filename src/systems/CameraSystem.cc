@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <osg/PositionAttitudeTransform>
+#include "../Constants.h"
 #include "../InputAdapter.h"
 #include "../components/DynamicEntity.h"
 
@@ -36,10 +37,10 @@ void CameraSystem::update()
 
   DynamicEntity& user = entity_system.get_user("kadijah");
 
-  viewer.getCamera()->setViewMatrixAsLookAt(
-    user.position + Vec3(-sin(user.heading), cos(user.heading), 0) + Vec3(0, 0, 1.5),
-    user.position + Vec3(0, 0, 1.4),
-    Vec3(0, 0, 1));
+  Vec3 pos(user.position + Vec3(0, 0, 1.4));
+  Vec3 dir(-sin(user.heading), cos(user.heading), 0);
+
+  viewer.getCamera()->setViewMatrixAsLookAt(pos + dir, pos, Vec3(0, 0, 1));
 
   viewer.frame();
 }

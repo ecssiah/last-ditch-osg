@@ -12,7 +12,7 @@ PhysicsSystem::PhysicsSystem(Input& input_, EntitySystem& entity_system_)
 }
 
 
-void PhysicsSystem::update()
+void PhysicsSystem::update(double dt)
 {
   DynamicEntity& user = entity_system.get_user("kadijah");
   Vec3 direction;
@@ -26,7 +26,8 @@ void PhysicsSystem::update()
 
   direction.normalize();
 
-  user.position += Quat(user.heading, Vec3(0, 0, 1)) * direction * user.speed;
+  Quat user_heading(user.heading, Vec3(0, 0, 1));
+  user.position += user_heading * direction * user.speed * dt;
 
   Matrix r;
   r.makeRotate(user.heading, Vec3(0, 0, 1));

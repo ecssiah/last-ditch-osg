@@ -3,6 +3,7 @@
 
 #include <osg/Group>
 #include "src/components/Input.h"
+#include "src/systems/TimeSystem.h"
 #include "src/systems/MapSystem.h"
 #include "src/systems/RenderSystem.h"
 #include "src/systems/EntitySystem.h"
@@ -22,6 +23,7 @@ private:
 
   Input input;
 
+  TimeSystem time_system;
   MapSystem map_system;
   RenderSystem render_system;
   EntitySystem entity_system;
