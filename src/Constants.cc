@@ -14,6 +14,7 @@ const double FIXED_TIMESTEP = constants["fixed timestep"].as<double>();
 
 // Map
 const int CHUNK_SIZE = constants["chunk size"].as<int>();
-const int MAP_SIZE = constants["map size"].as<int>();
+const int NUM_CHUNKS = constants["num chunks"].as<int>();
+const int MAP_SIZE = NUM_CHUNKS * CHUNK_SIZE;
 const int NUM_FLOORS = constants["num floors"].as<int>();
 const int TILE_SIZE = constants["tile size"].as<int>();

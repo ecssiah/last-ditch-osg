@@ -8,6 +8,6 @@ fixed timestep: .032
 
 # Map
 chunk size: 20
-map size: 5
+num chunks: 5
 num floors: 3
 tile size: 2

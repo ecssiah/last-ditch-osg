@@ -8,8 +8,8 @@ using namespace ld;
 
 MapSystem::MapSystem()
   : tiles(
-      CHUNK_SIZE * MAP_SIZE, std::vector<std::vector<Tile>>(
-	CHUNK_SIZE * MAP_SIZE, std::vector<Tile>(
+      MAP_SIZE, std::vector<std::vector<Tile>>(
+	MAP_SIZE, std::vector<Tile>(
 	  NUM_FLOORS, Tile())))
 {
   layout_map();
@@ -61,8 +61,6 @@ void MapSystem::set_tile(
   const std::string& type, const std::string& name,
   double rotation)
 {
-  std::cout << x << " " << y << std::endl;
-
   Tile& tile = get_tile(x, y, floor);
 
   tile.type = type;
@@ -73,8 +71,8 @@ void MapSystem::set_tile(
 
 Tile& MapSystem::get_tile(int x, int y, int floor)
 {
-  int xx = x + (CHUNK_SIZE * MAP_SIZE) / 2;
-  int yy = y + (CHUNK_SIZE * MAP_SIZE) / 2;
+  int xx = x + MAP_SIZE / 2;
+  int yy = y + MAP_SIZE / 2;
 
   return tiles[xx][yy][floor];
 }
@@ -82,8 +80,8 @@ Tile& MapSystem::get_tile(int x, int y, int floor)
 
 const Tile& MapSystem::get_tile(int x, int y, int floor) const
 {
-  int xx = x + (CHUNK_SIZE * MAP_SIZE) / 2;
-  int yy = y + (CHUNK_SIZE * MAP_SIZE) / 2;
+  int xx = x + MAP_SIZE / 2;
+  int yy = y + MAP_SIZE / 2;
 
   return tiles[xx][yy][floor];
 }
