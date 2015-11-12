@@ -19,16 +19,9 @@ LastDitch::LastDitch()
 {
   while (camera_system.is_running())
   {
-    double dt = time_system.tick();
+    auto dt = time_system.tick();
 
-    for (int i = 0; i < time_system.get_iterations(); ++i)
-    {
-      physics_system.update(FIXED_TIMESTEP);
-    }
-
-    sleep(FIXED_TIMESTEP - dt);
-
-    // physics_system.update(dt);
+    physics_system.update(dt);
     camera_system.update();
   }
 }

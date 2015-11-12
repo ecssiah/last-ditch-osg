@@ -12,15 +12,12 @@ public:
   TimeSystem();
 
   double tick();
-  int get_iterations() { return iterations; }
 
 private:
   osg::Timer timer;
   osg::Timer_t last_time;
 
-  int iterations;
   double dt;
-  double accumulated_dt;
 };
 
 }

@@ -2,6 +2,8 @@
 
 #include <iostream>
 #include <math.h>
+#include <chrono>
+#include <thread>
 #include "../Constants.h"
 
 using namespace ld;
@@ -9,9 +11,7 @@ using namespace ld;
 TimeSystem::TimeSystem()
   :timer(),
    last_time(timer.tick()),
-   iterations(0),
-   dt(0),
-   accumulated_dt(0)
+   dt(0)
 {
 }
 
@@ -19,11 +19,16 @@ TimeSystem::TimeSystem()
 double TimeSystem::tick()
 {
   auto current = timer.tick();
-  double dt = timer.delta_s(last_time, current);
+  auto dt = timer.delta_s(last_time, current);
   last_time = current;
 
-  iterations = floor(dt / FIXED_TIMESTEP);
-  dt -= iterations * FIXED_TIMESTEP;
+  if (dt < FIXED_TIMESTEP)
+  {
+    int millis = floor(1000 * (FIXED_TIMESTEP - dt));
+    std::this_thread::sleep_for(std::chrono::milliseconds(millis));
+
+    return timer.delta_s(last_time, timer.tick()) + dt;
+  }
 
   return dt;
 }

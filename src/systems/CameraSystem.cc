@@ -2,6 +2,8 @@
 
 #include <iostream>
 #include <osg/PositionAttitudeTransform>
+#include <osgGA/GUIEventHandler>
+#include <osgViewer/ViewerEventHandlers>
 #include "../Constants.h"
 #include "../InputAdapter.h"
 #include "../components/DynamicEntity.h"
@@ -20,6 +22,10 @@ CameraSystem::CameraSystem(
 {
   viewer.setSceneData(root);
   viewer.addEventHandler(new InputAdapter(input, entity_system, *this));
+
+  osgViewer::StatsHandler* stats_handler = new osgViewer::StatsHandler;
+  stats_handler->setKeyEventTogglesOnScreenStats(osgGA::GUIEventAdapter::KEY_O);
+  viewer.addEventHandler(stats_handler);
 
   viewer.getCamera()->setProjectionMatrixAsPerspective(40, 1, .1, 100);
 
