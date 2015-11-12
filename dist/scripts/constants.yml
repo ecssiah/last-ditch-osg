@@ -7,6 +7,7 @@ user y rot speed: .003
 fixed timestep: .032
 
 # Map
-map size: 101
+chunk size: 20
+map size: 5
 num floors: 3
 tile size: 2

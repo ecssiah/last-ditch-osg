@@ -8,8 +8,8 @@ using namespace ld;
 
 MapSystem::MapSystem()
   : tiles(
-      MAP_SIZE, std::vector<std::vector<Tile>>(
-	MAP_SIZE, std::vector<Tile>(
+      CHUNK_SIZE * MAP_SIZE, std::vector<std::vector<Tile>>(
+	CHUNK_SIZE * MAP_SIZE, std::vector<Tile>(
 	  NUM_FLOORS, Tile())))
 {
   layout_map();
@@ -22,6 +22,13 @@ void MapSystem::layout_map()
   layout_room("a", 6, -6, 5, 5, 0);
   layout_room("a", -6, 6, 5, 5, 0);
   layout_room("a", 6, 6, 5, 5, 0);
+}
+
+
+void MapSystem::layout_foundation()
+{
+
+
 }
 
 
@@ -54,6 +61,8 @@ void MapSystem::set_tile(
   const std::string& type, const std::string& name,
   double rotation)
 {
+  std::cout << x << " " << y << std::endl;
+
   Tile& tile = get_tile(x, y, floor);
 
   tile.type = type;
@@ -64,11 +73,17 @@ void MapSystem::set_tile(
 
 Tile& MapSystem::get_tile(int x, int y, int floor)
 {
-  return tiles[x + MAP_SIZE / 2][y + MAP_SIZE / 2][floor];
+  int xx = x + (CHUNK_SIZE * MAP_SIZE) / 2;
+  int yy = y + (CHUNK_SIZE * MAP_SIZE) / 2;
+
+  return tiles[xx][yy][floor];
 }
 
 
 const Tile& MapSystem::get_tile(int x, int y, int floor) const
 {
-  return tiles[x + MAP_SIZE / 2][y + MAP_SIZE / 2][floor];
+  int xx = x + (CHUNK_SIZE * MAP_SIZE) / 2;
+  int yy = y + (CHUNK_SIZE * MAP_SIZE) / 2;
+
+  return tiles[xx][yy][floor];
 }

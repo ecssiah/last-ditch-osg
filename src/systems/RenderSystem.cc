@@ -18,13 +18,42 @@ RenderSystem::RenderSystem(osg::ref_ptr<osg::Group> root_, MapSystem& map_system
   osgDB::Registry::instance()->getDataFilePathList().push_back("media/");
 
   setup_materials();
-  root->addChild(setup_test_grid());
+
+  // root->addChild(setup_test_grid());
+
+  root->addChild(setup_foundation());
 
   const std::string& name = "kadijah";
   users[name] = setup_character(name);
   root->addChild(users[name]);
 
   build_map();
+}
+
+
+osg::ref_ptr<osg::Node> RenderSystem::setup_foundation()
+{
+  ref_ptr<Group> group = new Group;
+
+  StateSet* state_set = group->getOrCreateStateSet();
+  state_set->setTextureAttributeAndModes(
+    0, textures["buildings"],StateAttribute::ON | StateAttribute::OVERRIDE);
+  state_set->setAttribute(materials["buildings"]);
+
+  ref_ptr<Node> foundation = osgDB::readNodeFile("models/a-foundation.fbx");
+
+  for (int x = -MAP_SIZE / 2; x < MAP_SIZE / 2; ++x)
+  {
+    for (int y = -MAP_SIZE / 2; y < MAP_SIZE / 2; ++y)
+    {
+      ref_ptr<PositionAttitudeTransform> xform = new PositionAttitudeTransform;
+      xform->setPosition(Vec3(x * CHUNK_SIZE, y * CHUNK_SIZE, 0));
+      xform->addChild(foundation);
+      group->addChild(xform);
+    }
+  }
+
+  return group;
 }
 
 
@@ -105,9 +134,9 @@ void RenderSystem::setup_material(const std::string& name)
 
 void RenderSystem::build_map()
 {
-  for (int x = -MAP_SIZE / 2; x < MAP_SIZE / 2 + 1; ++x)
+  for (int x = -(CHUNK_SIZE * MAP_SIZE / 2); x < (CHUNK_SIZE * MAP_SIZE / 2) / 2 + 1; ++x)
   {
-    for (int y = -MAP_SIZE / 2; y < MAP_SIZE / 2 + 1; ++y)
+    for (int y = -(CHUNK_SIZE * MAP_SIZE / 2) / 2; y < (CHUNK_SIZE * MAP_SIZE / 2) / 2 + 1; ++y)
     {
       const Tile& tile = map_system.get_tile(x, y, 0);
 

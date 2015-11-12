@@ -27,6 +27,7 @@ private:
   void setup_materials();
   void setup_material(const std::string& name);
 
+  osg::ref_ptr<osg::Node> setup_foundation();
   osg::ref_ptr<osg::Node> setup_test_grid();
   osg::ref_ptr<osg::Node> setup_accessory(const std::string& name);
 
