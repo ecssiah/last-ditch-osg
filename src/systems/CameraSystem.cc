@@ -44,7 +44,7 @@ void CameraSystem::update()
   DynamicEntity& user = entity_system.get_user("kadijah");
 
   Vec3 pos(user.position + Vec3(0, 0, 1.4));
-  Vec3 dir(-sin(user.heading), cos(user.heading), 0);
+  Vec3 dir(-sin(user.heading), cos(user.heading), .2);
 
   viewer.getCamera()->setViewMatrixAsLookAt(pos + dir, pos, Vec3(0, 0, 1));
 

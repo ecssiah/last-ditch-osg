@@ -3,6 +3,7 @@
 
 #include <osg/Node>
 #include <osg/MatrixTransform>
+#include "../Constants.h"
 
 struct DynamicEntity
 {
@@ -10,9 +11,9 @@ struct DynamicEntity
     : name(""),
       xform(),
       position(),
-      speed(1),
-      x_rot_speed(.003),
-      y_rot_speed(.003),
+      speed(USER_SPEED),
+      x_rot_speed(USER_X_ROT_SPEED),
+      y_rot_speed(USER_Y_ROT_SPEED),
       heading(0),
       pitch(0)
   {}

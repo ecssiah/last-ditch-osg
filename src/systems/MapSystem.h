@@ -14,7 +14,8 @@ public:
   MapSystem();
 
   void layout_map();
-  void layout_room(int x, int y, int size_x, int size_y, int floor);
+  void layout_room(
+    const std::string& type, int x, int y, int size_x, int size_y, int floor);
 
   void set_tile(
     int x, int y, int floor,
