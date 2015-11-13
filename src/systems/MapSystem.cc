@@ -1,5 +1,6 @@
 #include "MapSystem.h"
 
+#include <cmath>
 #include <iostream>
 #include "../Constants.h"
 
@@ -7,10 +8,6 @@ using namespace std;
 using namespace ld;
 
 MapSystem::MapSystem()
-  : tiles(
-      MAP_SIZE, std::vector<std::vector<Tile>>(
-	MAP_SIZE, std::vector<Tile>(
-	  NUM_FLOORS, Tile())))
 {
   layout_map();
 }
@@ -18,17 +15,12 @@ MapSystem::MapSystem()
 
 void MapSystem::layout_map()
 {
-  layout_room("a", -6, -6, 5, 5, 0);
-  layout_room("a", 6, -6, 5, 5, 0);
-  layout_room("a", -6, 6, 5, 5, 0);
-  layout_room("a", 6, 6, 5, 5, 0);
-}
+  // layout_room("a", 0, 0, 5, 5, 0);
 
-
-void MapSystem::layout_foundation()
-{
-
-
+  layout_room("a", 5, 5, 5, 5, 0);
+  layout_room("a", 5, -5, 5, 5, 0);
+  layout_room("a", -5, 5, 5, 5, 0);
+  layout_room("a", -5, -5, 5, 5, 0);
 }
 
 
@@ -47,41 +39,68 @@ void MapSystem::layout_room(
     set_tile(x_ + size_x / 2, y, floor, type, "wall", 270);
   }
 
-  set_tile(x_ - size_x / 2, y_, floor, type, "door", 90);
-
   set_tile(x_ - size_x / 2, y_ - size_y / 2, floor, type, "corner", 90);
   set_tile(x_ + size_x / 2, y_ - size_y / 2, floor, type, "corner", 180);
   set_tile(x_ + size_x / 2, y_ + size_y / 2, floor, type, "corner", 270);
   set_tile(x_ - size_x / 2, y_ + size_y / 2, floor, type, "corner", 0);
+
+  set_tile(x_ - size_x / 2, y_, floor, type, "door", 90, false);
 }
 
 
 void MapSystem::set_tile(
   int x, int y, int floor,
   const std::string& type, const std::string& name,
-  double rotation)
+  double rotation,
+  bool solid)
 {
   Tile& tile = get_tile(x, y, floor);
 
   tile.type = type;
   tile.name = name;
   tile.rotation = rotation;
+  tile.solid = solid;
 }
 
 
 Tile& MapSystem::get_tile(int x, int y, int floor)
 {
-  int xx = x + MAP_SIZE / 2;
-  int yy = y + MAP_SIZE / 2;
+  int xx = x + Map_Size / 2;
+  int yy = y + Map_Size / 2;
 
-  return tiles[xx][yy][floor];
+  return tiles[floor][xx][yy];
 }
 
 
 const Tile& MapSystem::get_tile(int x, int y, int floor) const
 {
-  int xx = x + MAP_SIZE / 2;
-  int yy = y + MAP_SIZE / 2;
+  return get_tile(x, y, floor);
+}
 
-  return tiles[xx][yy][floor];
+
+Tile& MapSystem::get_tile(double x, double y, int floor)
+{
+  int xx = round(x / 2);
+  int yy = round(y / 2);
+
+  return get_tile(xx, yy, floor);
+}
+
+
+bool MapSystem::is_solid(double x, double y, int floor)
+{
+  return get_tile(x, y, floor).solid;
+}
+
+
+void MapSystem::print_map()
+{
+  for (auto row : tiles[0])
+  {
+    for (auto tile : row)
+    {
+      std::cout << tile.solid;
+    }
+    std::cout << std::endl;
+  }
 }

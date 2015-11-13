@@ -14,7 +14,7 @@ LastDitch::LastDitch()
     map_system(),
     render_system(root, map_system),
     entity_system(render_system),
-    physics_system(input, entity_system),
+    physics_system(input, entity_system, map_system),
     camera_system(root, input, entity_system)
 {
   while (camera_system.is_running())

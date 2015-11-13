@@ -1,4 +1,5 @@
 # User
+user radius: .05
 user speed: 2.1
 user x rot speed: .003
 user y rot speed: .003
@@ -7,7 +8,7 @@ user y rot speed: .003
 fixed timestep: .032
 
 # Map
-chunk size: 20
-num chunks: 5
-num floors: 3
 tile size: 2
+
+# Physics
+iterations: 3

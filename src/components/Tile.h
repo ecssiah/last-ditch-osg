@@ -8,6 +8,8 @@ namespace ld
 
 struct Tile
 {
+  bool solid = false;
+
   std::string type = "a";
   std::string name = "";
 

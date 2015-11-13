@@ -14,15 +14,6 @@ namespace ld
 
 class RenderSystem
 {
-public:
-  RenderSystem(osg::ref_ptr<osg::Group> root, MapSystem& map_system);
-
-  osg::ref_ptr<osg::MatrixTransform> setup_character(const std::string& name);
-
-  osg::ref_ptr<osg::MatrixTransform> get_user_xform(const std::string& name)
-    { return users[name]; }
-
-private:
   void build_map();
   void setup_materials();
   void setup_material(const std::string& name);
@@ -38,6 +29,14 @@ private:
   std::map<std::string, osg::ref_ptr<osg::MatrixTransform>> users;
   std::map<std::string, osg::ref_ptr<osg::Texture2D>> textures;
   std::map<std::string, osg::ref_ptr<osg::Material>> materials;
+
+public:
+  RenderSystem(osg::ref_ptr<osg::Group> root, MapSystem& map_system);
+
+  osg::ref_ptr<osg::MatrixTransform> setup_character(const std::string& name);
+
+  osg::ref_ptr<osg::MatrixTransform> get_user_xform(const std::string& name)
+    { return users[name]; }
 };
 
 }

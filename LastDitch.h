@@ -15,10 +15,6 @@ namespace ld
 
 class LastDitch
 {
-public:
-  LastDitch();
-
-private:
   osg::ref_ptr<osg::Group> root;
 
   Input input;
@@ -29,6 +25,9 @@ private:
   EntitySystem entity_system;
   PhysicsSystem physics_system;
   CameraSystem camera_system;
+
+public:
+  LastDitch();
 };
 
 }

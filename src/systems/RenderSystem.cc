@@ -19,15 +19,13 @@ RenderSystem::RenderSystem(osg::ref_ptr<osg::Group> root_, MapSystem& map_system
 
   setup_materials();
 
-  // root->addChild(setup_test_grid());
-
   root->addChild(setup_foundation());
+
+  build_map();
 
   const std::string& name = "kadijah";
   users[name] = setup_character(name);
   root->addChild(users[name]);
-
-  build_map();
 }
 
 
@@ -42,12 +40,18 @@ osg::ref_ptr<osg::Node> RenderSystem::setup_foundation()
 
   ref_ptr<Node> foundation = osgDB::readNodeFile("models/a-foundation.fbx");
 
-  for (int x = -NUM_CHUNKS / 2; x < NUM_CHUNKS / 2; ++x)
+  int num_chunks = map_system.get_num_chunks();
+
+  for (int x = -num_chunks / 2; x < num_chunks / 2; ++x)
   {
-    for (int y = -NUM_CHUNKS / 2; y < NUM_CHUNKS / 2; ++y)
+    for (int y = -num_chunks / 2; y < num_chunks / 2; ++y)
     {
       ref_ptr<PositionAttitudeTransform> xform = new PositionAttitudeTransform;
-      xform->setPosition(Vec3(x * CHUNK_SIZE, y * CHUNK_SIZE, 0));
+      xform->setPosition(
+	Vec3(
+	  x * map_system.get_chunk_size(),
+	  y * map_system.get_chunk_size(),
+	  0));
       xform->addChild(foundation);
       group->addChild(xform);
     }
@@ -134,9 +138,11 @@ void RenderSystem::setup_material(const std::string& name)
 
 void RenderSystem::build_map()
 {
-  for (int x = -MAP_SIZE / 2; x < MAP_SIZE / 2; ++x)
+  int map_size = map_system.get_size();
+
+  for (int x = -map_size / 2; x < map_size / 2; ++x)
   {
-    for (int y = -MAP_SIZE / 2; y < MAP_SIZE / 2; ++y)
+    for (int y = -map_size / 2; y < map_size / 2; ++y)
     {
       const Tile& tile = map_system.get_tile(x, y, 0);
 
@@ -153,7 +159,11 @@ void RenderSystem::build_map()
       ref_ptr<MatrixTransform> xform = new MatrixTransform;
 
       Matrix t;
-      t.makeTranslate(Vec3(TILE_SIZE * x, TILE_SIZE * y, 0));
+      t.makeTranslate(
+	Vec3(
+	  map_system.get_tile_size() * x,
+	  map_system.get_tile_size() * y,
+	  0));
       Matrix r;
       r.makeRotate(osg::inDegrees(tile.rotation), Vec3(0, 0, 1));
 

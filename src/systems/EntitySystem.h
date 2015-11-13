@@ -10,17 +10,15 @@ namespace ld
 
 class EntitySystem
 {
+  std::map<std::string, DynamicEntity> users;
+
+  RenderSystem& render_system;
+
 public:
   EntitySystem(RenderSystem& render_system);
 
   void add_user(DynamicEntity entity);
   DynamicEntity& get_user(const std::string& name) { return users[name]; }
-
-private:
-  std::map<std::string, DynamicEntity> users;
-
-  RenderSystem& render_system;
-
 };
 
 }

@@ -11,20 +11,6 @@ namespace ld
 
 class InputAdapter : public osgGA::GUIEventHandler
 {
-public:
-  InputAdapter(
-    Input& input_,
-    EntitySystem& entity_system_,
-    CameraSystem& camera_system_
-  )
-    : input(input_),
-      entity_system(entity_system_),
-      camera_system(camera_system_)
-  {}
-
-  bool handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa);
-
-private:
   bool handle_mouse_move(
     const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa);
   bool handle_mouse_click(
@@ -44,6 +30,19 @@ private:
   CameraSystem& camera_system;
 
   osg::Vec2 mouse_center;
+
+public:
+  InputAdapter(
+    Input& input_,
+    EntitySystem& entity_system_,
+    CameraSystem& camera_system_
+  )
+    : input(input_),
+      entity_system(entity_system_),
+      camera_system(camera_system_)
+  {}
+
+  bool handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa);
 };
 
 }
