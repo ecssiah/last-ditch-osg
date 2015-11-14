@@ -15,6 +15,8 @@ const double FIXED_TIMESTEP = constants["fixed timestep"].as<double>();
 
 // Map
 const int TILE_SIZE = constants["tile size"].as<int>();
+const double TILE_INNER_RADIUS = constants["tile inner radius"].as<double>();
+const double TILE_OUTER_RADIUS = constants["tile outer radius"].as<double>();
 
 // Physics
 const int ITERATIONS = constants["iterations"].as<int>();

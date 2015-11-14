@@ -1,6 +1,7 @@
 #ifndef PHYSICSSYSTEM_H
 #define PHYSICSSYSTEM_H
 
+#include <osg/Vec2>
 #include <osg/Vec3>
 #include "../Constants.h"
 #include "../components/Input.h"
@@ -15,6 +16,10 @@ class PhysicsSystem
 {
   void simulate(DynamicEntity& user, double dt);
   void resolve_collisions(DynamicEntity& user, osg::Vec3& displacement);
+  void resolve_collision(DynamicEntity& user, osg::Vec2& tile_pos);
+  void collision_pass(DynamicEntity& user, int center_x, int center_y);
+
+  bool tile_contains(const osg::Vec2& point, const osg::Vec2& tile_pos);
 
   Input& input;
   EntitySystem& entity_system;

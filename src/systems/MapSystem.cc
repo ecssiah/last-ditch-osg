@@ -58,6 +58,7 @@ void MapSystem::set_tile(
 
   tile.type = type;
   tile.name = name;
+  tile.position = osg::Vec3(x, y, floor);
   tile.rotation = rotation;
   tile.solid = solid;
 }
@@ -80,8 +81,8 @@ const Tile& MapSystem::get_tile(int x, int y, int floor) const
 
 Tile& MapSystem::get_tile(double x, double y, int floor)
 {
-  int xx = round(x / 2);
-  int yy = round(y / 2);
+  int xx = round(x);
+  int yy = round(y);
 
   return get_tile(xx, yy, floor);
 }

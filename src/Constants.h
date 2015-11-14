@@ -12,6 +12,8 @@ extern const double FIXED_TIMESTEP;
 
 // Map
 extern const int TILE_SIZE;
+extern const double TILE_INNER_RADIUS;
+extern const double TILE_OUTER_RADIUS;
 
 // Physics
 extern const int ITERATIONS;

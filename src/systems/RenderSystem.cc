@@ -161,8 +161,8 @@ void RenderSystem::build_map()
       Matrix t;
       t.makeTranslate(
 	Vec3(
-	  map_system.get_tile_size() * x,
-	  map_system.get_tile_size() * y,
+	  TILE_SIZE * x,
+	  TILE_SIZE * y,
 	  0));
       Matrix r;
       r.makeRotate(osg::inDegrees(tile.rotation), Vec3(0, 0, 1));

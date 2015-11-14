@@ -2,6 +2,7 @@
 #define TILE_H
 
 #include <iostream>
+#include <osg/Vec3>
 
 namespace ld
 {
@@ -12,6 +13,8 @@ struct Tile
 
   std::string type = "a";
   std::string name = "";
+
+  osg::Vec3 position = osg::Vec3();
 
   float rotation = 0;
 };

@@ -1,5 +1,5 @@
 # User
-user radius: .05
+user radius: .3
 user speed: 2.1
 user x rot speed: .003
 user y rot speed: .003
@@ -9,6 +9,8 @@ fixed timestep: .032
 
 # Map
 tile size: 2
+tile inner radius: 1.0
+tile outer radius: 1.41421
 
 # Physics
 iterations: 3
