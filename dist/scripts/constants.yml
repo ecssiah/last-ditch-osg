@@ -8,6 +8,7 @@ user y rot speed: .003
 fixed timestep: .032
 
 # Map
+floor height: 3.0
 tile size: 2
 tile inner radius: 1.0
 tile outer radius: 1.41421

@@ -14,6 +14,7 @@ const double USER_Y_ROT_SPEED = constants["user y rot speed"].as<double>();
 const double FIXED_TIMESTEP = constants["fixed timestep"].as<double>();
 
 // Map
+const double FLOOR_HEIGHT = constants["floor height"].as<double>();
 const int TILE_SIZE = constants["tile size"].as<int>();
 const double TILE_INNER_RADIUS = constants["tile inner radius"].as<double>();
 const double TILE_OUTER_RADIUS = constants["tile outer radius"].as<double>();

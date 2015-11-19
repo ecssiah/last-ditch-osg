@@ -15,10 +15,11 @@ namespace ld
 class PhysicsSystem
 {
   void simulate(DynamicEntity& user, double dt);
-  void resolve_collisions(DynamicEntity& user, osg::Vec3& displacement);
-  void resolve_collision(DynamicEntity& user, osg::Vec2& tile_pos);
-  void collision_pass(DynamicEntity& user, int center_x, int center_y);
-
+  void scan_collisions(DynamicEntity& user, const osg::Vec2& start);
+  void collision_pass(
+    DynamicEntity& user, const osg::Vec2& start, int tile_x, int tile_y);
+  void resolve_collision(
+    DynamicEntity& user, const osg::Vec2& start, const osg::Vec2& tile_pos);
   bool tile_contains(const osg::Vec2& point, const osg::Vec2& tile_pos);
 
   Input& input;

@@ -21,7 +21,7 @@ struct DynamicEntity
 
   std::string name;
   osg::ref_ptr<osg::MatrixTransform> xform;
-  osg::Vec3 position;
+  osg::Vec2 position;
   int floor;
   double speed, x_rot_speed, y_rot_speed;
   double heading, pitch;

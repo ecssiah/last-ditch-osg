@@ -11,6 +11,7 @@ extern const double USER_Y_ROT_SPEED;
 extern const double FIXED_TIMESTEP;
 
 // Map
+extern const double FLOOR_HEIGHT;
 extern const int TILE_SIZE;
 extern const double TILE_INNER_RADIUS;
 extern const double TILE_OUTER_RADIUS;

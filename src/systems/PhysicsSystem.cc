@@ -27,114 +27,55 @@ void PhysicsSystem::update(double dt)
 
 void PhysicsSystem::simulate(DynamicEntity& user, double dt)
 {
-  Vec3 direction;
+  Vec2 input_direction;
 
-  if (input.forward) direction += Vec3(0, -1, 0);
-  if (input.backward) direction += Vec3(0, 1, 0);
-  if (input.left) direction += Vec3(1, 0, 0);
-  if (input.right) direction += Vec3(-1, 0, 0);
-  if (input.up) direction += Vec3(0, 0, 1);
-  if (input.down) direction += Vec3(0, 0, -1);
+  if (input.forward) input_direction += Vec2(0, -1);
+  if (input.backward) input_direction += Vec2(0, 1);
+  if (input.left) input_direction += Vec2(1, 0);
+  if (input.right) input_direction += Vec2(-1, 0);
 
-  direction.normalize();
+  Vec2 direction(
+    input_direction.x() * cos(user.heading) - input_direction.y() * sin(user.heading),
+    input_direction.x() * sin(user.heading) + input_direction.y() * cos(user.heading));
 
-  Quat user_heading(user.heading, Vec3(0, 0, 1));
-  Vec3 velocity(user_heading * direction * user.speed);
-  Vec3 displacement(velocity * dt);
+  Vec2 velocity(direction * user.speed);
+  Vec2 displacement(velocity * dt);
+  Vec2 start(user.position);
 
-  resolve_collisions(user, displacement);
+  user.position += displacement;
+
+  scan_collisions(user, start);
 
   Matrix r;
   r.makeRotate(user.heading, Vec3(0, 0, 1));
 
+  Vec3 position(
+    user.position.x() * TILE_SIZE,
+    user.position.y() * TILE_SIZE,
+    user.floor * FLOOR_HEIGHT);
+
   Matrix t;
-  t.makeTranslate(user.position * TILE_SIZE);
+  t.makeTranslate(position);
 
   user.xform->setMatrix(r * t);
 }
 
 
-void PhysicsSystem::resolve_collisions(DynamicEntity& user, Vec3& displacement)
+void PhysicsSystem::scan_collisions(DynamicEntity& user, const Vec2& start)
 {
-  int x = round(user.position.x());
-  int y = round(user.position.y());
-
-  user.position += displacement;
-
-  if (displacement.x() > 0)
-  {
-    for (int yy = y - 1; yy <= y + 1; ++yy)
-    {
-      if (map_system.is_solid(x + 1, yy, user.floor))
-      {
-	collision_pass(user, x + 1, yy);
-      }
-    }
-  }
-  else
-  {
-    for (int yy = y - 1; yy <= y + 1; ++yy)
-    {
-      if (map_system.is_solid(x - 1, yy, user.floor))
-      {
-	collision_pass(user, x - 1, yy);
-      }
-    }
-  }
-
-  if (displacement.y() > 0)
-  {
-    for (int xx = x - 1; xx <= x + 1; ++xx)
-    {
-      if (map_system.is_solid(xx, y + 1, user.floor))
-      {
-	collision_pass(user, xx, y + 1);
-      }
-    }
-  }
-  else
-  {
-    for (int xx = x - 1; xx <= x + 1; ++xx)
-    {
-      if (map_system.is_solid(xx, y - 1, user.floor))
-      {
-	collision_pass(user, xx, y - 1);
-      }
-    }
-  }
+  const int x = round(user.position.x());
+  const int y = round(user.position.y());
 }
-
 
 void PhysicsSystem::collision_pass(
-  DynamicEntity& user, int center_x, int center_y)
+  DynamicEntity& user, const Vec2& start, int tile_x, int tile_y)
 {
-  std::cout << center_x << " " << center_y << std::endl;
-
-  Vec2 tile_pos(center_x, center_y);
-  Vec2 user_pos(user.position.x(), user.position.y());
-
-  double sq_length = (tile_pos - user_pos).length2();
-
-  if (sq_length > pow(TILE_OUTER_RADIUS + USER_RADIUS, 2)) return;
-
-  if (sq_length < pow(TILE_INNER_RADIUS + USER_RADIUS, 2))
-  {
-    Vec2 ctr_2_ctr = user_pos - tile_pos;
-    ctr_2_ctr.normalize();
-
-    Vec2 point = user_pos + ctr_2_ctr * USER_RADIUS;
-
-    if (tile_contains(point, tile_pos))
-    {
-      resolve_collision(user, tile_pos);
-    }
-  }
 }
 
 
-void PhysicsSystem::resolve_collision(DynamicEntity& user, Vec2& tile_pos)
+void PhysicsSystem::resolve_collision(
+  DynamicEntity& user, const Vec2& start, const Vec2& tile_pos)
 {
-  std::cout << tile_pos.x() << " " << tile_pos.y() << std::endl;
 }
 
 
