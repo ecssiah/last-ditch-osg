@@ -14,15 +14,17 @@ namespace ld
 
 struct Intersection
 {
-  Intersection(float time_, float x, float y, float nx, float ny)
+  Intersection(float time_, float x, float y, float nx, float ny, float ix, float iy)
     : time(time_),
       position(x, y),
-      normal(nx, ny)
+      normal(nx, ny),
+      intersection(ix, iy)
   {}
 
   float time;
   osg::Vec2 position;
   osg::Vec2 normal;
+  osg::Vec2 intersection;
 };
 
 

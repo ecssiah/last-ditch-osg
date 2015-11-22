@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <limits>
+#include <algorithm>
 
 using namespace ld;
 using namespace osg;
@@ -74,7 +75,7 @@ void PhysicsSystem::scan_collisions(DynamicEntity& user, const Vec2& start)
 
 	if (inter)
 	{
-	  float remaining_time = 1 - inter->time;
+	  float remaining_time = 1.f - inter->time;
 	  float dx = user.position.x() - start.x();
 	  float dy = user.position.y() - start.y();
 	  float dot = dx * inter->normal.x() + dy * inter->normal.y();
@@ -83,116 +84,160 @@ void PhysicsSystem::scan_collisions(DynamicEntity& user, const Vec2& start)
 	  float newx = inter->position.x() + ndx * remaining_time;
 	  float newy = inter->position.y() + ndy * remaining_time;
 
+	  std::cout << "SO: " << newx << " " << newy;
+
 	  user.position = Vec3(newx, newy, 0);
 	}
       }
     }
+    std::cout << std::endl;
   }
 }
 
 Intersection* PhysicsSystem::collision_pass(
   DynamicEntity& user, const Vec2& start, int tile_x, int tile_y)
 {
-  float dx = user.position.x() - start.x();
-  float dy = user.position.y() - start.y();
-
-  if (dx == 0 || dy == 0) return nullptr;
-
   float R = tile_x + .5;
   float L = tile_x - .5;
   float T = tile_y + .5;
   float B = tile_y - .5;
 
-  float rtime = std::numeric_limits<float>::max();
-  float ltime = std::numeric_limits<float>::max();
-  float ttime = std::numeric_limits<float>::max();
-  float btime = std::numeric_limits<float>::max();
+  bool bounding_box_check =
+    (std::max(start.x(), user.position.x()) + USER_RADIUS < L) ||
+    (std::min(start.x(), user.position.x()) - USER_RADIUS > R) ||
+    (std::max(start.y(), user.position.y()) + USER_RADIUS < T) ||
+    (std::min(start.y(), user.position.y()) - USER_RADIUS > B);
 
-  if (start.x() - USER_RADIUS < L && user.position.x() + USER_RADIUS > L)
-    ltime = ((L - USER_RADIUS) - start.x()) / dx;
-  if (start.x() + USER_RADIUS > R && user.position.x() - USER_RADIUS < R)
-    rtime = (start.x() - (R + USER_RADIUS)) / -dx;
-  if (start.y() - USER_RADIUS < T && user.position.y() + USER_RADIUS > T)
-    ttime = ((T - USER_RADIUS) - start.y()) / dy;
-  if (start.y() + USER_RADIUS > B && user.position.y() - USER_RADIUS < B)
-    btime = (start.y() - (B + USER_RADIUS)) / -dy;
+  if (bounding_box_check) return nullptr;
 
-  if (ltime >= 0.f && ltime <= 1.f)
+  float dx = user.position.x() - start.x();
+  float dy = user.position.y() - start.y();
+  float invdx = (dx == 0.f ? 0.f : 1.f / dx);
+  float invdy = (dy == 0.f ? 0.f : 1.f / dy);
+  float cornerX = std::numeric_limits<float>::max();
+  float cornerY = std::numeric_limits<float>::max();
+
+  // left side
+  if (start.x() + USER_RADIUS < L && user.position.x() + USER_RADIUS > L)
   {
-    float ly = dy * ltime + start.y();
+    float time = (L - start.x()) * invdx;
 
-    if (ly >= T && ly <= B)
-      return new Intersection(ltime, dx * ltime + start.x(), ly, -1, 0);
-  }
-  else if (rtime >= 0.f && rtime <= 1.f)
-  {
-    float ry = dy * rtime + start.y();
+    if (time >= 0.f && time <= 1.f)
+    {
+      float x = dx * time + start.x();
+      float y = dy * time + start.y();
 
-    if (ry >= T && ry <= B)
-      return new Intersection(rtime, dx * rtime + start.x(), ry, 1, 0);
-  }
-
-  if (ttime >= 0.f && ttime <= 1.f)
-  {
-    float tx = dx * ttime + start.x();
-
-    if (tx >= L && tx <= R)
-      return new Intersection(ttime, tx, dy * ttime + start.y(), 0, -1);
-  }
-  else if (btime >= 0.f && btime <= 1.f)
-  {
-    float bx = dx * btime + start.x();
-
-    if (bx >= L && bx <= R)
-      return new Intersection(btime, dx, dy * btime + start.y(), 0, 1);
+      if (y <= T && y >= B) return new Intersection(time, x, y, -1, 0, L, y);
+    }
+    cornerX = L;
   }
 
-  float cornerx = std::numeric_limits<float>::max();
-  float cornery = std::numeric_limits<float>::max();
+  // right side
+  if (start.x() - USER_RADIUS > R && user.position.x() - USER_RADIUS < R)
+  {
+    float time = (start.x() - R) * -invdx;
 
-  if (ltime != std::numeric_limits<float>::max()) cornerx = L;
-  else if (rtime != std::numeric_limits<float>::max()) cornerx = R;
+    if (time >= 0.f && time <= 1.f)
+    {
+      float x = dx * time + start.x();
+      float y = dy * time + start.y();
 
-  if (ttime != std::numeric_limits<float>::max()) cornery = T;
-  else if (btime != std::numeric_limits<float>::max()) cornery = B;
+      if (y <= T && y >= B) return new Intersection(time, x, y, 1, 0, R, y);
+    }
+    cornerX = R;
+  }
 
-  bool x_side =
-    cornerx != std::numeric_limits<float>::max() &&
-    cornery == std::numeric_limits<float>::max();
+  // bottom side
+  if (start.y() + USER_RADIUS < B && user.position.y() + USER_RADIUS > B)
+  {
+    float time = (B - start.y()) * invdy;
 
-  if (x_side) cornery = (dy > 0 ? B : T);
+    if (time >= 0.f && time <= 1.f)
+    {
+      float x = dx * time + start.x();
+      float y = dy * time + start.y();
 
-  bool y_side =
-    cornery != std::numeric_limits<float>::max() &&
-    cornerx == std::numeric_limits<float>::max();
+      if (x >= L && x <= R) return new Intersection(time, x, y, 0, -1, x, B);
+    }
+    cornerY = B;
+  }
 
-  if (y_side) cornerx = (dx > 0 ? R : L);
+  // top side
+  if (start.y() - USER_RADIUS > T && user.position.y() - USER_RADIUS < T)
+  {
+    float time = (start.y() - T) * -invdy;
+
+    if (time >= 0.f && time <= 1.f)
+    {
+      float x = dx * time + start.x();
+      float y = dy * time + start.y();
+
+      if (x >= L && x <= R) return new Intersection(time, x, y, 0, 1, x, T);
+    }
+    cornerY = T;
+  }
+
+  bool no_intersection =
+    cornerX == std::numeric_limits<float>::max() &&
+    cornerY == std::numeric_limits<float>::max();
+
+  if (no_intersection) return nullptr;
+
+  bool no_x_intersection =
+    cornerX != std::numeric_limits<float>::max() &&
+    cornerY == std::numeric_limits<float>::max();
+
+  if (no_x_intersection) cornerY = (dy > 0 ? B : T);
+
+  bool no_y_intersection =
+    cornerY != std::numeric_limits<float>::max() &&
+    cornerX == std::numeric_limits<float>::max();
+
+  if (no_y_intersection) cornerX = (dx > 0 ? L : R);
 
   double inverse_radius = 1.0 / USER_RADIUS;
   double line_length = sqrt(dx * dx + dy * dy);
-  double corner_dx = cornerx - user.position.x();
-  double corner_dy = cornery - user.position.y();
-  double corner_dist = sqrt(corner_dx * corner_dx + corner_dy * corner_dy);
-  double inner_angle = acos((corner_dx * dx + corner_dy * dy) / (line_length * corner_dist));
+  double corner_dx = cornerX - user.position.x();
+  double corner_dy = cornerY - user.position.y();
+  double corner_distance = sqrt(corner_dx * corner_dx + corner_dy * corner_dy);
+  double inner_angle =
+    acos((corner_dx * dx + corner_dy * dy) / (line_length * corner_distance));
+
+  if (corner_distance < USER_RADIUS) return nullptr;
+
+  if (inner_angle == 0.f)
+  {
+    float time = (float)((corner_distance - USER_RADIUS) / line_length);
+
+    if (time > 1.f || time < 0.f) return nullptr;
+
+    float ix = time * dx + start.x();
+    float iy = time * dy + start.y();
+    float nx = (float)(corner_dx / corner_distance);
+    float ny = (float)(corner_dy / corner_distance);
+
+    return new Intersection(time, ix, iy, nx, ny, cornerX, cornerY);
+  }
+
   double inner_angle_sin = sin(inner_angle);
-  double angle_sin = inner_angle_sin * corner_dist * inverse_radius;
+  double angle1_sin = inner_angle_sin * corner_distance * inverse_radius;
 
-  if (fabs(angle_sin) > 1) return nullptr;
+  if (fabs(angle1_sin) > 1.f) return nullptr;
 
-  double angle1 = M_PI - asin(angle_sin);
+  double angle1 = M_PI - asin(angle1_sin);
   double angle2 = M_PI - inner_angle - angle1;
   double intersection_distance = USER_RADIUS * sin(angle2) / inner_angle_sin;
 
   float time = (float)(intersection_distance / line_length);
 
-  if (time > 1 || time < 0) return nullptr;
+  if (time > 1.f || time < 0.f) return nullptr;
 
   float ix = time * dx + start.x();
   float iy = time * dy + start.y();
-  float nx = (float)((ix - cornerx) * inverse_radius);
-  float ny = (float)((iy - cornery) * inverse_radius);
+  float nx = (float)((ix - cornerX) * inverse_radius);
+  float ny = (float)((iy - cornerY) * inverse_radius);
 
-  return new Intersection(time, ix, iy, nx, ny);
+  return new Intersection(time, ix, iy, nx, ny, cornerX, cornerY);
 }
 
 
