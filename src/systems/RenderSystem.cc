@@ -42,9 +42,9 @@ osg::ref_ptr<osg::Node> RenderSystem::setup_foundation()
 
   int num_chunks = map_system.get_num_chunks();
 
-  for (int x = -num_chunks / 2; x < num_chunks / 2; ++x)
+  for (int x = -num_chunks / 2; x <= num_chunks / 2; ++x)
   {
-    for (int y = -num_chunks / 2; y < num_chunks / 2; ++y)
+    for (int y = -num_chunks / 2; y <= num_chunks / 2; ++y)
     {
       ref_ptr<PositionAttitudeTransform> xform = new PositionAttitudeTransform;
       xform->setPosition(

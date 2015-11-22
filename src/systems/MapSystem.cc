@@ -15,8 +15,6 @@ MapSystem::MapSystem()
 
 void MapSystem::layout_map()
 {
-  // layout_room("a", 0, 0, 5, 5, 0);
-
   layout_room("a", 5, 5, 5, 5, 0);
   layout_room("a", 5, -5, 5, 5, 0);
   layout_room("a", -5, 5, 5, 5, 0);
@@ -91,17 +89,4 @@ Tile& MapSystem::get_tile(double x, double y, int floor)
 bool MapSystem::is_solid(double x, double y, int floor)
 {
   return get_tile(x, y, floor).solid;
-}
-
-
-void MapSystem::print_map()
-{
-  for (auto row : tiles[0])
-  {
-    for (auto tile : row)
-    {
-      std::cout << tile.solid;
-    }
-    std::cout << std::endl;
-  }
 }

@@ -12,11 +12,25 @@
 namespace ld
 {
 
+struct Intersection
+{
+  Intersection(float time_, float x, float y, float nx, float ny)
+    : time(time_),
+      position(x, y),
+      normal(nx, ny)
+  {}
+
+  float time;
+  osg::Vec2 position;
+  osg::Vec2 normal;
+};
+
+
 class PhysicsSystem
 {
   void simulate(DynamicEntity& user, double dt);
   void scan_collisions(DynamicEntity& user, const osg::Vec2& start);
-  void collision_pass(
+  Intersection* collision_pass(
     DynamicEntity& user, const osg::Vec2& start, int tile_x, int tile_y);
   void resolve_collision(
     DynamicEntity& user, const osg::Vec2& start, const osg::Vec2& tile_pos);

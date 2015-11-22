@@ -18,8 +18,6 @@ class MapSystem
   static constexpr unsigned Chunk_Size = 34;
   static constexpr unsigned Map_Size = Chunk_Size * Num_Chunks;
 
-  void print_map();
-
   std::array<std::array<std::array<Tile, Map_Size>, Map_Size>, Num_Floors> tiles;
 
 public:
