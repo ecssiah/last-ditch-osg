@@ -8,6 +8,8 @@ extern const double USER_X_ROT_SPEED;
 extern const double USER_Y_ROT_SPEED;
 
 // Rendering
+extern const int FULLSCREEN_SIZE_X;
+extern const int FULLSCREEN_SIZE_Y;
 extern const double FIXED_TIMESTEP;
 
 // Map

@@ -40,8 +40,8 @@ void PhysicsSystem::simulate(DynamicEntity& user, double dt)
 
   direction.normalize();
 
-  Quat user_heading(user.heading, Vec3(0, 0, 1));
-  Vec3 velocity(user_heading * direction * user.speed);
+  Quat user_heading_quat(user.heading, Vec3(0, 0, 1));
+  Vec3 velocity(user_heading_quat * direction * user.speed);
   Vec3 displacement(velocity * dt);
 
   Vec2 start(user.position.x(), user.position.y());
@@ -51,7 +51,7 @@ void PhysicsSystem::simulate(DynamicEntity& user, double dt)
   scan_collisions(user, start);
 
   Matrix r;
-  r.makeRotate(user_heading);
+  r.makeRotate(user_heading_quat);
 
   Matrix t;
   t.makeTranslate(user.position);
@@ -84,13 +84,10 @@ void PhysicsSystem::scan_collisions(DynamicEntity& user, const Vec2& start)
 	  float newx = inter->position.x() + ndx * remaining_time;
 	  float newy = inter->position.y() + ndy * remaining_time;
 
-	  std::cout << "SO: " << newx << " " << newy;
-
 	  user.position = Vec3(newx, newy, 0);
 	}
       }
     }
-    std::cout << std::endl;
   }
 }
 

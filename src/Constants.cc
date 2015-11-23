@@ -11,6 +11,8 @@ const double USER_X_ROT_SPEED = constants["user x rot speed"].as<double>();
 const double USER_Y_ROT_SPEED = constants["user y rot speed"].as<double>();
 
 // Rendering
+const int FULLSCREEN_SIZE_X = constants["fullscreen size x"].as<int>();
+const int FULLSCREEN_SIZE_Y = constants["fullscreen size y"].as<int>();
 const double FIXED_TIMESTEP = constants["fixed timestep"].as<double>();
 
 // Map

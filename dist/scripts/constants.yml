@@ -5,6 +5,8 @@ user x rot speed: .003
 user y rot speed: .003
 
 # Rendering
+fullscreen size x: 1368
+fullscreen size y: 768
 fixed timestep: .032
 
 # Map

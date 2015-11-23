@@ -6,6 +6,7 @@
 #include <osg/Material>
 #include <osg/MatrixTransform>
 #include <osg/Texture2D>
+#include <osgText/Text>
 #include <osgViewer/Viewer>
 #include "MapSystem.h"
 
