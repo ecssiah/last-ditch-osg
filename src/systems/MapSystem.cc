@@ -52,7 +52,7 @@ void MapSystem::set_tile(
   double rotation,
   bool solid)
 {
-  Tile& tile = get_tile(x, y, floor);
+  auto& tile = get_tile(x, y, floor);
 
   tile.type = type;
   tile.name = name;

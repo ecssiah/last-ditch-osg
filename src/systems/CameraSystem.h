@@ -28,8 +28,9 @@ class CameraSystem
   EntitySystem& entity_system;
 
   osgViewer::CompositeViewer viewer;
+  osg::ref_ptr<osgText::Text> debug_text_object;
 
-  osg::Camera* setup_HUD();
+  osg::Camera* setup_HUD(osgViewer::Viewer::Windows& windows);
 
 public:
   CameraSystem(
@@ -40,6 +41,8 @@ public:
   bool has_active_cursor() const { return active_cursor; }
   void show_cursor(bool show);
   void toggle_cursor();
+
+  void debug(const std::string& debug_text_) { debug_text = debug_text_; }
 };
 
 }

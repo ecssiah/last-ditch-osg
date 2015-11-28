@@ -1,6 +1,6 @@
 #include "LastDitch.h"
 
-#include <unistd.h>
+#include <string>
 #include "src/Constants.h"
 #include "src/InputAdapter.h"
 

@@ -7,6 +7,7 @@
 #include <osgViewer/ViewerEventHandlers>
 #include "../Constants.h"
 #include "../InputAdapter.h"
+#include "../callbacks/DebugTextCallback.h"
 #include "../components/DynamicEntity.h"
 
 using namespace ld;
@@ -14,65 +15,69 @@ using namespace osg;
 
 CameraSystem::CameraSystem(
   osg::ref_ptr<osg::Group> root,
-  Input& input, EntitySystem& entity_system_
+  Input& input,
+  EntitySystem& entity_system_
 )
   : running(true),
     active_cursor(true),
-    debug_text("Testing Debug Text"),
+    debug_text("Testing"),
     entity_system(entity_system_),
-    viewer()
+    viewer(),
+    debug_text_object(new osgText::Text)
 {
-  osgViewer::View* view = new osgViewer::View;
+  auto* view = new osgViewer::View;
   viewer.addView(view);
 
   view->setSceneData(root);
   view->setUpViewAcrossAllScreens();
+  view->getCamera()->setProjectionMatrixAsPerspective(
+    40, (float)FULLSCREEN_SIZE_X / (float)FULLSCREEN_SIZE_Y, 0.1, 100.0);
   view->addEventHandler(new InputAdapter(input, entity_system, *this));
 
-  osgViewer::StatsHandler* stats_handler = new osgViewer::StatsHandler;
+  auto* stats_handler = new osgViewer::StatsHandler;
   stats_handler->setKeyEventTogglesOnScreenStats(osgGA::GUIEventAdapter::KEY_O);
   view->addEventHandler(stats_handler);
 
   osgViewer::Viewer::Windows windows;
   viewer.getWindows(windows);
 
-  Camera* hud_cam = setup_HUD();
-  hud_cam->setGraphicsContext(windows[0]);
-  hud_cam->setViewport(
-    0, 0,
-    windows[0]->getTraits()->width, windows[0]->getTraits()->height);
-
-  osgViewer::View* hud_view = new osgViewer::View;
+  Camera* hud_cam = setup_HUD(windows);
+  auto* hud_view = new osgViewer::View;
   hud_view->setCamera(hud_cam);
 
   viewer.addView(hud_view);
 }
 
 
-Camera* CameraSystem::setup_HUD()
+Camera* CameraSystem::setup_HUD(osgViewer::Viewer::Windows& windows)
 {
-  Camera* camera = new Camera;
+  auto* camera = new Camera;
 
-  camera->setProjectionMatrix(Matrix::ortho2D(0, FULLSCREEN_SIZE_X, 0, FULLSCREEN_SIZE_Y));
+  camera->setProjectionMatrixAsOrtho2D(0, FULLSCREEN_SIZE_X, 0, FULLSCREEN_SIZE_Y);
   camera->setReferenceFrame(Transform::ABSOLUTE_RF);
   camera->setViewMatrix(Matrix::identity());
   camera->setClearMask(GL_DEPTH_BUFFER_BIT);
   camera->setRenderOrder(Camera::POST_RENDER);
   camera->setAllowEventFocus(false);
 
-  Geode* geode = new Geode;
+  debug_text_object->setFont("fonts/Vera.ttf");
+  debug_text_object->setDataVariance(Object::DYNAMIC);
+  debug_text_object->setUpdateCallback(new DebugTextCallback);
+  debug_text_object->setText("It ain't workin yet");
 
-  StateSet* stateset = geode->getOrCreateStateSet();
-  stateset->setMode(GL_LIGHTING, StateAttribute::OFF);
-
-  osgText::Text* debug_text_object = new osgText::Text;
+  auto* geode = new Geode;
   geode->addDrawable(debug_text_object);
 
-  debug_text_object->setFont("fonts/Vera.ttf");
-  debug_text_object->setPosition(Vec3(0, 0, 0));
-  debug_text_object->setText(debug_text);
+  auto* stateset = geode->getOrCreateStateSet();
+  stateset->setMode(GL_LIGHTING, StateAttribute::OFF);
 
   camera->addChild(geode);
+
+  camera->setGraphicsContext(windows[0]);
+  camera->setViewport(
+    0, 0,
+    windows[0]->getTraits()->width,
+    windows[0]->getTraits()->height);
 
   return camera;
 }
@@ -86,7 +91,7 @@ void CameraSystem::update()
     return;
   }
 
-  DynamicEntity& user = entity_system.get_user("kadijah");
+  auto& user = entity_system.get_user("kadijah");
 
   Vec3 offset(0, 0, 1.4);
   Vec3 direction(-sin(user.heading), cos(user.heading), .2);

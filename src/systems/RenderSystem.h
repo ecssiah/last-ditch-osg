@@ -19,9 +19,10 @@ class RenderSystem
   void setup_materials();
   void setup_material(const std::string& name);
 
-  osg::ref_ptr<osg::Node> setup_foundation();
-  osg::ref_ptr<osg::Node> setup_test_grid();
-  osg::ref_ptr<osg::Node> setup_accessory(const std::string& name);
+  osg::Node* setup_foundation();
+  osg::Node* setup_test_grid();
+  osg::Node* setup_accessory(const std::string& name);
+  osg::MatrixTransform* setup_character(const std::string& name);
 
   osg::ref_ptr<osg::Group> root;
 
@@ -34,7 +35,6 @@ class RenderSystem
 public:
   RenderSystem(osg::ref_ptr<osg::Group> root, MapSystem& map_system);
 
-  osg::ref_ptr<osg::MatrixTransform> setup_character(const std::string& name);
 
   osg::ref_ptr<osg::MatrixTransform> get_user_xform(const std::string& name)
     { return users[name]; }
