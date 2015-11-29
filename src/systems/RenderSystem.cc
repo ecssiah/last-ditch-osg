@@ -6,7 +6,6 @@
 #include <osg/PositionAttitudeTransform>
 #include <osgDB/ReadFile>
 #include "../Constants.h"
-#include "../callbacks/TestCallback.h"
 #include "../components/Tile.h"
 
 using namespace ld;

@@ -45,7 +45,7 @@ void PhysicsSystem::simulate(DynamicEntity& user, double dt)
 
   user.position += velocity * dt;
 
-  scan_collisions(user, start);
+  scan_collisions(user);
 
   Matrix r, t;
   r.makeRotate(user_heading);
@@ -55,7 +55,7 @@ void PhysicsSystem::simulate(DynamicEntity& user, double dt)
 }
 
 
-void PhysicsSystem::scan_collisions(DynamicEntity& user, const Vec2& start)
+void PhysicsSystem::scan_collisions(DynamicEntity& user)
 {
   int x = round(user.position.x());
   int y = round(user.position.y());
@@ -66,7 +66,7 @@ void PhysicsSystem::scan_collisions(DynamicEntity& user, const Vec2& start)
     {
       if (map_system.get_tile(xx, yy, 0).solid)
       {
-	resolve_collision(user, start, xx, yy);
+	resolve_collision(user, xx, yy);
       }
     }
   }
@@ -74,7 +74,7 @@ void PhysicsSystem::scan_collisions(DynamicEntity& user, const Vec2& start)
 
 
 void PhysicsSystem::resolve_collision(
-  DynamicEntity& user, const osg::Vec2& start, int x, int y)
+  DynamicEntity& user, int x, int y)
 {
   Vec2f tile_pos(x, y);
   Vec2f user_pos(user.position.x(), user.position.y());

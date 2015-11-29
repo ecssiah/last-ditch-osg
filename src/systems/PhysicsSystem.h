@@ -15,8 +15,8 @@ namespace ld
 class PhysicsSystem
 {
   void simulate(DynamicEntity& user, double dt);
-  void scan_collisions(DynamicEntity& user, const osg::Vec2& start);
-  void resolve_collision(DynamicEntity& user, const osg::Vec2& start, int x, int y);
+  void scan_collisions(DynamicEntity& user);
+  void resolve_collision(DynamicEntity& user, int x, int y);
 
   Input& input;
   EntitySystem& entity_system;
