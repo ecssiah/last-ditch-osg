@@ -40,7 +40,6 @@ void PhysicsSystem::simulate(DynamicEntity& user, double dt)
   direction.normalize();
 
   Quat user_heading(user.heading, Vec3(0, 0, 1));
-  Vec2 start(user.position.x(), user.position.y());
   Vec3 velocity(user_heading * direction * user.speed);
 
   user.position += velocity * dt;
