@@ -35,7 +35,6 @@ class RenderSystem
 public:
   RenderSystem(osg::ref_ptr<osg::Group> root, MapSystem& map_system);
 
-
   osg::ref_ptr<osg::MatrixTransform> get_user_xform(const std::string& name)
     { return users[name]; }
 };

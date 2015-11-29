@@ -23,7 +23,6 @@ class CameraSystem
 {
   bool running;
   bool active_cursor;
-  std::string debug_text;
 
   EntitySystem& entity_system;
 
@@ -41,8 +40,6 @@ public:
   bool has_active_cursor() const { return active_cursor; }
   void show_cursor(bool show);
   void toggle_cursor();
-
-  void debug(const std::string& debug_text_) { debug_text = debug_text_; }
 };
 
 }

@@ -21,7 +21,6 @@ CameraSystem::CameraSystem(
 )
   : running(true),
     active_cursor(true),
-    debug_text("Testing"),
     entity_system(entity_system_),
     viewer(),
     debug_text_object(new osgText::Text)
@@ -61,10 +60,10 @@ Camera* CameraSystem::setup_HUD(osgViewer::Viewer::Windows& windows)
   camera->setRenderOrder(Camera::POST_RENDER);
   camera->setAllowEventFocus(false);
 
+  debug_text_object->setText("this string can't be empty, we don't know why!!!");
   debug_text_object->setFont("fonts/Vera.ttf");
   debug_text_object->setDataVariance(Object::DYNAMIC);
   debug_text_object->setDrawCallback(new DebugTextCallback);
-  debug_text_object->setText("default");
 
   auto* geode = new Geode;
   geode->addDrawable(debug_text_object);
@@ -94,9 +93,9 @@ void CameraSystem::update()
 
   auto& user = entity_system.get_user("kadijah");
 
-  Vec3 offset(0, 0, .7);
+  Vec3 offset(0, 0, CAMERA_HEIGHT);
   Vec3 direction(-sin(user.heading), cos(user.heading), .1);
-  Vec3 start = user.position + offset + direction;
+  Vec3 start = user.position + offset + direction * CAMERA_OFFSET;
   Vec3 center = user.position + offset;
 
   using namespace std;
