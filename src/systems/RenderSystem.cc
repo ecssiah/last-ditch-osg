@@ -163,8 +163,8 @@ void RenderSystem::build_map()
 	osg::inDegrees(tile.rotation), Vec3(0, 0, 1));
       t.makeTranslate(
 	Vec3(
-	  TILE_SIZE * x,
-	  TILE_SIZE * y,
+	  2 * TILE_RADIUS * x,
+	  2 * TILE_RADIUS * y,
 	  0));
 
       xform->setMatrix(r * t);

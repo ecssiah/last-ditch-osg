@@ -49,7 +49,7 @@ void PhysicsSystem::simulate(DynamicEntity& user, double dt)
 
   Matrix r, t;
   r.makeRotate(user_heading);
-  t.makeTranslate(user.position);
+  t.makeTranslate(user.position * 2 * TILE_RADIUS);
 
   user.xform->setMatrix(r * t);
 }
@@ -76,5 +76,21 @@ void PhysicsSystem::scan_collisions(DynamicEntity& user, const Vec2& start)
 void PhysicsSystem::resolve_collision(
   DynamicEntity& user, const osg::Vec2& start, int x, int y)
 {
+  Vec2f tile_pos(x, y);
+  Vec2f user_pos(user.position.x(), user.position.y());
+  Vec2f nearest(user_pos);
+  Vec2f min(tile_pos.x() - TILE_RADIUS / 2, tile_pos.y() - TILE_RADIUS / 2);
+  Vec2f max(tile_pos.x() + TILE_RADIUS / 2, tile_pos.y() + TILE_RADIUS / 2);
 
+  if (nearest.x() < min.x()) nearest.x() = min.x();
+  else if (nearest.x() > max.x()) nearest.x() = max.x();
+
+  if (nearest.y() < min.y()) nearest.y() = min.y();
+  else if (nearest.y() > max.y()) nearest.y() = max.y();
+
+  Vec2f norm(user_pos - nearest);
+  double dist = norm.normalize();
+  double depth = USER_RADIUS - dist;
+
+  if (dist < USER_RADIUS) user.position += Vec3d(norm.x(), norm.y(), 0) * depth;
 }

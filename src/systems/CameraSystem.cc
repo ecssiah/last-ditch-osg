@@ -93,14 +93,14 @@ void CameraSystem::update()
 
   auto& user = entity_system.get_user("kadijah");
 
-  Vec3 offset(0, 0, 1.4);
-  Vec3 direction(-sin(user.heading), cos(user.heading), .2);
+  Vec3 offset(0, 0, .7);
+  Vec3 direction(-sin(user.heading), cos(user.heading), .1);
 
   Vec3 start = user.position + offset + direction;
   Vec3 center = user.position + offset;
 
   viewer.getView(MAIN_VIEW)->getCamera()->setViewMatrixAsLookAt(
-    start, center, Vec3(0, 0, 1));
+    start * 2 * TILE_RADIUS, center * 2 * TILE_RADIUS, Vec3(0, 0, 1));
 
   viewer.frame();
 }

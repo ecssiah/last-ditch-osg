@@ -1,9 +1,3 @@
-# User
-user radius: .2
-user speed: 2.1
-user x rot speed: .003
-user y rot speed: .003
-
 # Rendering
 fullscreen size x: 1368
 fullscreen size y: 768
@@ -11,9 +5,11 @@ fixed timestep: .032
 
 # Map
 floor height: 3.0
-tile size: 2
-tile inner radius: 1.0
+tile radius: 1.0
 tile outer radius: 1.41421
 
 # Physics
-iterations: 3
+user radius: .2
+user speed: 1.0
+user x rot speed: .003
+user y rot speed: .003
