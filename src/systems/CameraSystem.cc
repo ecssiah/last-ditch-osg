@@ -6,6 +6,7 @@
 #include <osgViewer/CompositeViewer>
 #include <osgViewer/ViewerEventHandlers>
 #include "../Constants.h"
+#include "../DebugOut.h"
 #include "../InputAdapter.h"
 #include "../callbacks/DebugTextCallback.h"
 #include "../components/DynamicEntity.h"
@@ -62,8 +63,8 @@ Camera* CameraSystem::setup_HUD(osgViewer::Viewer::Windows& windows)
 
   debug_text_object->setFont("fonts/Vera.ttf");
   debug_text_object->setDataVariance(Object::DYNAMIC);
-  debug_text_object->setUpdateCallback(new DebugTextCallback);
-  debug_text_object->setText("It ain't workin yet");
+  debug_text_object->setDrawCallback(new DebugTextCallback);
+  debug_text_object->setText("default");
 
   auto* geode = new Geode;
   geode->addDrawable(debug_text_object);
@@ -95,9 +96,14 @@ void CameraSystem::update()
 
   Vec3 offset(0, 0, .7);
   Vec3 direction(-sin(user.heading), cos(user.heading), .1);
-
   Vec3 start = user.position + offset + direction;
   Vec3 center = user.position + offset;
+
+  using namespace std;
+
+  DebugOut::instance().text =
+    to_string(user.position.x()) +
+    " " + to_string(user.position.y());
 
   viewer.getView(MAIN_VIEW)->getCamera()->setViewMatrixAsLookAt(
     start * 2 * TILE_RADIUS, center * 2 * TILE_RADIUS, Vec3(0, 0, 1));

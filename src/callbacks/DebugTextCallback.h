@@ -3,26 +3,23 @@
 
 #include <osg/Drawable>
 #include <osgText/Text>
+#include "../DebugOut.h"
 
 using namespace osg;
 
 namespace ld
 {
 
-struct DebugTextCallback : public osg::Drawable::UpdateCallback
+struct DebugTextCallback : public Drawable::DrawCallback
 {
-public:
-  virtual void update(NodeVisitor* nv, Drawable* drawable)
+  DebugTextCallback() {}
+
+  virtual void drawImplementation(
+    RenderInfo& render_info, const Drawable* drawable) const
   {
-    printf("Stallin\n");
-
-    if (nv->getVisitorType() == NodeVisitor::UPDATE_VISITOR)
-    {
-      osgText::Text* debug_text_object = dynamic_cast<osgText::Text*>(drawable);
-      debug_text_object->setText("Sparky");
-    }
-
-    traverse(drawable, nv);
+    osgText::Text* text = (osgText::Text*)drawable;
+    text->setText(DebugOut::instance().text);
+    text->drawImplementation(render_info);
   }
 };
 
