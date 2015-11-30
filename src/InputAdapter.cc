@@ -106,8 +106,8 @@ bool InputAdapter::handle_key_up(
 bool InputAdapter::handle_mouse_delta(
   const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa)
 {
-  float dx = ea.getX() - mouse_center.x();
-  float dy = ea.getY() - mouse_center.y();
+  auto dx = ea.getX() - mouse_center.x();
+  auto dy = ea.getY() - mouse_center.y();
 
   if (dx == 0 && dy == 0) return false;
 

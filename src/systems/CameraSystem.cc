@@ -15,7 +15,7 @@ using namespace ld;
 using namespace osg;
 
 CameraSystem::CameraSystem(
-  osg::ref_ptr<osg::Group> root,
+  ref_ptr<Group> root,
   Input& input,
   EntitySystem& entity_system_
 )
@@ -41,7 +41,7 @@ CameraSystem::CameraSystem(
   osgViewer::Viewer::Windows windows;
   viewer.getWindows(windows);
 
-  Camera* hud_cam = setup_HUD(windows);
+  auto* hud_cam = setup_HUD(windows);
   auto* hud_view = new osgViewer::View;
   hud_view->setCamera(hud_cam);
 
@@ -93,19 +93,15 @@ void CameraSystem::update()
 
   auto& user = entity_system.get_user("kadijah");
 
-  Vec3 offset(0, 0, CAMERA_HEIGHT);
-  Vec3 direction(-sin(user.heading), cos(user.heading), .1);
-  Vec3 start = user.position + offset + direction * CAMERA_OFFSET;
-  Vec3 center = user.position + offset;
-
-  using namespace std;
-
-  DebugOut::instance().text =
-    to_string(user.position.x()) +
-    " " + to_string(user.position.y());
+  Vec3 center(user.position + Vec3(0, 0, CAMERA_HEIGHT));
+  Quat user_orient(
+    -user.pitch, Vec3(1, 0, 0),
+    0, Vec3(0, 1, 0),
+    user.heading, Vec3(0, 0, 1));
+  Vec3 eye(center + user_orient * Vec3(0, CAMERA_OFFSET, 0));
 
   viewer.getView(MAIN_VIEW)->getCamera()->setViewMatrixAsLookAt(
-    start * 2 * TILE_RADIUS, center * 2 * TILE_RADIUS, Vec3(0, 0, 1));
+    eye * 2 * TILE_RADIUS, center * 2 * TILE_RADIUS, Vec3(0, 0, 1));
 
   viewer.frame();
 }
@@ -135,4 +131,32 @@ void CameraSystem::show_cursor(bool show)
       active_cursor = false;
     }
   }
+}
+
+
+void CameraSystem::fix_vertical_axis(Quat& rotation)
+{
+  Vec3d cam_up = rotation * Vec3d(0, 1, 0);
+  Vec3d cam_right = rotation * Vec3d(1, 0, 0);
+  Vec3d cam_forward = rotation * Vec3d(0, 0, -1);
+
+  // computed directions
+  Vec3d cam_right1 = cam_forward ^ Vec3(0, 0, 1);
+  Vec3d cam_right2 = cam_up ^ Vec3(0, 0, 1);
+  bool cam1_right_larger = cam_right1.length2() > cam_right2.length2();
+  Vec3d new_cam_right = cam1_right_larger ? cam_right1 : cam_right2;
+
+  if (new_cam_right * cam_right < 0) new_cam_right = -new_cam_right;
+
+  // vertical axis correction
+  Quat rotation_vertical_axis_correction;
+  rotation_vertical_axis_correction.makeRotate(cam_right, new_cam_right);
+
+  // rotate camera
+  rotation *= rotation_vertical_axis_correction;
+
+  // make viewer's up vector to be always less than 90 degrees from "up" axis
+  Vec3d new_cam_up = new_cam_right ^ cam_forward;
+  if (new_cam_up * Vec3(0, 0, 1) < 0)
+    rotation = Quat(PI, Vec3d(0, 0, 1)) * rotation;
 }
