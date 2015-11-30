@@ -12,7 +12,7 @@ extern const double FIXED_TIMESTEP;
 
 // Map
 extern const double FLOOR_HEIGHT;
-extern const double TILE_RADIUS;
+extern const double TILE_SIZE;
 
 // Physics
 extern const double USER_RADIUS;

@@ -94,14 +94,11 @@ void CameraSystem::update()
   auto& user = entity_system.get_user("kadijah");
 
   Vec3 center(user.position + Vec3(0, 0, CAMERA_HEIGHT));
-  Quat user_orient(
-    -user.pitch, Vec3(1, 0, 0),
-    0, Vec3(0, 1, 0),
-    user.heading, Vec3(0, 0, 1));
+  Quat user_orient(user.pitch, Vec3(1, 0, 0), 0, Vec3(), user.heading, Vec3(0, 0, 1));
   Vec3 eye(center + user_orient * Vec3(0, CAMERA_OFFSET, 0));
 
   viewer.getView(MAIN_VIEW)->getCamera()->setViewMatrixAsLookAt(
-    eye * 2 * TILE_RADIUS, center * 2 * TILE_RADIUS, Vec3(0, 0, 1));
+    eye * TILE_SIZE, center * TILE_SIZE, Vec3(0, 0, 1));
 
   viewer.frame();
 }

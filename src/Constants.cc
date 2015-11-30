@@ -15,7 +15,7 @@ const double FIXED_TIMESTEP = constants["fixed timestep"].as<double>();
 
 // Map
 const double FLOOR_HEIGHT = constants["floor height"].as<double>();
-const double TILE_RADIUS = constants["tile radius"].as<double>();
+const double TILE_SIZE = constants["tile size"].as<double>();
 
 // Physics
 const double USER_RADIUS = constants["user radius"].as<double>();

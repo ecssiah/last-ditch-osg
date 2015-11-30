@@ -1,6 +1,6 @@
 # Camera
 camera height: .66
-camera offset: .8
+camera offset: .6
 
 # Rendering
 fullscreen size x: 1368
@@ -9,10 +9,10 @@ fixed timestep: .032
 
 # Map
 floor height: 3.0
-tile radius: 1.0
+tile size: 2.0
 
 # Physics
 user radius: .2
 user speed: 1.0
 user x rot speed: .003
-user y rot speed: .003
+user y rot speed: .001

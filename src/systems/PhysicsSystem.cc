@@ -48,7 +48,7 @@ void PhysicsSystem::simulate(DynamicEntity& user, double dt)
 
   Matrix r, t;
   r.makeRotate(user_heading);
-  t.makeTranslate(user.position * 2 * TILE_RADIUS);
+  t.makeTranslate(user.position * TILE_SIZE);
 
   user.xform->setMatrix(r * t);
 }
@@ -78,8 +78,8 @@ void PhysicsSystem::resolve_collision(
   Vec2f tile_pos(x, y);
   Vec2f user_pos(user.position.x(), user.position.y());
   Vec2f nearest(user_pos);
-  Vec2f min(tile_pos.x() - TILE_RADIUS / 2, tile_pos.y() - TILE_RADIUS / 2);
-  Vec2f max(tile_pos.x() + TILE_RADIUS / 2, tile_pos.y() + TILE_RADIUS / 2);
+  Vec2f min(tile_pos.x() - TILE_SIZE / 4, tile_pos.y() - TILE_SIZE / 4);
+  Vec2f max(tile_pos.x() + TILE_SIZE / 4, tile_pos.y() + TILE_SIZE / 4);
 
   if (nearest.x() < min.x()) nearest.x() = min.x();
   else if (nearest.x() > max.x()) nearest.x() = max.x();

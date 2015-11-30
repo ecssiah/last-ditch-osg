@@ -9,7 +9,7 @@ namespace ld
 class DebugOut
 {
   DebugOut()
-    : text("default")
+    : text("debug")
   {};
 
   DebugOut(const DebugOut&) = delete;
