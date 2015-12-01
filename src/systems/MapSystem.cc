@@ -19,6 +19,12 @@ void MapSystem::layout_map()
   layout_room("a", 5, -5, 5, 5, 0);
   layout_room("a", -5, 5, 5, 5, 0);
   layout_room("a", -5, -5, 5, 5, 0);
+
+  layout_room("a", 5, 5, 5, 5, 1);
+  layout_room("a", 5, -5, 5, 5, 1);
+  layout_room("a", -5, 5, 5, 5, 1);
+  layout_room("a", -5, -5, 5, 5, 1);
+
 }
 
 

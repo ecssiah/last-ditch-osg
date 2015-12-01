@@ -18,7 +18,7 @@ struct DebugTextCallback : public Drawable::DrawCallback
     RenderInfo& render_info, const Drawable* drawable) const
   {
     osgText::Text* text = (osgText::Text*)drawable;
-    text->setText(Debug::instance().text);
+    text->setText(Debug::instance().msg);
     text->drawImplementation(render_info);
   }
 };

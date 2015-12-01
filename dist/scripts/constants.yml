@@ -8,6 +8,7 @@ fullscreen size y: 768
 fixed timestep: .032
 
 # Map
+num floors: 2
 floor height: 3.0
 tile size: 2.0
 

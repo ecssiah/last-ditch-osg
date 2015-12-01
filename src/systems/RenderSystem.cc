@@ -157,34 +157,37 @@ void RenderSystem::setup_material(const std::string& name)
 
 void RenderSystem::build_map()
 {
-  int map_size = map_system.get_size();
+  const auto map_size = map_system.get_size();
 
-  for (int x = -map_size / 2; x <= map_size / 2; ++x)
+  for (int floor = 0; floor < NUM_FLOORS; ++floor)
   {
-    for (int y = -map_size / 2; y <= map_size / 2; ++y)
+    for (int x = -map_size / 2; x <= map_size / 2; ++x)
     {
-      const auto& tile = map_system.get_tile(x, y, 0);
+      for (int y = -map_size / 2; y <= map_size / 2; ++y)
+      {
+	const auto& tile = map_system.get_tile(x, y, floor);
 
-      if (tile.name == "") continue;
+	if (tile.name == "") continue;
 
-      auto* node = osgDB::readNodeFile(
-	"models/" + tile.type + "-" + tile.name + ".fbx");
+	auto* node = osgDB::readNodeFile(
+	  "models/" + tile.type + "-" + tile.name + ".fbx");
 
-      auto* state_set = node->getOrCreateStateSet();
-      state_set->setTextureAttributeAndModes(
-	0, textures["buildings"], StateAttribute::ON | StateAttribute::OVERRIDE);
-      state_set->setAttribute(materials["buildings"]);
+	auto* state_set = node->getOrCreateStateSet();
+	state_set->setTextureAttributeAndModes(
+	  0, textures["buildings"], StateAttribute::ON | StateAttribute::OVERRIDE);
+	state_set->setAttribute(materials["buildings"]);
 
-      auto* xform = new MatrixTransform;
+	auto* xform = new MatrixTransform;
 
-      Matrix r, t;
-      r.makeRotate(inDegrees(tile.rotation), Vec3(0, 0, 1));
-      t.makeTranslate(Vec3(TILE_SIZE * x, TILE_SIZE * y, 0));
+	Matrix r, t;
+	r.makeRotate(inDegrees(tile.rotation), Vec3(0, 0, 1));
+	t.makeTranslate(Vec3(TILE_SIZE * x, TILE_SIZE * y, FLOOR_HEIGHT * tile.position.z()));
 
-      xform->setMatrix(r * t);
+	xform->setMatrix(r * t);
 
-      xform->addChild(node);
-      root->addChild(xform);
+	xform->addChild(node);
+	root->addChild(xform);
+      }
     }
   }
 }

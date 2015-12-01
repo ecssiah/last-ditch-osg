@@ -6,7 +6,6 @@
 #include <osgViewer/CompositeViewer>
 #include <osgViewer/ViewerEventHandlers>
 #include "../Constants.h"
-#include "../DebugOut.h"
 #include "../InputAdapter.h"
 #include "../callbacks/DebugTextCallback.h"
 #include "../components/DynamicEntity.h"
