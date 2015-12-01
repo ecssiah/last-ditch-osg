@@ -9,8 +9,6 @@ struct Input
   bool down = false;
   bool left = false;
   bool right = false;
-
-  bool toggle_cursor = false;
 };
 
 #endif /* INPUT_H */
