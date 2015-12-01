@@ -70,15 +70,9 @@ void PhysicsSystem::scan_collisions(DynamicEntity& user)
   int y = round(user.position.y());
 
   for (int xx = x - 1; xx <= x + 1; ++xx)
-  {
     for (int yy = y - 1; yy <= y + 1; ++yy)
-    {
       if (map_system.get_tile(xx, yy, 0).solid)
-      {
 	resolve_collision(user, xx, yy);
-      }
-    }
-  }
 }
 
 
