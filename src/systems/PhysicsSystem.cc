@@ -3,6 +3,7 @@
 #include <iostream>
 #include <limits>
 #include <algorithm>
+#include "../DebugOut.h"
 
 using namespace ld;
 using namespace osg;
@@ -45,6 +46,9 @@ void PhysicsSystem::simulate(DynamicEntity& user, double dt)
   user.position += velocity * dt;
 
   scan_collisions(user);
+
+  DebugOut::instance().text =
+    std::to_string(user.position.x()) + " " + std::to_string(user.position.y());
 
   Matrix r, t;
   r.makeRotate(user_heading);

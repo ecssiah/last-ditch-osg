@@ -3,6 +3,7 @@
 #include <iostream>
 
 using namespace ld;
+using namespace osg;
 
 
 bool InputAdapter::handle(
@@ -116,6 +117,11 @@ bool InputAdapter::handle_mouse_delta(
   auto& user = entity_system.get_user("kadijah");
   user.heading -= user.x_rot_speed * dx;
   user.pitch -= user.y_rot_speed * dy;
+
+  const double max_pitch = inDegrees(89.f);
+
+  if (user.pitch > max_pitch) user.pitch = max_pitch;
+  else if (user.pitch < -max_pitch) user.pitch = -max_pitch;
 
   return false;
 }

@@ -159,9 +159,9 @@ void RenderSystem::build_map()
 {
   int map_size = map_system.get_size();
 
-  for (int x = -map_size / 2; x < map_size / 2; ++x)
+  for (int x = -map_size / 2; x <= map_size / 2; ++x)
   {
-    for (int y = -map_size / 2; y < map_size / 2; ++y)
+    for (int y = -map_size / 2; y <= map_size / 2; ++y)
     {
       const auto& tile = map_system.get_tile(x, y, 0);
 
@@ -178,7 +178,7 @@ void RenderSystem::build_map()
       auto* xform = new MatrixTransform;
 
       Matrix r, t;
-      r.makeRotate(osg::inDegrees(tile.rotation), Vec3(0, 0, 1));
+      r.makeRotate(inDegrees(tile.rotation), Vec3(0, 0, 1));
       t.makeTranslate(Vec3(TILE_SIZE * x, TILE_SIZE * y, 0));
 
       xform->setMatrix(r * t);
