@@ -3,7 +3,7 @@
 
 #include <osg/Drawable>
 #include <osgText/Text>
-#include "../DebugOut.h"
+#include "../Debug.h"
 
 using namespace osg;
 
@@ -18,7 +18,7 @@ struct DebugTextCallback : public Drawable::DrawCallback
     RenderInfo& render_info, const Drawable* drawable) const
   {
     osgText::Text* text = (osgText::Text*)drawable;
-    text->setText(DebugOut::instance().text);
+    text->setText(Debug::instance().text);
     text->drawImplementation(render_info);
   }
 };

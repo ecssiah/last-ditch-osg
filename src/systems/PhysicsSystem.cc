@@ -1,9 +1,11 @@
 #include "PhysicsSystem.h"
 
 #include <iostream>
+#include <iomanip>
+#include <sstream>
 #include <limits>
 #include <algorithm>
-#include "../DebugOut.h"
+#include "../Debug.h"
 
 using namespace ld;
 using namespace osg;
@@ -47,8 +49,12 @@ void PhysicsSystem::simulate(DynamicEntity& user, double dt)
 
   scan_collisions(user);
 
-  DebugOut::instance().text =
-    std::to_string(user.position.x()) + " " + std::to_string(user.position.y());
+  std::ostringstream ss;
+  ss.precision(1);
+  ss.setf(std::ios::fixed);
+  ss << TILE_SIZE * user.position.x() << " " << TILE_SIZE * user.position.y();
+
+  Debug::instance().msg = ss.str();
 
   Matrix r, t;
   r.makeRotate(user_heading);

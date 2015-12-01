@@ -1,24 +1,24 @@
-#ifndef DEBUGOUT_H
-#define DEBUGOUT_H
+#ifndef DEBUG_H
+#define DEBUG_H
 
 #include <string>
 
 namespace ld
 {
 
-class DebugOut
+class Debug
 {
-  DebugOut()
-    : text("debug")
-  {};
+  Debug()
+    : text("default")
+  {}
 
-  DebugOut(const DebugOut&) = delete;
-  void operator=(const DebugOut&) = delete;
+  Debug(const Debug&) = delete;
+  void operator=(const Debug&) = delete;
 
 public:
-  static DebugOut& instance()
+  static Debug& instance()
   {
-    static DebugOut instance;
+    static Debug instance;
 
     return instance;
   }
@@ -28,4 +28,4 @@ public:
 
 };
 
-#endif /* DEBUGOUT_H */
+#endif /* DEBUG_H */
