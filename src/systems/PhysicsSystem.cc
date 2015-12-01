@@ -15,7 +15,8 @@ PhysicsSystem::PhysicsSystem(
   EntitySystem& entity_system_,
   MapSystem& map_system_
 )
-  : input(input_),
+  : tile_radius(TILE_SIZE / 4),
+    input(input_),
     entity_system(entity_system_),
     map_system(map_system_)
 {
@@ -82,8 +83,8 @@ void PhysicsSystem::resolve_collision(
   Vec2f tile_pos(x, y);
   Vec2f user_pos(user.position.x(), user.position.y());
   Vec2f nearest(user_pos);
-  Vec2f min(tile_pos.x() - TILE_SIZE / 4, tile_pos.y() - TILE_SIZE / 4);
-  Vec2f max(tile_pos.x() + TILE_SIZE / 4, tile_pos.y() + TILE_SIZE / 4);
+  Vec2f min(tile_pos.x() - tile_radius, tile_pos.y() - tile_radius);
+  Vec2f max(tile_pos.x() + tile_radius, tile_pos.y() + tile_radius);
 
   if (nearest.x() < min.x()) nearest.x() = min.x();
   else if (nearest.x() > max.x()) nearest.x() = max.x();
@@ -95,5 +96,6 @@ void PhysicsSystem::resolve_collision(
   double dist = norm.normalize();
   double depth = USER_RADIUS - dist;
 
-  if (dist < USER_RADIUS) user.position += Vec3d(norm.x(), norm.y(), 0) * depth;
+  if (dist < USER_RADIUS)
+    user.position += Vec3d(norm.x(), norm.y(), 0) * depth;
 }

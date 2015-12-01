@@ -18,6 +18,8 @@ class PhysicsSystem
   void scan_collisions(DynamicEntity& user);
   void resolve_collision(DynamicEntity& user, int x, int y);
 
+  const double tile_radius;
+
   Input& input;
   EntitySystem& entity_system;
   MapSystem& map_system;
