@@ -30,8 +30,13 @@ public:
   void set_tile(
     int x, int y, int floor,
     const std::string& type, const std::string& name,
-    double rotation,
+    double rotation = 0.0,
     bool solid = true);
+
+  void set_ceil_tile(
+    int x, int y, int floor,
+    const std::string& type, const std::string& name,
+    double rotation = 0.0);
 
   Tile& get_tile(int x, int y, int floor);
   const Tile& get_tile(int x, int y, int floor) const;

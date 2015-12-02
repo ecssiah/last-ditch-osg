@@ -17,7 +17,6 @@ class EntitySystem
 public:
   EntitySystem(RenderSystem& render_system);
 
-  void add_user(DynamicEntity entity);
   DynamicEntity& get_user(const std::string& name) { return users[name]; }
 };
 

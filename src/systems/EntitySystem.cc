@@ -14,9 +14,3 @@ EntitySystem::EntitySystem(RenderSystem& render_system_)
 
   users[user.name] = user;
 }
-
-
-void EntitySystem::add_user(DynamicEntity user)
-{
-  users[user.name] = user;
-}

@@ -24,7 +24,6 @@ void MapSystem::layout_map()
   layout_room("a", 5, -5, 5, 5, 1);
   layout_room("a", -5, 5, 5, 5, 1);
   layout_room("a", -5, -5, 5, 5, 1);
-
 }
 
 
@@ -35,18 +34,31 @@ void MapSystem::layout_room(
   {
     set_tile(x, y_ - size_y / 2, floor, type, "wall", 180);
     set_tile(x, y_ + size_y / 2, floor, type, "wall", 0);
-  }
 
-  for (int y = y_ - size_y / 2 + 1; y < y_ + size_y / 2; ++y)
-  {
-    set_tile(x_ - size_x / 2, y, floor, type, "wall", 90);
-    set_tile(x_ + size_x / 2, y, floor, type, "wall", 270);
+    set_ceil_tile(x, y_ - size_y / 2, floor, type, "floor-edge", 180);
+    set_ceil_tile(x, y_ + size_y / 2, floor, type, "floor-edge", 0);
+
+    for (int y = y_ - size_y / 2 + 1; y < y_ + size_y / 2; ++y)
+    {
+      set_tile(x_ - size_x / 2, y, floor, type, "wall", 90);
+      set_tile(x_ + size_x / 2, y, floor, type, "wall", 270);
+
+      set_ceil_tile(x_ - size_x / 2, y, floor, type, "floor-edge", 90);
+      set_ceil_tile(x_ + size_x / 2, y, floor, type, "floor-edge", 270);
+
+      set_ceil_tile(x, y, floor, type, "floor");
+    }
   }
 
   set_tile(x_ - size_x / 2, y_ - size_y / 2, floor, type, "corner", 90);
   set_tile(x_ + size_x / 2, y_ - size_y / 2, floor, type, "corner", 180);
   set_tile(x_ + size_x / 2, y_ + size_y / 2, floor, type, "corner", 270);
   set_tile(x_ - size_x / 2, y_ + size_y / 2, floor, type, "corner", 0);
+
+  set_ceil_tile(x_ - size_x / 2, y_ - size_y / 2, floor, type, "floor-edge", 90);
+  set_ceil_tile(x_ + size_x / 2, y_ - size_y / 2, floor, type, "floor-edge", 180);
+  set_ceil_tile(x_ + size_x / 2, y_ + size_y / 2, floor, type, "floor-edge", 270);
+  set_ceil_tile(x_ - size_x / 2, y_ + size_y / 2, floor, type, "floor-edge", 0);
 
   set_tile(x_ - size_x / 2, y_, floor, type, "door", 90, false);
 }
@@ -65,6 +77,19 @@ void MapSystem::set_tile(
   tile.position = osg::Vec3(x, y, floor);
   tile.rotation = rotation;
   tile.solid = solid;
+}
+
+
+void MapSystem::set_ceil_tile(
+  int x, int y, int floor,
+  const std::string& type, const std::string& name,
+  double rotation)
+{
+  auto& tile = get_tile(x, y, floor);
+
+  tile.ceil_type = type;
+  tile.ceil_name = name;
+  tile.ceil_rotation = rotation;
 }
 
 

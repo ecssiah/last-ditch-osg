@@ -18,6 +18,9 @@ class PhysicsSystem
   void scan_collisions(DynamicEntity& user);
   void resolve_collision(DynamicEntity& user, int x, int y);
 
+  double cosine_interp(double v1, double v2, double t);
+  osg::Vec3 cosine_interp(osg::Vec3 v1, osg::Vec3 v2, double t);
+
   const double tile_radius;
 
   Input& input;

@@ -181,7 +181,35 @@ void RenderSystem::build_map()
 
 	Matrix r, t;
 	r.makeRotate(inDegrees(tile.rotation), Vec3(0, 0, 1));
-	t.makeTranslate(Vec3(TILE_SIZE * x, TILE_SIZE * y, FLOOR_HEIGHT * tile.position.z()));
+	t.makeTranslate(
+	  Vec3(
+	    TILE_SIZE * x,
+	    TILE_SIZE * y,
+	    FLOOR_HEIGHT * tile.position.z()));
+
+	xform->setMatrix(r * t);
+
+	xform->addChild(node);
+	root->addChild(xform);
+
+	if (tile.ceil_name == "") continue;
+
+	node = osgDB::readNodeFile(
+	  "models/" + tile.ceil_type + "-" + tile.ceil_name + ".fbx");
+
+	state_set = node->getOrCreateStateSet();
+	state_set->setTextureAttributeAndModes(
+	  0, textures["buildings"], StateAttribute::ON | StateAttribute::OVERRIDE);
+	state_set->setAttribute(materials["buildings"]);
+
+	xform = new MatrixTransform;
+
+	r.makeRotate(inDegrees(tile.ceil_rotation), Vec3(0, 0, 1));
+	t.makeTranslate(
+	  Vec3(
+	    TILE_SIZE * x,
+	    TILE_SIZE * y,
+	    FLOOR_HEIGHT * (tile.position.z() + 1)));
 
 	xform->setMatrix(r * t);
 

@@ -9,7 +9,7 @@ fixed timestep: .032
 
 # Map
 num floors: 2
-floor height: 3.0
+floor height: 4.0
 tile size: 2.0
 
 # Physics

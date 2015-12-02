@@ -1,6 +1,7 @@
 #include "CameraSystem.h"
 
 #include <iostream>
+#include <sstream>
 #include <osg/PositionAttitudeTransform>
 #include <osgGA/GUIEventHandler>
 #include <osgViewer/CompositeViewer>
@@ -96,6 +97,12 @@ void CameraSystem::update()
   Quat user_orient(user.pitch, Vec3(1, 0, 0), 0, Vec3(), user.heading, Vec3(0, 0, 1));
   Vec3 eye(center + user_orient * Vec3(0, CAMERA_OFFSET, 0));
 
+  std::ostringstream ss;
+  ss.precision(1);
+  ss.setf(std::ios::fixed);
+  ss << TILE_SIZE * user.position.x() << " " << TILE_SIZE * user.position.y();
+
+  Debug::instance().msg = ss.str();
   viewer.getView(MAIN_VIEW)->getCamera()->setViewMatrixAsLookAt(
     eye * TILE_SIZE, center * TILE_SIZE, Vec3(0, 0, 1));
 

@@ -75,6 +75,14 @@ bool InputAdapter::handle_key_down(
     input.up = true; return false;
   case 'q':
     input.down = true; return false;
+  case 'y':
+  {
+    auto& user = entity_system.get_user("kadijah");
+
+    user.inactive_time = 1.0;
+    user.start = user.position;
+    user.target = user.position + Vec3(0, 0, FLOOR_HEIGHT);
+  }
   default:
     return false;
   }
