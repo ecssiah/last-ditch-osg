@@ -31,8 +31,6 @@ class CameraSystem
 
   osg::Camera* setup_HUD(osgViewer::Viewer::Windows& windows);
 
-  void fix_vertical_axis(osg::Quat& rotation);
-
 public:
   CameraSystem(
     osg::ref_ptr<osg::Group> root, Input& input, EntitySystem& entity_system);

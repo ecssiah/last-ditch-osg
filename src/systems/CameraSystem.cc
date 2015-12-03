@@ -138,31 +138,3 @@ void CameraSystem::show_cursor(bool show)
     }
   }
 }
-
-
-void CameraSystem::fix_vertical_axis(Quat& rotation)
-{
-  Vec3d cam_up = rotation * Vec3d(0, 1, 0);
-  Vec3d cam_right = rotation * Vec3d(1, 0, 0);
-  Vec3d cam_forward = rotation * Vec3d(0, 0, -1);
-
-  // computed directions
-  Vec3d cam_right1 = cam_forward ^ Vec3(0, 0, 1);
-  Vec3d cam_right2 = cam_up ^ Vec3(0, 0, 1);
-  bool cam1_right_larger = cam_right1.length2() > cam_right2.length2();
-  Vec3d new_cam_right = cam1_right_larger ? cam_right1 : cam_right2;
-
-  if (new_cam_right * cam_right < 0) new_cam_right = -new_cam_right;
-
-  // vertical axis correction
-  Quat rotation_vertical_axis_correction;
-  rotation_vertical_axis_correction.makeRotate(cam_right, new_cam_right);
-
-  // rotate camera
-  rotation *= rotation_vertical_axis_correction;
-
-  // make viewer's up vector to be always less than 90 degrees from "up" axis
-  Vec3d new_cam_up = new_cam_right ^ cam_forward;
-  if (new_cam_up * Vec3(0, 0, 1) < 0)
-    rotation = Quat(PI, Vec3d(0, 0, 1)) * rotation;
-}
