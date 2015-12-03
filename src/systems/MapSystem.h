@@ -10,15 +10,16 @@
 namespace ld
 {
 
+static constexpr int NUM_CHUNKS = 5;
+static constexpr int NUM_FLOORS = 2;
+static constexpr double FLOOR_HEIGHT = 4.0;
+static constexpr int TILE_SIZE = 2;
+static constexpr int CHUNK_SIZE = 34;
+static constexpr int MAP_SIZE = CHUNK_SIZE * NUM_CHUNKS;
+
 class MapSystem
 {
-  static constexpr unsigned Num_Chunks = 5;
-  static constexpr unsigned Num_Floors = 3;
-  static constexpr unsigned Tile_Size = 2;
-  static constexpr unsigned Chunk_Size = 34;
-  static constexpr unsigned Map_Size = Chunk_Size * Num_Chunks;
-
-  std::array<std::array<std::array<Tile, Map_Size>, Map_Size>, Num_Floors> tiles;
+  std::array<std::array<std::array<Tile, MAP_SIZE>, MAP_SIZE>, NUM_FLOORS> tiles;
 
 public:
   MapSystem();
@@ -43,12 +44,6 @@ public:
   Tile& get_tile(double x, double y, int floor);
 
   bool is_solid(double x, double y, int floor);
-
-  int get_num_chunks() const { return Num_Chunks; }
-  int get_num_floors() const { return Num_Floors; }
-  int get_size() const { return Map_Size; }
-  int get_tile_size() const { return Tile_Size; }
-  int get_chunk_size() const { return Chunk_Size; }
 };
 
 }

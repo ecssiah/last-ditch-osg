@@ -10,11 +10,6 @@ fullscreen size x: 1368
 fullscreen size y: 768
 fixed timestep: .032
 
-# Map
-num floors: 2
-floor height: 4.0
-tile size: 2.0
-
 # Physics
 user radius: .2
 user speed: 3.1

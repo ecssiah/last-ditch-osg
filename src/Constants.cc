@@ -17,11 +17,6 @@ const int FULLSCREEN_SIZE_Y = constants["fullscreen size y"].as<int>();
 const double ASPECT_RATIO = (double)FULLSCREEN_SIZE_X / (double)FULLSCREEN_SIZE_Y;
 const double FIXED_TIMESTEP = constants["fixed timestep"].as<double>();
 
-// Map
-const int NUM_FLOORS = constants["num floors"].as<int>();
-const double FLOOR_HEIGHT = constants["floor height"].as<double>();
-const double TILE_SIZE = constants["tile size"].as<double>();
-
 // Physics
 const double USER_RADIUS = constants["user radius"].as<double>();
 const double USER_SPEED = constants["user speed"].as<double>();

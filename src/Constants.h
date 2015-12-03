@@ -14,11 +14,6 @@ extern const int FULLSCREEN_SIZE_Y;
 extern const double ASPECT_RATIO;
 extern const double FIXED_TIMESTEP;
 
-// Map
-extern const int NUM_FLOORS;
-extern const double FLOOR_HEIGHT;
-extern const double TILE_SIZE;
-
 // Physics
 extern const double USER_RADIUS;
 extern const double USER_SPEED;

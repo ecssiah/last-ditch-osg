@@ -1,6 +1,7 @@
 #include "InputAdapter.h"
 
 #include <iostream>
+#include "systems/MapSystem.h"
 
 using namespace ld;
 using namespace osg;
@@ -81,7 +82,7 @@ bool InputAdapter::handle_key_down(
 
     user.inactive_time = 1.0;
     user.start = user.position;
-    user.target = user.position + Vec3(0, 0, FLOOR_HEIGHT);
+    user.target = user.position + Vec3(0, 0, 1);
   }
   default:
     return false;

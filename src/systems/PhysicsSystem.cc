@@ -71,7 +71,10 @@ void PhysicsSystem::scan_collisions(DynamicEntity& user)
 {
   int x = round(user.position.x());
   int y = round(user.position.y());
-  int z = round(user.position.z());
+  int z = floor(user.position.z());
+
+  if (z < 0) z = 0;
+  if (z >= NUM_FLOORS) z = NUM_FLOORS - 1;
 
   for (int xx = x - 1; xx <= x + 1; ++xx)
     for (int yy = y - 1; yy <= y + 1; ++yy)
@@ -83,12 +86,15 @@ void PhysicsSystem::scan_collisions(DynamicEntity& user)
 void PhysicsSystem::resolve_collision(
   DynamicEntity& user, int x, int y)
 {
-  Vec2 min(x - tile_radius, y - tile_radius);
-  Vec2 max(x + tile_radius, y + tile_radius);
+  Vec2d min(x - tile_radius, y - tile_radius);
+  Vec2d max(x + tile_radius, y + tile_radius);
 
-  Vec2 tile_pos(x, y);
-  Vec2 user_pos(user.position.x(), user.position.y());
-  Vec2 nearest(user_pos);
+  Vec2d tile_pos(x, y);
+  Vec2d user_pos(user.position.x(), user.position.y());
+  Vec2d nearest(user_pos);
+
+  std::cout << tile_pos.x() << " " << tile_pos.y() << std::endl;
+  std::cout << user_pos.x() << " " << user_pos.y() << std::endl;
 
   if (nearest.x() < min.x()) nearest.x() = min.x();
   else if (nearest.x() > max.x()) nearest.x() = max.x();
@@ -96,11 +102,15 @@ void PhysicsSystem::resolve_collision(
   if (nearest.y() < min.y()) nearest.y() = min.y();
   else if (nearest.y() > max.y()) nearest.y() = max.y();
 
-  Vec2 norm(user_pos - nearest);
+  Vec2d norm(user_pos - nearest);
   double dist = norm.normalize();
   double depth = USER_RADIUS - dist;
 
-  if (depth > 0) user.position += Vec3d(norm.x(), norm.y(), 0) * depth;
+  if (depth > 0)
+  {
+    std::cout << depth << std::endl;
+    user.position += Vec3d(norm.x(), norm.y(), 0) * depth;
+  }
 }
 
 

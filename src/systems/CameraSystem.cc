@@ -100,7 +100,10 @@ void CameraSystem::update()
   std::ostringstream ss;
   ss.precision(1);
   ss.setf(std::ios::fixed);
-  ss << TILE_SIZE * user.position.x() << " " << TILE_SIZE * user.position.y();
+  ss <<
+    TILE_SIZE * user.position.x() << " " <<
+    TILE_SIZE * user.position.y() << " " <<
+    FLOOR_HEIGHT * user.position.z();
 
   Debug::instance().msg = ss.str();
   viewer.getView(MAIN_VIEW)->getCamera()->setViewMatrixAsLookAt(

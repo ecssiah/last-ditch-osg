@@ -15,15 +15,13 @@ MapSystem::MapSystem()
 
 void MapSystem::layout_map()
 {
-  layout_room("a", 5, 5, 5, 5, 0);
-  layout_room("a", 5, -5, 5, 5, 0);
-  layout_room("a", -5, 5, 5, 5, 0);
-  layout_room("a", -5, -5, 5, 5, 0);
-
-  layout_room("a", 5, 5, 5, 5, 1);
-  layout_room("a", 5, -5, 5, 5, 1);
-  layout_room("a", -5, 5, 5, 5, 1);
-  layout_room("a", -5, -5, 5, 5, 1);
+  for (auto floor = 0; floor < NUM_FLOORS; ++floor)
+  {
+    layout_room("a", 5, 5, 5, 5, floor);
+    layout_room("a", 5, -5, 5, 5, floor);
+    layout_room("a", -5, 5, 5, 5, floor);
+    layout_room("a", -5, -5, 5, 5, floor);
+  }
 }
 
 
@@ -97,8 +95,8 @@ void MapSystem::set_ceil_tile(
 
 Tile& MapSystem::get_tile(int x, int y, int floor)
 {
-  int xx = x + Map_Size / 2;
-  int yy = y + Map_Size / 2;
+  int xx = x + MAP_SIZE / 2;
+  int yy = y + MAP_SIZE / 2;
 
   return tiles[floor][xx][yy];
 }
