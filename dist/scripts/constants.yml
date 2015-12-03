@@ -1,4 +1,7 @@
 # Camera
+fov: 55.0
+near clip: .1
+far clip: 100.0
 camera height: .66
 camera offset: .6
 

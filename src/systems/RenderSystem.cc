@@ -27,7 +27,7 @@ RenderSystem::RenderSystem(osg::ref_ptr<osg::Group> root_, MapSystem& map_system
   users[name] = setup_character(name);
   root->addChild(users[name]);
 
-  auto* stateset = root->getOrCreateStateSet();
+  auto stateset = root->getOrCreateStateSet();
   stateset->setMode(GL_LIGHTING, StateAttribute::ON);
   stateset->setMode(GL_LIGHT0, StateAttribute::ON);
 
@@ -38,7 +38,7 @@ RenderSystem::RenderSystem(osg::ref_ptr<osg::Group> root_, MapSystem& map_system
   light0->setPosition(Vec4(0.f, 0.f, 0.f, 1.f));
   light0->setDirection(Vec3(0.f, 0.f, -1.f));
 
-  auto* xform = new PositionAttitudeTransform;
+  auto xform = new PositionAttitudeTransform;
   xform->setPosition(Vec3(0.f, 0.f, 10.f));
 
   ref_ptr<LightSource> ls0 = new LightSource;
@@ -51,14 +51,14 @@ RenderSystem::RenderSystem(osg::ref_ptr<osg::Group> root_, MapSystem& map_system
 
 osg::Node* RenderSystem::setup_foundation()
 {
-  auto* group = new Group;
+  auto group = new Group;
 
-  auto* state_set = group->getOrCreateStateSet();
+  auto state_set = group->getOrCreateStateSet();
   state_set->setTextureAttributeAndModes(
     0, textures["buildings"],StateAttribute::ON | StateAttribute::OVERRIDE);
   state_set->setAttribute(materials["buildings"]);
 
-  auto* foundation = osgDB::readNodeFile("models/a-foundation.fbx");
+  auto foundation = osgDB::readNodeFile("models/a-foundation.fbx");
 
   int num_chunks = map_system.get_num_chunks();
 
@@ -66,7 +66,7 @@ osg::Node* RenderSystem::setup_foundation()
   {
     for (int y = -num_chunks / 2; y <= num_chunks / 2; ++y)
     {
-      ref_ptr<PositionAttitudeTransform> xform = new PositionAttitudeTransform;
+      auto xform = new PositionAttitudeTransform;
       xform->setPosition(
 	Vec3(
 	  x * map_system.get_chunk_size(),
@@ -83,9 +83,9 @@ osg::Node* RenderSystem::setup_foundation()
 
 osg::Node* RenderSystem::setup_test_grid()
 {
-  auto* node = osgDB::readNodeFile("models/grid.fbx");
+  auto node = osgDB::readNodeFile("models/grid.fbx");
 
-  auto* state_set = node->getOrCreateStateSet();
+  auto state_set = node->getOrCreateStateSet();
   state_set->setTextureAttributeAndModes(
     0, textures["buildings"],StateAttribute::ON | StateAttribute::OVERRIDE);
   state_set->setAttribute(materials["buildings"]);
@@ -96,11 +96,11 @@ osg::Node* RenderSystem::setup_test_grid()
 
 osg::MatrixTransform* RenderSystem::setup_character(const std::string& name)
 {
-  auto* character_group = new Group;
+  auto character_group = new Group;
 
-  auto* character = osgDB::readNodeFile("models/" + name + ".fbx");
+  auto character = osgDB::readNodeFile("models/" + name + ".fbx");
 
-  auto* state_set = character->getOrCreateStateSet();
+  auto state_set = character->getOrCreateStateSet();
   state_set->setTextureAttributeAndModes(
     0, textures[name], StateAttribute::ON | StateAttribute::OVERRIDE);
   state_set->setAttribute(materials[name]);
@@ -112,7 +112,7 @@ osg::MatrixTransform* RenderSystem::setup_character(const std::string& name)
   character_group->addChild(setup_accessory("pants"));
   character_group->addChild(setup_accessory("boots"));
 
-  auto* xform = new MatrixTransform;
+  auto xform = new MatrixTransform;
   xform->addChild(character_group);
 
   return xform;
@@ -121,9 +121,9 @@ osg::MatrixTransform* RenderSystem::setup_character(const std::string& name)
 
 osg::Node* RenderSystem::setup_accessory(const std::string& name)
 {
-  auto* node = osgDB::readNodeFile("models/" + name + ".fbx");
+  auto node = osgDB::readNodeFile("models/" + name + ".fbx");
 
-  auto* state_set = node->getOrCreateStateSet();
+  auto state_set = node->getOrCreateStateSet();
   state_set->setTextureAttributeAndModes(
     0, textures["clothing1"],StateAttribute::ON | StateAttribute::OVERRIDE);
   state_set->setAttribute(materials["clothing1"]);
@@ -142,7 +142,7 @@ void RenderSystem::setup_materials()
 
 void RenderSystem::setup_material(const std::string& name)
 {
-  auto* image = osgDB::readImageFile("textures/" + name + ".png");
+  auto image = osgDB::readImageFile("textures/" + name + ".png");
 
   textures[name] = new Texture2D;
   textures[name]->setImage(image);
@@ -167,54 +167,57 @@ void RenderSystem::build_map()
       {
 	const auto& tile = map_system.get_tile(x, y, floor);
 
-	if (tile.name == "") continue;
+	if (tile.name != "")
+	{
+	  auto node = osgDB::readNodeFile(
+	    "models/" + tile.type + "-" + tile.name + ".fbx");
 
-	auto* node = osgDB::readNodeFile(
-	  "models/" + tile.type + "-" + tile.name + ".fbx");
+	  auto state_set = node->getOrCreateStateSet();
+	  state_set->setTextureAttributeAndModes(
+	    0, textures["buildings"], StateAttribute::ON | StateAttribute::OVERRIDE);
+	  state_set->setAttribute(materials["buildings"]);
 
-	auto* state_set = node->getOrCreateStateSet();
-	state_set->setTextureAttributeAndModes(
-	  0, textures["buildings"], StateAttribute::ON | StateAttribute::OVERRIDE);
-	state_set->setAttribute(materials["buildings"]);
+	  auto xform = new MatrixTransform;
 
-	auto* xform = new MatrixTransform;
+	  Matrix r, t;
+	  r.makeRotate(inDegrees(tile.rotation), Vec3(0, 0, 1));
+	  t.makeTranslate(
+	    Vec3(
+	      TILE_SIZE * x,
+	      TILE_SIZE * y,
+	      FLOOR_HEIGHT * tile.position.z()));
 
-	Matrix r, t;
-	r.makeRotate(inDegrees(tile.rotation), Vec3(0, 0, 1));
-	t.makeTranslate(
-	  Vec3(
-	    TILE_SIZE * x,
-	    TILE_SIZE * y,
-	    FLOOR_HEIGHT * tile.position.z()));
+	  xform->setMatrix(r * t);
 
-	xform->setMatrix(r * t);
+	  xform->addChild(node);
+	  root->addChild(xform);
+	}
 
-	xform->addChild(node);
-	root->addChild(xform);
+	if (tile.ceil_name != "")
+	{
+	  auto node = osgDB::readNodeFile(
+	    "models/" + tile.ceil_type + "-" + tile.ceil_name + ".fbx");
 
-	if (tile.ceil_name == "") continue;
+	  auto state_set = node->getOrCreateStateSet();
+	  state_set->setTextureAttributeAndModes(
+	    0, textures["buildings"], StateAttribute::ON | StateAttribute::OVERRIDE);
+	  state_set->setAttribute(materials["buildings"]);
 
-	node = osgDB::readNodeFile(
-	  "models/" + tile.ceil_type + "-" + tile.ceil_name + ".fbx");
+	  auto xform = new MatrixTransform;
 
-	state_set = node->getOrCreateStateSet();
-	state_set->setTextureAttributeAndModes(
-	  0, textures["buildings"], StateAttribute::ON | StateAttribute::OVERRIDE);
-	state_set->setAttribute(materials["buildings"]);
+	  Matrix r, t;
+	  r.makeRotate(inDegrees(tile.ceil_rotation), Vec3(0, 0, 1));
+	  t.makeTranslate(
+	    Vec3(
+	      TILE_SIZE * x,
+	      TILE_SIZE * y,
+	      FLOOR_HEIGHT * (tile.position.z() + 1)));
 
-	xform = new MatrixTransform;
+	  xform->setMatrix(r * t);
 
-	r.makeRotate(inDegrees(tile.ceil_rotation), Vec3(0, 0, 1));
-	t.makeTranslate(
-	  Vec3(
-	    TILE_SIZE * x,
-	    TILE_SIZE * y,
-	    FLOOR_HEIGHT * (tile.position.z() + 1)));
-
-	xform->setMatrix(r * t);
-
-	xform->addChild(node);
-	root->addChild(xform);
+	  xform->addChild(node);
+	  root->addChild(xform);
+	}
       }
     }
   }

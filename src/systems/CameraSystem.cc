@@ -25,24 +25,24 @@ CameraSystem::CameraSystem(
     viewer(),
     debug_text_object(new osgText::Text)
 {
-  auto* view = new osgViewer::View;
+  auto view = new osgViewer::View;
   viewer.addView(view);
 
   view->setSceneData(root);
   view->setUpViewAcrossAllScreens();
   view->getCamera()->setProjectionMatrixAsPerspective(
-    40, (float)FULLSCREEN_SIZE_X / (float)FULLSCREEN_SIZE_Y, 0.1, 100.0);
+    FOV, ASPECT_RATIO, NEAR_CLIP, FAR_CLIP);
   view->addEventHandler(new InputAdapter(input, entity_system, *this));
 
-  auto* stats_handler = new osgViewer::StatsHandler;
+  auto stats_handler = new osgViewer::StatsHandler;
   stats_handler->setKeyEventTogglesOnScreenStats(osgGA::GUIEventAdapter::KEY_O);
   view->addEventHandler(stats_handler);
 
   osgViewer::Viewer::Windows windows;
   viewer.getWindows(windows);
 
-  auto* hud_cam = setup_HUD(windows);
-  auto* hud_view = new osgViewer::View;
+  auto hud_cam = setup_HUD(windows);
+  auto hud_view = new osgViewer::View;
   hud_view->setCamera(hud_cam);
 
   viewer.addView(hud_view);
@@ -51,7 +51,7 @@ CameraSystem::CameraSystem(
 
 Camera* CameraSystem::setup_HUD(osgViewer::Viewer::Windows& windows)
 {
-  auto* camera = new Camera;
+  auto camera = new Camera;
 
   camera->setProjectionMatrixAsOrtho2D(0, FULLSCREEN_SIZE_X, 0, FULLSCREEN_SIZE_Y);
   camera->setReferenceFrame(Transform::ABSOLUTE_RF);
@@ -60,15 +60,15 @@ Camera* CameraSystem::setup_HUD(osgViewer::Viewer::Windows& windows)
   camera->setRenderOrder(Camera::POST_RENDER);
   camera->setAllowEventFocus(false);
 
-  debug_text_object->setText("this string can't be empty, we don't know why!!!");
   debug_text_object->setFont("fonts/Vera.ttf");
   debug_text_object->setDataVariance(Object::DYNAMIC);
   debug_text_object->setDrawCallback(new DebugTextCallback);
+  debug_text_object->setText("This string can't be empty, we don't know why!!!");
 
-  auto* geode = new Geode;
+  auto geode = new Geode;
   geode->addDrawable(debug_text_object);
 
-  auto* stateset = geode->getOrCreateStateSet();
+  auto stateset = geode->getOrCreateStateSet();
   stateset->setMode(GL_LIGHTING, StateAttribute::OFF);
 
   camera->addChild(geode);
@@ -91,7 +91,7 @@ void CameraSystem::update()
     return;
   }
 
-  auto& user = entity_system.get_user("kadijah");
+  const auto& user = entity_system.get_user("kadijah");
 
   Vec3 center(user.position + Vec3(0, 0, CAMERA_HEIGHT));
   Quat user_orient(user.pitch, Vec3(1, 0, 0), 0, Vec3(), user.heading, Vec3(0, 0, 1));

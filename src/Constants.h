@@ -2,12 +2,16 @@
 #define CONSTANTS_H
 
 // Camera
+extern const double FOV;
+extern const double NEAR_CLIP;
+extern const double FAR_CLIP;
 extern const double CAMERA_HEIGHT;
 extern const double CAMERA_OFFSET;
 
 // Rendering
 extern const int FULLSCREEN_SIZE_X;
 extern const int FULLSCREEN_SIZE_Y;
+extern const double ASPECT_RATIO;
 extern const double FIXED_TIMESTEP;
 
 // Map

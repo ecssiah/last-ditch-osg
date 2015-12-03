@@ -30,25 +30,27 @@ void MapSystem::layout_map()
 void MapSystem::layout_room(
   const std::string& type, int x_, int y_, int size_x, int size_y, int floor)
 {
-  for (int x = x_ - size_x / 2 + 1; x < x_ + size_x / 2; ++x)
+  for (int x = x_ - size_x / 2 + 1; x <= x_ + size_x / 2 - 1; ++x)
   {
     set_tile(x, y_ - size_y / 2, floor, type, "wall", 180);
     set_tile(x, y_ + size_y / 2, floor, type, "wall", 0);
 
     set_ceil_tile(x, y_ - size_y / 2, floor, type, "floor-edge", 180);
     set_ceil_tile(x, y_ + size_y / 2, floor, type, "floor-edge", 0);
-
-    for (int y = y_ - size_y / 2 + 1; y < y_ + size_y / 2; ++y)
-    {
-      set_tile(x_ - size_x / 2, y, floor, type, "wall", 90);
-      set_tile(x_ + size_x / 2, y, floor, type, "wall", 270);
-
-      set_ceil_tile(x_ - size_x / 2, y, floor, type, "floor-edge", 90);
-      set_ceil_tile(x_ + size_x / 2, y, floor, type, "floor-edge", 270);
-
-      set_ceil_tile(x, y, floor, type, "floor");
-    }
   }
+
+  for (int y = y_ - size_y / 2 + 1; y <= y_ + size_y / 2 - 1; ++y)
+  {
+    set_tile(x_ - size_x / 2, y, floor, type, "wall", 90);
+    set_tile(x_ + size_x / 2, y, floor, type, "wall", 270);
+
+    set_ceil_tile(x_ - size_x / 2, y, floor, type, "floor-edge", 90);
+    set_ceil_tile(x_ + size_x / 2, y, floor, type, "floor-edge", 270);
+  }
+
+  for (int x = x_ - size_x / 2 + 1; x <= x_ + size_x / 2 - 1; ++x)
+    for (int y = y_ - size_y / 2 + 1; y <= y_ + size_x / 2 - 1; ++y)
+      set_ceil_tile(x, y, floor, type, "floor");
 
   set_tile(x_ - size_x / 2, y_ - size_y / 2, floor, type, "corner", 90);
   set_tile(x_ + size_x / 2, y_ - size_y / 2, floor, type, "corner", 180);
