@@ -76,13 +76,25 @@ bool InputAdapter::handle_key_down(
     input.up = true; return false;
   case 'q':
     input.down = true; return false;
-  case 'y':
+  case 'r':
   {
     auto& user = entity_system.get_user("kadijah");
 
     user.inactive_time = 1.0;
     user.start = user.position;
-    user.target = user.position + Vec3(0, 0, 1);
+    user.target = user.start + Vec3(0, 0, 1);
+
+    return false;
+  }
+  case 'f':
+  {
+    auto& user = entity_system.get_user("kadijah");
+
+    user.inactive_time = 1.0;
+    user.start = user.position;
+    user.target = user.start - Vec3(0, 0, 1);
+
+    return false;
   }
   default:
     return false;

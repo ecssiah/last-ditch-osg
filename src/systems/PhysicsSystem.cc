@@ -39,7 +39,7 @@ void PhysicsSystem::simulate(DynamicEntity& user, double dt)
   if (user.inactive_time > 0.0)
   {
     user.position = cosine_interp(user.start, user.target, 1 - user.inactive_time);
-    user.inactive_time -= .1;
+    user.inactive_time -= .05;
   }
   else
   {

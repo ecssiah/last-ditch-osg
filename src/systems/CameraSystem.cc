@@ -91,6 +91,14 @@ void CameraSystem::update()
 
   const auto& user = entity_system.get_user("kadijah");
 
+  // Debug user position
+  std::ostringstream ss;
+  ss.precision(1);
+  ss.setf(std::ios::fixed);
+  ss << user.position.x() << " " << user.position.y() << " " << user.position.z();
+
+  Debug::instance().msg = ss.str();
+
   Quat user_orient(user.pitch, Vec3(1, 0, 0), 0, Vec3(), user.heading, Vec3(0, 0, 1));
 
   Vec3 center(user.position + Vec3(0, 0, CAMERA_HEIGHT));
@@ -99,13 +107,6 @@ void CameraSystem::update()
 
   center.set(TILE_SIZE * center.x(), TILE_SIZE * center.y(), FLOOR_HEIGHT * center.z());
   eye.set(TILE_SIZE * eye.x(), TILE_SIZE * eye.y(), FLOOR_HEIGHT * eye.z());
-
-  std::ostringstream ss;
-  ss.precision(1);
-  ss.setf(std::ios::fixed);
-  ss << center.x() << " " << center.y() << " " << center.z();
-
-  Debug::instance().msg = ss.str();
 
   viewer.getView(MAIN_VIEW)->getCamera()->setViewMatrixAsLookAt(eye, center, up);
 

@@ -63,6 +63,7 @@ void MapSystem::layout_room(
   set_ceil_tile(x_ - size_x / 2, y_ + size_y / 2, floor, type, "floor-edge", 0);
 
   set_tile(x_ - size_x / 2, y_, floor, type, "door", 90, false);
+  set_tile(x_, y_, floor, type, "transporter", 0, false);
 }
 
 
