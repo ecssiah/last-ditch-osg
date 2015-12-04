@@ -65,7 +65,7 @@ Camera* CameraSystem::setup_HUD(osgViewer::Viewer::Windows& windows)
   debug_text_object->setFont("fonts/Vera.ttf");
   debug_text_object->setDataVariance(Object::DYNAMIC);
   debug_text_object->setDrawCallback(new DebugTextCallback);
-  debug_text_object->setText("This string can't be empty, we don't know why!!!");
+  debug_text_object->setText("Must not be empty!!!");
 
   auto geode = new Geode;
   geode->addDrawable(debug_text_object);
@@ -74,12 +74,8 @@ Camera* CameraSystem::setup_HUD(osgViewer::Viewer::Windows& windows)
   stateset->setMode(GL_LIGHTING, StateAttribute::OFF);
 
   camera->addChild(geode);
-
   camera->setGraphicsContext(windows[0]);
-  camera->setViewport(
-    0, 0,
-    windows[0]->getTraits()->width,
-    windows[0]->getTraits()->height);
+  camera->setViewport(0, 0, FULLSCREEN_SIZE_X, FULLSCREEN_SIZE_Y);
 
   return camera;
 }
@@ -95,21 +91,23 @@ void CameraSystem::update()
 
   const auto& user = entity_system.get_user("kadijah");
 
-  Vec3 center(user.position + Vec3(0, 0, CAMERA_HEIGHT));
   Quat user_orient(user.pitch, Vec3(1, 0, 0), 0, Vec3(), user.heading, Vec3(0, 0, 1));
+
+  Vec3 center(user.position + Vec3(0, 0, CAMERA_HEIGHT));
   Vec3 eye(center + user_orient * Vec3(0, CAMERA_OFFSET, 0));
+  Vec3 up(0, 0, 1);
+
+  center.set(TILE_SIZE * center.x(), TILE_SIZE * center.y(), FLOOR_HEIGHT * center.z());
+  eye.set(TILE_SIZE * eye.x(), TILE_SIZE * eye.y(), FLOOR_HEIGHT * eye.z());
 
   std::ostringstream ss;
   ss.precision(1);
   ss.setf(std::ios::fixed);
-  ss <<
-    TILE_SIZE * user.position.x() << " " <<
-    TILE_SIZE * user.position.y() << " " <<
-    FLOOR_HEIGHT * user.position.z();
+  ss << center.x() << " " << center.y() << " " << center.z();
 
   Debug::instance().msg = ss.str();
-  viewer.getView(MAIN_VIEW)->getCamera()->setViewMatrixAsLookAt(
-    eye * TILE_SIZE, center * TILE_SIZE, Vec3(0, 0, 1));
+
+  viewer.getView(MAIN_VIEW)->getCamera()->setViewMatrixAsLookAt(eye, center, up);
 
   viewer.frame();
 }

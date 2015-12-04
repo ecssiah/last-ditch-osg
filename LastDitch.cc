@@ -33,7 +33,7 @@ int main()
 {
   setbuf(stdout, NULL);
 
-  printf("Last Ditch starting up...\n");
+  printf("Last Ditch starting...\n");
 
   LastDitch app;
 }

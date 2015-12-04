@@ -39,7 +39,7 @@ void PhysicsSystem::simulate(DynamicEntity& user, double dt)
   if (user.inactive_time > 0.0)
   {
     user.position = cosine_interp(user.start, user.target, 1 - user.inactive_time);
-    user.inactive_time -= .01;
+    user.inactive_time -= .1;
   }
   else
   {
@@ -62,7 +62,11 @@ void PhysicsSystem::simulate(DynamicEntity& user, double dt)
 
   Matrix r, t;
   r.makeRotate(user_heading);
-  t.makeTranslate(user.position * TILE_SIZE);
+  t.makeTranslate(
+    Vec3(
+      user.position.x() * TILE_SIZE,
+      user.position.y() * TILE_SIZE,
+      user.position.z() * FLOOR_HEIGHT));
 
   user.xform->setMatrix(r * t);
 }
@@ -70,16 +74,16 @@ void PhysicsSystem::simulate(DynamicEntity& user, double dt)
 
 void PhysicsSystem::scan_collisions(DynamicEntity& user)
 {
-  int x = round(user.position.x());
-  int y = round(user.position.y());
-  int z = floor(user.position.z());
+  int floor = std::floor(user.position.z());
 
-  if (z < 0) z = 0;
-  if (z >= NUM_FLOORS) z = NUM_FLOORS - 1;
+  if (floor < 0 || floor >= NUM_FLOORS) return;
 
-  for (int xx = x - 1; xx <= x + 1; ++xx)
-    for (int yy = y - 1; yy <= y + 1; ++yy)
-      if (map_system.get_tile(xx, yy, z).solid)
+  int x = std::round(user.position.x());
+  int y = std::round(user.position.y());
+
+  for (auto xx = x - 1; xx <= x + 1; ++xx)
+    for (auto yy = y - 1; yy <= y + 1; ++yy)
+      if (map_system.get_tile(xx, yy, floor).solid)
 	resolve_collision(user, xx, yy);
 }
 
@@ -101,8 +105,8 @@ void PhysicsSystem::resolve_collision(
   else if (nearest.y() > max.y()) nearest.y() = max.y();
 
   Vec2d norm(user_pos - nearest);
-  double dist = norm.normalize();
-  double depth = USER_RADIUS - dist;
+  auto dist = norm.normalize();
+  auto depth = USER_RADIUS - dist;
 
   if (depth > 0) user.position += Vec3d(norm.x(), norm.y(), 0) * depth;
 }
@@ -110,7 +114,7 @@ void PhysicsSystem::resolve_collision(
 
 double PhysicsSystem::cosine_interp(double v1, double v2, double t)
 {
-  double tt = (1 - cos(M_PI * t)) / 2;
+  auto tt = (1 - cos(M_PI * t)) / 2;
 
   return (v1 * (1 - tt) + v2 * tt);
 }
@@ -118,9 +122,9 @@ double PhysicsSystem::cosine_interp(double v1, double v2, double t)
 
 Vec3 PhysicsSystem::cosine_interp(Vec3 v1, Vec3 v2, double t)
 {
-  double x = cosine_interp(v1.x(), v2.x(), t);
-  double y = cosine_interp(v1.y(), v2.y(), t);
-  double z = cosine_interp(v1.z(), v2.z(), t);
+  auto x = cosine_interp(v1.x(), v2.x(), t);
+  auto y = cosine_interp(v1.y(), v2.y(), t);
+  auto z = cosine_interp(v1.z(), v2.z(), t);
 
   return Vec3(x, y, z);
 }

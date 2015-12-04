@@ -30,7 +30,7 @@ void MapSystem::layout_map()
 void MapSystem::layout_room(
   const std::string& type, int x_, int y_, int size_x, int size_y, int floor)
 {
-  for (int x = x_ - size_x / 2 + 1; x <= x_ + size_x / 2 - 1; ++x)
+  for (auto x = x_ - size_x / 2 + 1; x <= x_ + size_x / 2 - 1; ++x)
   {
     set_tile(x, y_ - size_y / 2, floor, type, "wall", 180);
     set_tile(x, y_ + size_y / 2, floor, type, "wall", 0);
@@ -39,7 +39,7 @@ void MapSystem::layout_room(
     set_ceil_tile(x, y_ + size_y / 2, floor, type, "floor-edge", 0);
   }
 
-  for (int y = y_ - size_y / 2 + 1; y <= y_ + size_y / 2 - 1; ++y)
+  for (auto y = y_ - size_y / 2 + 1; y <= y_ + size_y / 2 - 1; ++y)
   {
     set_tile(x_ - size_x / 2, y, floor, type, "wall", 90);
     set_tile(x_ + size_x / 2, y, floor, type, "wall", 270);
@@ -48,8 +48,8 @@ void MapSystem::layout_room(
     set_ceil_tile(x_ + size_x / 2, y, floor, type, "floor-edge", 270);
   }
 
-  for (int x = x_ - size_x / 2 + 1; x <= x_ + size_x / 2 - 1; ++x)
-    for (int y = y_ - size_y / 2 + 1; y <= y_ + size_x / 2 - 1; ++y)
+  for (auto x = x_ - size_x / 2 + 1; x <= x_ + size_x / 2 - 1; ++x)
+    for (auto y = y_ - size_y / 2 + 1; y <= y_ + size_x / 2 - 1; ++y)
       set_ceil_tile(x, y, floor, type, "floor");
 
   set_tile(x_ - size_x / 2, y_ - size_y / 2, floor, type, "corner", 90);
@@ -97,8 +97,8 @@ void MapSystem::set_ceil_tile(
 
 Tile& MapSystem::get_tile(int x, int y, int floor)
 {
-  int xx = x + MAP_SIZE / 2;
-  int yy = y + MAP_SIZE / 2;
+  auto xx = x + MAP_SIZE / 2;
+  auto yy = y + MAP_SIZE / 2;
 
   return tiles[floor][xx][yy];
 }
@@ -112,8 +112,8 @@ const Tile& MapSystem::get_tile(int x, int y, int floor) const
 
 Tile& MapSystem::get_tile(double x, double y, int floor)
 {
-  int xx = round(x);
-  int yy = round(y);
+  auto xx = round(x);
+  auto yy = round(y);
 
   return get_tile(xx, yy, floor);
 }

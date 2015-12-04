@@ -2,7 +2,7 @@
 fov: 55.0
 near clip: .1
 far clip: 100.0
-camera height: .66
+camera height: .36
 camera offset: .6
 
 # Rendering

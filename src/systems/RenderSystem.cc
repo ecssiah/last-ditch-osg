@@ -21,9 +21,7 @@ RenderSystem::RenderSystem(osg::ref_ptr<osg::Group> root_, MapSystem& map_system
 
   root->addChild(setup_foundation());
 
-  printf("  * building map...");
   build_map();
-  printf("done\n");
 
   auto name = "kadijah";
   users[name] = setup_character(name);
