@@ -17,6 +17,8 @@ LastDitch::LastDitch()
     physics_system(input, entity_system, map_system),
     camera_system(root, input, entity_system)
 {
+  printf("Complete\n");
+
   while (camera_system.is_running())
   {
     auto dt = time_system.tick();
@@ -29,5 +31,9 @@ LastDitch::LastDitch()
 
 int main()
 {
+  setbuf(stdout, NULL);
+
+  printf("Last Ditch starting up...\n");
+
   LastDitch app;
 }

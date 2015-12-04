@@ -13,4 +13,6 @@ EntitySystem::EntitySystem(RenderSystem& render_system_)
   user.xform = render_system.get_user_xform(user.name);
 
   users[user.name] = user;
+
+  printf(" Entity System finished\n");
 }

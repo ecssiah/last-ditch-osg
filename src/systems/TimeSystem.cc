@@ -13,6 +13,7 @@ TimeSystem::TimeSystem()
    last_time(timer.tick()),
    dt(0)
 {
+  printf(" Time System finished\n");
 }
 
 

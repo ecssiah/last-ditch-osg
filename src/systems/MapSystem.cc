@@ -10,6 +10,8 @@ using namespace ld;
 MapSystem::MapSystem()
 {
   layout_map();
+
+  printf(" Map System finished\n");
 }
 
 

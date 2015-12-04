@@ -21,7 +21,7 @@ RenderSystem::RenderSystem(osg::ref_ptr<osg::Group> root_, MapSystem& map_system
 
   root->addChild(setup_foundation());
 
-  printf("Building map... ");
+  printf("  * building map...");
   build_map();
   printf("done\n");
 
@@ -48,6 +48,8 @@ RenderSystem::RenderSystem(osg::ref_ptr<osg::Group> root_, MapSystem& map_system
 
   xform->addChild(ls0);
   root->addChild(xform);
+
+  printf(" Render System finished\n");
 }
 
 

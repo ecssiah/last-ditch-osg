@@ -20,6 +20,7 @@ PhysicsSystem::PhysicsSystem(
     entity_system(entity_system_),
     map_system(map_system_)
 {
+  printf(" Physics System finished\n");
 }
 
 
@@ -93,9 +94,6 @@ void PhysicsSystem::resolve_collision(
   Vec2d user_pos(user.position.x(), user.position.y());
   Vec2d nearest(user_pos);
 
-  std::cout << tile_pos.x() << " " << tile_pos.y() << std::endl;
-  std::cout << user_pos.x() << " " << user_pos.y() << std::endl;
-
   if (nearest.x() < min.x()) nearest.x() = min.x();
   else if (nearest.x() > max.x()) nearest.x() = max.x();
 
@@ -106,11 +104,7 @@ void PhysicsSystem::resolve_collision(
   double dist = norm.normalize();
   double depth = USER_RADIUS - dist;
 
-  if (depth > 0)
-  {
-    std::cout << depth << std::endl;
-    user.position += Vec3d(norm.x(), norm.y(), 0) * depth;
-  }
+  if (depth > 0) user.position += Vec3d(norm.x(), norm.y(), 0) * depth;
 }
 
 
