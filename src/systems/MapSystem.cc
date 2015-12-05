@@ -5,6 +5,7 @@
 #include "../Constants.h"
 
 using namespace std;
+using namespace osg;
 using namespace ld;
 
 MapSystem::MapSystem()
@@ -77,7 +78,7 @@ void MapSystem::set_tile(
 
   tile.type = type;
   tile.name = name;
-  tile.position = osg::Vec3(x, y, floor);
+  tile.position = Vec3(x, y, floor);
   tile.rotation = rotation;
   tile.solid = solid;
 }
@@ -90,6 +91,7 @@ void MapSystem::set_ceil_tile(
 {
   auto& tile = get_tile(x, y, floor);
 
+  tile.position = Vec3(x, y, floor);
   tile.ceil_type = type;
   tile.ceil_name = name;
   tile.ceil_rotation = rotation;
@@ -113,8 +115,8 @@ const Tile& MapSystem::get_tile(int x, int y, int floor) const
 
 Tile& MapSystem::get_tile(double x, double y, int floor)
 {
-  auto xx = round(x);
-  auto yy = round(y);
+  auto xx = std::round(x);
+  auto yy = std::round(y);
 
   return get_tile(xx, yy, floor);
 }

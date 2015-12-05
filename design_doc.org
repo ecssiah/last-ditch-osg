@@ -15,7 +15,9 @@ useful abilities and then managing them when they join. The player will
 also be able to individually contribute to the settlement based on their
 class.
 *** Notes
-- No stairs, small elevators.
+- no stairs, small elevators.
+- elevators will be activated by touching a patch on the left side of the
+character's chest.
 ** Characters
 *** Kadijah
 The main character. A refugee from a collapsed settlement on another

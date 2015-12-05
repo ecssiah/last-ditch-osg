@@ -31,7 +31,7 @@ RenderSystem::RenderSystem(osg::ref_ptr<osg::Group> root_, MapSystem& map_system
   stateset->setMode(GL_LIGHTING, StateAttribute::ON);
   stateset->setMode(GL_LIGHT0, StateAttribute::ON);
 
-  ref_ptr<Light> light0 = new Light;
+  auto light0 = new Light;
   light0->setAmbient(Vec4(.1f, .1f, .1f, 1.f));
   light0->setDiffuse(Vec4(.5f, .5f, .5f, 1.f));
   light0->setSpecular(Vec4(.5f, .5f, .5f, 1.f));
@@ -41,8 +41,8 @@ RenderSystem::RenderSystem(osg::ref_ptr<osg::Group> root_, MapSystem& map_system
   auto xform = new PositionAttitudeTransform;
   xform->setPosition(Vec3(0.f, 0.f, 10.f));
 
-  ref_ptr<LightSource> ls0 = new LightSource;
-  ls0->setLight(light0.get());
+  auto ls0 = new LightSource;
+  ls0->setLight(light0);
 
   xform->addChild(ls0);
   root->addChild(xform);
