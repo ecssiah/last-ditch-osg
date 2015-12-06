@@ -25,7 +25,7 @@ class MapSystem
   std::array<std::array<std::array<Tile, MAP_SIZE + 1>, MAP_SIZE + 1>, NUM_FLOORS> tiles;
 
   void seed_rooms(Room& master, int floor);
-  void extend_room(Room& room, int floor);
+  void extend_room(Room& target, int floor);
 
   bool intersects(Room& r1, Room& r2);
 

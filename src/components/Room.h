@@ -10,6 +10,11 @@ struct Room
       h(h_)
   {}
 
+  bool operator==(const Room& room)
+  {
+    return x == room.x && y == room.y && w == room.w && h == room.h;
+  }
+
   int x, y;
   int w, h;
 };

@@ -31,8 +31,8 @@ void MapSystem::layout_map()
     for (auto master : master_rooms[floor])
       seed_rooms(master, floor);
 
-  for (int floor = 0; floor < NUM_FLOORS; ++floor)
-    for (int i = 0; i < 10; ++i)
+  for (int iterations = 0; iterations < 10; ++iterations)
+    for (int floor = 0; floor < NUM_FLOORS; ++floor)
       for (auto room : rooms[floor])
 	extend_room(room, floor);
 
@@ -59,16 +59,17 @@ void MapSystem::seed_rooms(Room& master, int floor)
 }
 
 
-void MapSystem::extend_room(Room& room, int floor)
+void MapSystem::extend_room(Room& target, int floor)
 {
   std::random_device rd;
   std::mt19937 mt(rd());
   std::uniform_int_distribution<int> dist(0, 4);
 
-  while (true)
+  int i = 0;
+  while (i++ < 100)
   {
     int direction = dist(mt);
-    Room test_room(room.x, room.y, room.w, room.h);
+    Room test_room(target.x, target.y, target.w, target.h);
 
     if (direction == 0) ++test_room.x;
     if (direction == 1) --test_room.x;
@@ -78,8 +79,11 @@ void MapSystem::extend_room(Room& room, int floor)
     bool collision = false;
     for (auto room : rooms[floor])
     {
-      if (intersects(test_room, room))
+      if (room == target) continue;
+
+      if (intersects(room, test_room))
       {
+	std::cout << "Collision!" << std::endl;
 	collision = true;
 	break;
       }
@@ -87,7 +91,13 @@ void MapSystem::extend_room(Room& room, int floor)
 
     if (!collision)
     {
-      room = test_room;
+      target.x = test_room.x;
+      target.y = test_room.y;
+      target.w = test_room.w;
+      target.h = test_room.h;
+
+      std::cout << "Expansion!" << std::endl;
+
       break;
     }
   }
@@ -204,8 +214,8 @@ bool MapSystem::is_solid(double x, double y, int floor)
 bool MapSystem::intersects(Room& r1, Room& r2)
 {
   bool intersects =
-    (r1.x > r2.x + r2.w) && (r1.x + r1.w < r2.x) &&
-    (r1.y > r2.y + r2.h) && (r1.y + r1.h < r2.y);
+    !(r1.x > r2.x + r2.w || r2.x > r1.x + r1.w ||
+      r1.y > r2.y + r2.h || r2.y > r1.y + r1.h);
 
   return intersects;
 }
