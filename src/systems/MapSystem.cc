@@ -1,6 +1,7 @@
 #include "MapSystem.h"
 
 #include <cmath>
+#include <random>
 #include <iostream>
 #include "../Constants.h"
 
@@ -20,11 +21,83 @@ void MapSystem::layout_map()
 {
   for (auto floor = 0; floor < NUM_FLOORS; ++floor)
   {
-    layout_room("a", 5, 5, 5, 5, floor);
-    layout_room("a", 5, -5, 5, 5, floor);
-    layout_room("a", -5, 5, 5, 5, floor);
-    layout_room("a", -5, -5, 5, 5, floor);
+    master_rooms[floor].push_back(Room(-10, -10, 10, 10));
+    master_rooms[floor].push_back(Room(-10, 10, 10, 10));
+    master_rooms[floor].push_back(Room(10, 10, 10, 10));
+    master_rooms[floor].push_back(Room(10, -10, 10, 10));
   }
+
+  for (int floor = 0; floor < NUM_FLOORS; ++floor)
+    for (auto master : master_rooms[floor])
+      seed_rooms(master, floor);
+
+  for (int floor = 0; floor < NUM_FLOORS; ++floor)
+    for (int i = 0; i < 10; ++i)
+      for (auto room : rooms[floor])
+	extend_room(room, floor);
+
+  for (int floor = 0; floor < NUM_FLOORS; ++floor)
+    for (auto& room : rooms[floor])
+      layout_room("a", room, floor);
+}
+
+
+void MapSystem::seed_rooms(Room& master, int floor)
+{
+  std::random_device rd;
+  std::mt19937 mt(rd());
+  std::uniform_int_distribution<int> x_dist(master.x, master.x + master.w);
+  std::uniform_int_distribution<int> y_dist(master.y, master.y + master.h);
+
+  for (int room_num = 0; room_num < 4; ++room_num)
+  {
+    int x = x_dist(mt);
+    int y = y_dist(mt);
+
+    rooms[floor].push_back(Room(x, y, 2, 2));
+  }
+}
+
+
+void MapSystem::extend_room(Room& room, int floor)
+{
+  std::random_device rd;
+  std::mt19937 mt(rd());
+  std::uniform_int_distribution<int> dist(0, 4);
+
+  while (true)
+  {
+    int direction = dist(mt);
+    Room test_room(room.x, room.y, room.w, room.h);
+
+    if (direction == 0) ++test_room.x;
+    if (direction == 1) --test_room.x;
+    if (direction == 2) ++test_room.y;
+    if (direction == 3) --test_room.y;
+
+    bool collision = false;
+    for (auto room : rooms[floor])
+    {
+      if (intersects(test_room, room))
+      {
+	collision = true;
+	break;
+      }
+    }
+
+    if (!collision)
+    {
+      room = test_room;
+      break;
+    }
+  }
+}
+
+
+void MapSystem::layout_room(
+  const std::string& type, const Room& room, int floor)
+{
+  layout_room(type, room.x, room.y, room.w, room.h, floor);
 }
 
 
@@ -76,9 +149,9 @@ void MapSystem::set_tile(
 {
   auto& tile = get_tile(x, y, floor);
 
+  tile.position = Vec3(x, y, floor);
   tile.type = type;
   tile.name = name;
-  tile.position = Vec3(x, y, floor);
   tile.rotation = rotation;
   tile.solid = solid;
 }
@@ -125,4 +198,14 @@ Tile& MapSystem::get_tile(double x, double y, int floor)
 bool MapSystem::is_solid(double x, double y, int floor)
 {
   return get_tile(x, y, floor).solid;
+}
+
+
+bool MapSystem::intersects(Room& r1, Room& r2)
+{
+  bool intersects =
+    (r1.x > r2.x + r2.w) && (r1.x + r1.w < r2.x) &&
+    (r1.y > r2.y + r2.h) && (r1.y + r1.h < r2.y);
+
+  return intersects;
 }

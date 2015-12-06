@@ -156,9 +156,9 @@ void RenderSystem::build_map()
 {
   for (int floor = 0; floor < NUM_FLOORS; ++floor)
   {
-    for (int x = -MAP_SIZE / 2; x < MAP_SIZE / 2; ++x)
+    for (int x = -MAP_SIZE / 2; x <= MAP_SIZE / 2; ++x)
     {
-      for (int y = -MAP_SIZE / 2; y < MAP_SIZE / 2; ++y)
+      for (int y = -MAP_SIZE / 2; y <= MAP_SIZE / 2; ++y)
       {
 	const auto& tile = map_system.get_tile(x, y, floor);
 

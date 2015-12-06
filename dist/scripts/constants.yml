@@ -3,7 +3,7 @@ fov: 55.0
 near clip: .1
 far clip: 100.0
 camera height: .36
-camera offset: .6
+camera offset: .3
 
 # Rendering
 fullscreen size x: 1368

@@ -5,6 +5,7 @@
 #include <array>
 #include <vector>
 #include "../Constants.h"
+#include "../components/Room.h"
 #include "../components/Tile.h"
 
 namespace ld
@@ -13,18 +14,27 @@ namespace ld
 static constexpr int NUM_CHUNKS = 5;
 static constexpr int CHUNK_SIZE = 34;
 static constexpr int MAP_SIZE = CHUNK_SIZE * NUM_CHUNKS;
-static constexpr int NUM_FLOORS = 3;
+static constexpr int NUM_FLOORS = 2;
 static constexpr double TILE_SIZE = 2.0;
 static constexpr double FLOOR_HEIGHT = 4.0;
 
 class MapSystem
 {
-  std::array<std::array<std::array<Tile, MAP_SIZE>, MAP_SIZE>, NUM_FLOORS> tiles;
+  std::array<std::vector<Room>, NUM_FLOORS> rooms;
+  std::array<std::vector<Room>, NUM_FLOORS> master_rooms;
+  std::array<std::array<std::array<Tile, MAP_SIZE + 1>, MAP_SIZE + 1>, NUM_FLOORS> tiles;
+
+  void seed_rooms(Room& master, int floor);
+  void extend_room(Room& room, int floor);
+
+  bool intersects(Room& r1, Room& r2);
 
 public:
   MapSystem();
 
   void layout_map();
+  void layout_room(
+    const std::string& type, const Room& room, int floor);
   void layout_room(
     const std::string& type, int x, int y, int size_x, int size_y, int floor);
 
