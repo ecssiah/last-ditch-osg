@@ -9,17 +9,27 @@ namespace ld
 
 struct Tile
 {
-  bool solid = false;
+  Tile()
+    : solid(false),
+      position(osg::Vec3()),
+      type("a"),
+      name(""),
+      rotation(0.0),
+      ceil_type("a"),
+      ceil_name(""),
+      ceil_rotation(0.0)
+  {}
 
-  std::string type = "a";
-  std::string ceil_type = "a";
-  std::string name = "";
-  std::string ceil_name = "";
+  bool solid;
+  osg::Vec3 position;
 
-  osg::Vec3 position = osg::Vec3();
+  std::string type;
+  std::string name;
+  float rotation;
 
-  float rotation = 0;
-  float ceil_rotation = 0;
+  std::string ceil_type;
+  std::string ceil_name;
+  float ceil_rotation;
 };
 
 }

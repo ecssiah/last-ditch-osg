@@ -20,39 +20,33 @@ static constexpr double FLOOR_HEIGHT = 4.0;
 
 class MapSystem
 {
+  void seed_rooms(Room& master, int floor);
+  void extend_room(Room& target, int floor);
+  void layout_map();
+  void layout_master(const std::string& type, const Room& master, int floor);
+  void layout_master(const std::string& type, int x, int y, int w, int h, int floor);
+  void layout_room(const std::string& type, const Room& room, int floor);
+  void layout_room(const std::string& type, int x, int y, int w, int h, int floor);
+  bool intersects(Room& r1, Room& r2);
+
   std::array<std::vector<Room>, NUM_FLOORS> rooms;
   std::array<std::vector<Room>, NUM_FLOORS> master_rooms;
   std::array<std::array<std::array<Tile, MAP_SIZE + 1>, MAP_SIZE + 1>, NUM_FLOORS> tiles;
 
-  void seed_rooms(Room& master, int floor);
-  void extend_room(Room& target, int floor);
-
-  bool intersects(Room& r1, Room& r2);
-
 public:
   MapSystem();
-
-  void layout_map();
-  void layout_room(
-    const std::string& type, const Room& room, int floor);
-  void layout_room(
-    const std::string& type, int x, int y, int size_x, int size_y, int floor);
 
   void set_tile(
     int x, int y, int floor,
     const std::string& type, const std::string& name,
-    double rotation = 0.0,
-    bool solid = true);
-
+    double rotation = 0.0, bool solid = true);
   void set_ceil_tile(
     int x, int y, int floor,
     const std::string& type, const std::string& name,
     double rotation = 0.0);
-
   Tile& get_tile(int x, int y, int floor);
   const Tile& get_tile(int x, int y, int floor) const;
   Tile& get_tile(double x, double y, int floor);
-
   bool is_solid(double x, double y, int floor);
 };
 

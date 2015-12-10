@@ -21,24 +21,25 @@ void MapSystem::layout_map()
 {
   for (auto floor = 0; floor < NUM_FLOORS; ++floor)
   {
-    master_rooms[floor].push_back(Room(-10, -10, 10, 10));
-    master_rooms[floor].push_back(Room(-10, 10, 10, 10));
-    master_rooms[floor].push_back(Room(10, 10, 10, 10));
-    master_rooms[floor].push_back(Room(10, -10, 10, 10));
+    master_rooms[floor].push_back(Room(-10, 20, 10, 10));
   }
 
   for (int floor = 0; floor < NUM_FLOORS; ++floor)
-    for (auto master : master_rooms[floor])
+    for (auto& master : master_rooms[floor])
       seed_rooms(master, floor);
 
   for (int iterations = 0; iterations < 10; ++iterations)
     for (int floor = 0; floor < NUM_FLOORS; ++floor)
-      for (auto room : rooms[floor])
+      for (auto& room : rooms[floor])
 	extend_room(room, floor);
 
   for (int floor = 0; floor < NUM_FLOORS; ++floor)
     for (auto& room : rooms[floor])
       layout_room("a", room, floor);
+
+  for (int floor = 0; floor < NUM_FLOORS; ++floor)
+    for (auto& master : master_rooms[floor])
+      layout_master("a", master, floor);
 }
 
 
@@ -46,15 +47,17 @@ void MapSystem::seed_rooms(Room& master, int floor)
 {
   std::random_device rd;
   std::mt19937 mt(rd());
-  std::uniform_int_distribution<int> x_dist(master.x, master.x + master.w);
-  std::uniform_int_distribution<int> y_dist(master.y, master.y + master.h);
+  std::uniform_int_distribution<int> x_dist(
+    master.x - master.w / 2 + 2, master.x + master.w / 2 - 2);
+  std::uniform_int_distribution<int> y_dist(
+    master.y - master.h / 2 + 2, master.y + master.h / 2 - 2);
 
   for (int room_num = 0; room_num < 4; ++room_num)
   {
     int x = x_dist(mt);
     int y = y_dist(mt);
 
-    rooms[floor].push_back(Room(x, y, 2, 2));
+    rooms[floor].push_back(Room(x, y, 3, 3));
   }
 }
 
@@ -66,24 +69,46 @@ void MapSystem::extend_room(Room& target, int floor)
   std::uniform_int_distribution<int> dist(0, 4);
 
   int i = 0;
-  while (i++ < 100)
+  while (i++ < 100000)
   {
-    int direction = dist(mt);
+    auto direction = dist(mt);
     Room test_room(target.x, target.y, target.w, target.h);
 
-    if (direction == 0) ++test_room.x;
-    if (direction == 1) --test_room.x;
-    if (direction == 2) ++test_room.y;
-    if (direction == 3) --test_room.y;
+    if (direction == 0)
+    {
+      ++test_room.w;
+    }
+    else if (direction == 1)
+    {
+      ++test_room.h;
+    }
+    else if (direction == 2)
+    {
+      --test_room.x;
+      ++test_room.w;
+    }
+    else if (direction == 3)
+    {
+      --test_room.y;
+      ++test_room.h;
+    }
 
     bool collision = false;
-    for (auto room : rooms[floor])
+    for (auto& room : rooms[floor])
     {
       if (room == target) continue;
 
       if (intersects(room, test_room))
       {
-	std::cout << "Collision!" << std::endl;
+	collision = true;
+	break;
+      }
+    }
+
+    for (auto& master : master_rooms[floor])
+    {
+      if (intersects(master, test_room))
+      {
 	collision = true;
 	break;
       }
@@ -96,8 +121,7 @@ void MapSystem::extend_room(Room& target, int floor)
       target.w = test_room.w;
       target.h = test_room.h;
 
-      std::cout << "Expansion!" << std::endl;
-
+      printf("%d %d %d %d\n", target.x, target.y, target.w, target.h);
       break;
     }
   }
@@ -111,42 +135,82 @@ void MapSystem::layout_room(
 }
 
 
-void MapSystem::layout_room(
-  const std::string& type, int x_, int y_, int size_x, int size_y, int floor)
+void MapSystem::layout_master(
+  const std::string& type, const Room& master, int floor)
 {
-  for (auto x = x_ - size_x / 2 + 1; x <= x_ + size_x / 2 - 1; ++x)
-  {
-    set_tile(x, y_ - size_y / 2, floor, type, "wall", 180);
-    set_tile(x, y_ + size_y / 2, floor, type, "wall", 0);
+  layout_room(type, master.x, master.y, master.w, master.h, floor);
+}
 
-    set_ceil_tile(x, y_ - size_y / 2, floor, type, "floor-edge", 180);
-    set_ceil_tile(x, y_ + size_y / 2, floor, type, "floor-edge", 0);
+
+void MapSystem::layout_master(
+  const std::string& type, int x_, int y_, int w_, int h_, int floor)
+{
+  for (auto x = x_ - w_ / 2 + 1; x <= x_ + w_ / 2 - 1; ++x)
+  {
+    set_tile(x, y_ - h_ / 2, floor, type, "wall", 180);
+    set_tile(x, y_ + h_ / 2, floor, type, "wall", 0);
+
+    set_ceil_tile(x, y_ - h_ / 2, floor, type, "floor-edge", 180);
+    set_ceil_tile(x, y_ + h_ / 2, floor, type, "floor-edge", 0);
   }
 
-  for (auto y = y_ - size_y / 2 + 1; y <= y_ + size_y / 2 - 1; ++y)
+  for (auto y = y_ - h_ / 2 + 1; y <= y_ + h_ / 2 - 1; ++y)
   {
-    set_tile(x_ - size_x / 2, y, floor, type, "wall", 90);
-    set_tile(x_ + size_x / 2, y, floor, type, "wall", 270);
+    set_tile(x_ - w_ / 2, y, floor, type, "wall", 90);
+    set_tile(x_ + w_ / 2, y, floor, type, "wall", 270);
 
-    set_ceil_tile(x_ - size_x / 2, y, floor, type, "floor-edge", 90);
-    set_ceil_tile(x_ + size_x / 2, y, floor, type, "floor-edge", 270);
+    set_ceil_tile(x_ - w_ / 2, y, floor, type, "floor-edge", 90);
+    set_ceil_tile(x_ + w_ / 2, y, floor, type, "floor-edge", 270);
   }
 
-  for (auto x = x_ - size_x / 2 + 1; x <= x_ + size_x / 2 - 1; ++x)
-    for (auto y = y_ - size_y / 2 + 1; y <= y_ + size_x / 2 - 1; ++y)
+  set_tile(x_ - w_ / 2, y_ - h_ / 2, floor, type, "corner", 90);
+  set_tile(x_ + w_ / 2, y_ - h_ / 2, floor, type, "corner", 180);
+  set_tile(x_ + w_ / 2, y_ + h_ / 2, floor, type, "corner", 270);
+  set_tile(x_ - w_ / 2, y_ + h_ / 2, floor, type, "corner", 0);
+
+  set_ceil_tile(x_ - w_ / 2, y_ - h_ / 2, floor, type, "floor-edge", 90);
+  set_ceil_tile(x_ + w_ / 2, y_ - h_ / 2, floor, type, "floor-edge", 180);
+  set_ceil_tile(x_ + w_ / 2, y_ + h_ / 2, floor, type, "floor-edge", 270);
+  set_ceil_tile(x_ - w_ / 2, y_ + h_ / 2, floor, type, "floor-edge", 0);
+}
+
+
+void MapSystem::layout_room(
+  const std::string& type, int x_, int y_, int w_, int h_, int floor)
+{
+  for (auto x = x_ - w_ / 2 + 1; x <= x_ + w_ / 2 - 1; ++x)
+  {
+    set_tile(x, y_ - h_ / 2, floor, type, "int-wall", 180);
+    set_tile(x, y_ + h_ / 2, floor, type, "int-wall", 0);
+
+    set_ceil_tile(x, y_ - h_ / 2, floor, type, "floor-edge", 180);
+    set_ceil_tile(x, y_ + h_ / 2, floor, type, "floor-edge", 0);
+  }
+
+  for (auto y = y_ - h_ / 2 + 1; y <= y_ + h_ / 2 - 1; ++y)
+  {
+    set_tile(x_ - w_ / 2, y, floor, type, "int-wall", 90);
+    set_tile(x_ + w_ / 2, y, floor, type, "int-wall", 270);
+
+    set_ceil_tile(x_ - w_ / 2, y, floor, type, "floor-edge", 90);
+    set_ceil_tile(x_ + w_ / 2, y, floor, type, "floor-edge", 270);
+  }
+
+  for (auto x = x_ - w_ / 2 + 1; x <= x_ + w_ / 2 - 1; ++x)
+    for (auto y = y_ - h_ / 2 + 1; y <= y_ + w_ / 2 - 1; ++y)
       set_ceil_tile(x, y, floor, type, "floor");
 
-  set_tile(x_ - size_x / 2, y_ - size_y / 2, floor, type, "corner", 90);
-  set_tile(x_ + size_x / 2, y_ - size_y / 2, floor, type, "corner", 180);
-  set_tile(x_ + size_x / 2, y_ + size_y / 2, floor, type, "corner", 270);
-  set_tile(x_ - size_x / 2, y_ + size_y / 2, floor, type, "corner", 0);
+  set_tile(x_ - w_ / 2, y_ - h_ / 2, floor, type, "int-corner", 90);
+  set_tile(x_ + w_ / 2, y_ - h_ / 2, floor, type, "int-corner", 180);
+  set_tile(x_ + w_ / 2, y_ + h_ / 2, floor, type, "int-corner", 270);
+  set_tile(x_ - w_ / 2, y_ + h_ / 2, floor, type, "int-corner", 0);
 
-  set_ceil_tile(x_ - size_x / 2, y_ - size_y / 2, floor, type, "floor-edge", 90);
-  set_ceil_tile(x_ + size_x / 2, y_ - size_y / 2, floor, type, "floor-edge", 180);
-  set_ceil_tile(x_ + size_x / 2, y_ + size_y / 2, floor, type, "floor-edge", 270);
-  set_ceil_tile(x_ - size_x / 2, y_ + size_y / 2, floor, type, "floor-edge", 0);
+  set_ceil_tile(x_ - w_ / 2, y_ - h_ / 2, floor, type, "floor-edge", 90);
+  set_ceil_tile(x_ + w_ / 2, y_ - h_ / 2, floor, type, "floor-edge", 180);
+  set_ceil_tile(x_ + w_ / 2, y_ + h_ / 2, floor, type, "floor-edge", 270);
+  set_ceil_tile(x_ - w_ / 2, y_ + h_ / 2, floor, type, "floor-edge", 0);
 
-  set_tile(x_ - size_x / 2, y_, floor, type, "door", 90, false);
+  set_tile(x_ - w_ / 2, y_, floor, type, "int-door", 90, false);
   set_tile(x_, y_, floor, type, "transporter", 0, false);
 }
 
@@ -213,6 +277,12 @@ bool MapSystem::is_solid(double x, double y, int floor)
 
 bool MapSystem::intersects(Room& r1, Room& r2)
 {
+  bool contained =
+    r1.x >= r2.x && r1.x + r1.w <= r2.x + r2.w &&
+    r1.y >= r2.y && r1.y + r1.h <= r2.y + r2.h;
+
+  if (contained) return false;
+
   bool intersects =
     !(r1.x > r2.x + r2.w || r2.x > r1.x + r1.w ||
       r1.y > r2.y + r2.h || r2.y > r1.y + r1.h);
