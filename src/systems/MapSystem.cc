@@ -21,7 +21,7 @@ void MapSystem::layout_map()
 {
   for (auto floor = 0; floor < NUM_FLOORS; ++floor)
   {
-    master_rooms[floor].push_back(Room(-10, 20, 10, 10));
+    master_rooms[floor].push_back(Room(0, 10, 10, 10));
   }
 
   for (int floor = 0; floor < NUM_FLOORS; ++floor)
@@ -48,16 +48,35 @@ void MapSystem::seed_rooms(Room& master, int floor)
   std::random_device rd;
   std::mt19937 mt(rd());
   std::uniform_int_distribution<int> x_dist(
-    master.x - master.w / 2 + 2, master.x + master.w / 2 - 2);
+    master.x - master.w / 2 + 3, master.x + master.w / 2 - 3);
   std::uniform_int_distribution<int> y_dist(
-    master.y - master.h / 2 + 2, master.y + master.h / 2 - 2);
+    master.y - master.h / 2 + 3, master.y + master.h / 2 - 3);
 
   for (int room_num = 0; room_num < 4; ++room_num)
   {
-    int x = x_dist(mt);
-    int y = y_dist(mt);
+    for (int timeout = 0; timeout < 100; ++timeout)
+    {
+      int x = x_dist(mt);
+      int y = y_dist(mt);
 
-    rooms[floor].push_back(Room(x, y, 3, 3));
+      Room candidate(x, y, 3, 3);
+
+      bool collision = false;
+      for (auto& room : rooms[floor])
+      {
+	if (intersects(candidate, room) || contained_in(candidate, room))
+	{
+	  collision = true;
+	  break;
+	}
+      }
+
+      if (!collision)
+      {
+	rooms[floor].push_back(candidate);
+	break;
+      }
+    }
   }
 }
 
@@ -107,7 +126,7 @@ void MapSystem::extend_room(Room& target, int floor)
 
     for (auto& master : master_rooms[floor])
     {
-      if (intersects(master, test_room))
+      if (intersects(test_room, master) && !contained_in(test_room, master))
       {
 	collision = true;
 	break;
@@ -138,7 +157,7 @@ void MapSystem::layout_room(
 void MapSystem::layout_master(
   const std::string& type, const Room& master, int floor)
 {
-  layout_room(type, master.x, master.y, master.w, master.h, floor);
+  layout_master(type, master.x, master.y, master.w, master.h, floor);
 }
 
 
@@ -172,6 +191,11 @@ void MapSystem::layout_master(
   set_ceil_tile(x_ + w_ / 2, y_ - h_ / 2, floor, type, "floor-edge", 180);
   set_ceil_tile(x_ + w_ / 2, y_ + h_ / 2, floor, type, "floor-edge", 270);
   set_ceil_tile(x_ - w_ / 2, y_ + h_ / 2, floor, type, "floor-edge", 0);
+
+  set_tile(x_ - w_ / 2, y_, floor, type, "door", 90, false);
+  set_tile(x_ + w_ / 2, y_, floor, type, "door", 180, false);
+  set_tile(x_, y_ + h_ / 2, floor, type, "door", 270, false);
+  set_tile(x_, y_ - h_ / 2, floor, type, "door", 0, false);
 }
 
 
@@ -275,14 +299,18 @@ bool MapSystem::is_solid(double x, double y, int floor)
 }
 
 
-bool MapSystem::intersects(Room& r1, Room& r2)
+bool MapSystem::contained_in(Room& r1, Room& r2)
 {
   bool contained =
     r1.x >= r2.x && r1.x + r1.w <= r2.x + r2.w &&
     r1.y >= r2.y && r1.y + r1.h <= r2.y + r2.h;
 
-  if (contained) return false;
+  return contained;
+}
 
+
+bool MapSystem::intersects(Room& r1, Room& r2)
+{
   bool intersects =
     !(r1.x > r2.x + r2.w || r2.x > r1.x + r1.w ||
       r1.y > r2.y + r2.h || r2.y > r1.y + r1.h);

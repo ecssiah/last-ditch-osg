@@ -27,6 +27,7 @@ class MapSystem
   void layout_master(const std::string& type, int x, int y, int w, int h, int floor);
   void layout_room(const std::string& type, const Room& room, int floor);
   void layout_room(const std::string& type, int x, int y, int w, int h, int floor);
+  bool contained_in(Room& r1, Room& r2);
   bool intersects(Room& r1, Room& r2);
 
   std::array<std::vector<Room>, NUM_FLOORS> rooms;
