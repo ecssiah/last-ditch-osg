@@ -14,7 +14,7 @@ namespace ld
 static constexpr int NUM_CHUNKS = 5;
 static constexpr int CHUNK_SIZE = 34;
 static constexpr int MAP_SIZE = CHUNK_SIZE * NUM_CHUNKS;
-static constexpr int NUM_FLOORS = 2;
+static constexpr int NUM_FLOORS = 1;
 static constexpr double TILE_SIZE = 2.0;
 static constexpr double FLOOR_HEIGHT = 4.0;
 

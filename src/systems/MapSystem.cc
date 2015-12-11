@@ -21,7 +21,7 @@ void MapSystem::layout_map()
 {
   for (auto floor = 0; floor < NUM_FLOORS; ++floor)
   {
-    master_rooms[floor].push_back(Room(0, 10, 10, 10));
+    master_rooms[floor].push_back(Room(0, 16, 10, 10));
   }
 
   for (int floor = 0; floor < NUM_FLOORS; ++floor)
@@ -64,7 +64,7 @@ void MapSystem::seed_rooms(Room& master, int floor)
       bool collision = false;
       for (auto& room : rooms[floor])
       {
-	if (intersects(candidate, room) || contained_in(candidate, room))
+	if (intersects(candidate, room))
 	{
 	  collision = true;
 	  break;
@@ -182,20 +182,20 @@ void MapSystem::layout_master(
     set_ceil_tile(x_ + w_ / 2, y, floor, type, "floor-edge", 270);
   }
 
+  set_tile(x_ - w_ / 2, y_ + h_ / 2, floor, type, "corner", 0);
   set_tile(x_ - w_ / 2, y_ - h_ / 2, floor, type, "corner", 90);
   set_tile(x_ + w_ / 2, y_ - h_ / 2, floor, type, "corner", 180);
   set_tile(x_ + w_ / 2, y_ + h_ / 2, floor, type, "corner", 270);
-  set_tile(x_ - w_ / 2, y_ + h_ / 2, floor, type, "corner", 0);
 
+  set_ceil_tile(x_ - w_ / 2, y_ + h_ / 2, floor, type, "floor-edge", 0);
   set_ceil_tile(x_ - w_ / 2, y_ - h_ / 2, floor, type, "floor-edge", 90);
   set_ceil_tile(x_ + w_ / 2, y_ - h_ / 2, floor, type, "floor-edge", 180);
   set_ceil_tile(x_ + w_ / 2, y_ + h_ / 2, floor, type, "floor-edge", 270);
-  set_ceil_tile(x_ - w_ / 2, y_ + h_ / 2, floor, type, "floor-edge", 0);
 
-  set_tile(x_ - w_ / 2, y_, floor, type, "door", 90, false);
-  set_tile(x_ + w_ / 2, y_, floor, type, "door", 180, false);
-  set_tile(x_, y_ + h_ / 2, floor, type, "door", 270, false);
   set_tile(x_, y_ - h_ / 2, floor, type, "door", 0, false);
+  set_tile(x_ - w_ / 2, y_, floor, type, "door", 90, false);
+  set_tile(x_, y_ + h_ / 2, floor, type, "door", 180, false);
+  set_tile(x_ + w_ / 2, y_, floor, type, "door", 270, false);
 }
 
 
@@ -204,11 +204,11 @@ void MapSystem::layout_room(
 {
   for (auto x = x_ - w_ / 2 + 1; x <= x_ + w_ / 2 - 1; ++x)
   {
-    set_tile(x, y_ - h_ / 2, floor, type, "int-wall", 180);
     set_tile(x, y_ + h_ / 2, floor, type, "int-wall", 0);
+    set_tile(x, y_ - h_ / 2, floor, type, "int-wall", 180);
 
-    set_ceil_tile(x, y_ - h_ / 2, floor, type, "floor-edge", 180);
     set_ceil_tile(x, y_ + h_ / 2, floor, type, "floor-edge", 0);
+    set_ceil_tile(x, y_ - h_ / 2, floor, type, "floor-edge", 180);
   }
 
   for (auto y = y_ - h_ / 2 + 1; y <= y_ + h_ / 2 - 1; ++y)
@@ -224,15 +224,15 @@ void MapSystem::layout_room(
     for (auto y = y_ - h_ / 2 + 1; y <= y_ + w_ / 2 - 1; ++y)
       set_ceil_tile(x, y, floor, type, "floor");
 
+  set_tile(x_ - w_ / 2, y_ + h_ / 2, floor, type, "int-corner", 0);
   set_tile(x_ - w_ / 2, y_ - h_ / 2, floor, type, "int-corner", 90);
   set_tile(x_ + w_ / 2, y_ - h_ / 2, floor, type, "int-corner", 180);
   set_tile(x_ + w_ / 2, y_ + h_ / 2, floor, type, "int-corner", 270);
-  set_tile(x_ - w_ / 2, y_ + h_ / 2, floor, type, "int-corner", 0);
 
+  set_ceil_tile(x_ - w_ / 2, y_ + h_ / 2, floor, type, "floor-edge", 0);
   set_ceil_tile(x_ - w_ / 2, y_ - h_ / 2, floor, type, "floor-edge", 90);
   set_ceil_tile(x_ + w_ / 2, y_ - h_ / 2, floor, type, "floor-edge", 180);
   set_ceil_tile(x_ + w_ / 2, y_ + h_ / 2, floor, type, "floor-edge", 270);
-  set_ceil_tile(x_ - w_ / 2, y_ + h_ / 2, floor, type, "floor-edge", 0);
 
   set_tile(x_ - w_ / 2, y_, floor, type, "int-door", 90, false);
   set_tile(x_, y_, floor, type, "transporter", 0, false);
@@ -301,7 +301,7 @@ bool MapSystem::is_solid(double x, double y, int floor)
 
 bool MapSystem::contained_in(Room& r1, Room& r2)
 {
-  bool contained =
+  auto contained =
     r1.x >= r2.x && r1.x + r1.w <= r2.x + r2.w &&
     r1.y >= r2.y && r1.y + r1.h <= r2.y + r2.h;
 
@@ -311,9 +311,9 @@ bool MapSystem::contained_in(Room& r1, Room& r2)
 
 bool MapSystem::intersects(Room& r1, Room& r2)
 {
-  bool intersects =
-    !(r1.x > r2.x + r2.w || r2.x > r1.x + r1.w ||
-      r1.y > r2.y + r2.h || r2.y > r1.y + r1.h);
+  auto intersects =
+    !(r1.x + r1.w <= r2.x + 1 || r2.x + r2.w <= r1.x + 1 ||
+      r1.y + r1.h <= r2.y + 1 || r2.y + r2.h <= r1.y + 1);
 
   return intersects;
 }
