@@ -38,8 +38,17 @@ void PhysicsSystem::simulate(DynamicEntity& user, double dt)
 
   if (user.inactive_time > 0.0)
   {
-    user.position = cosine_interp(user.start, user.target, 1 - user.inactive_time);
     user.inactive_time -= .05;
+
+    if (user.inactive_time < 0.0)
+    {
+      user.inactive_time = 0.0;
+      user.position = cosine_interp(user.start, user.target, 1);
+    }
+    else
+    {
+      user.position = cosine_interp(user.start, user.target, 1 - user.inactive_time);
+    }
   }
   else
   {
@@ -74,12 +83,12 @@ void PhysicsSystem::simulate(DynamicEntity& user, double dt)
 
 void PhysicsSystem::scan_collisions(DynamicEntity& user)
 {
-  int floor = std::floor(user.position.z());
+  auto floor = (int)std::floor(user.position.z());
 
   if (floor < 0 || floor >= NUM_FLOORS) return;
 
-  int x = std::round(user.position.x());
-  int y = std::round(user.position.y());
+  auto x = (int)std::round(user.position.x());
+  auto y = (int)std::round(user.position.y());
 
   for (auto xx = x - 1; xx <= x + 1; ++xx)
     for (auto yy = y - 1; yy <= y + 1; ++yy)

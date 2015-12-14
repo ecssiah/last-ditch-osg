@@ -11,7 +11,7 @@ EntitySystem::EntitySystem(RenderSystem& render_system_)
   DynamicEntity user;
   user.name = "kadijah";
   user.xform = render_system.get_user_xform(user.name);
-  user.collision_active = false;
+  user.collision_active = true;
 
   users[user.name] = user;
 
