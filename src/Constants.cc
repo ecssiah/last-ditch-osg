@@ -4,6 +4,9 @@
 
 const YAML::Node constants = YAML::LoadFile("scripts/constants.yml");
 
+// World
+const long SEED = constants["seed"].as<long>();
+
 // Camera
 const double FOV = constants["fov"].as<double>();
 const double NEAR_CLIP = constants["near clip"].as<double>();

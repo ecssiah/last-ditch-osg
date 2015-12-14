@@ -1,6 +1,9 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
+// World
+extern const long SEED;
+
 // Camera
 extern const double FOV;
 extern const double NEAR_CLIP;

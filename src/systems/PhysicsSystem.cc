@@ -100,11 +100,10 @@ void PhysicsSystem::scan_collisions(DynamicEntity& user)
 void PhysicsSystem::resolve_collision(
   DynamicEntity& user, int x, int y)
 {
-  Vec2d min(x - tile_radius, y - tile_radius);
-  Vec2d max(x + tile_radius, y + tile_radius);
-
   Vec2d tile_pos(x, y);
   Vec2d user_pos(user.position.x(), user.position.y());
+  Vec2d min(x - tile_radius, y - tile_radius);
+  Vec2d max(x + tile_radius, y + tile_radius);
   Vec2d nearest(user_pos);
 
   if (nearest.x() < min.x()) nearest.x() = min.x();
@@ -129,11 +128,11 @@ double PhysicsSystem::cosine_interp(double v1, double v2, double t)
 }
 
 
-Vec3 PhysicsSystem::cosine_interp(Vec3 v1, Vec3 v2, double t)
+Vec3d PhysicsSystem::cosine_interp(Vec3 v1, Vec3 v2, double t)
 {
   auto x = cosine_interp(v1.x(), v2.x(), t);
   auto y = cosine_interp(v1.y(), v2.y(), t);
   auto z = cosine_interp(v1.z(), v2.z(), t);
 
-  return Vec3(x, y, z);
+  return {x, y, z};
 }

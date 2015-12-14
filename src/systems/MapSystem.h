@@ -3,6 +3,7 @@
 
 #include <string>
 #include <array>
+#include <random>
 #include <vector>
 #include "../Constants.h"
 #include "../components/Room.h"
@@ -20,14 +21,13 @@ static constexpr double FLOOR_HEIGHT = 4.0;
 
 class MapSystem
 {
-  void seed_rooms(Room& master, int floor, long seed = -1);
-  void extend_room(Room& target, int floor, long seed = -1);
+  void seed_rooms(Room& master, int floor);
+  void extend_room(Room& target, int floor);
   void layout_map();
   void layout_master(const std::string& type, const Room& master, int floor);
   void layout_master(const std::string& type, int x, int y, int w, int h, int floor);
   void layout_room(const std::string& type, const Room& room, int floor);
   void layout_room(const std::string& type, int x, int y, int w, int h, int floor);
-  bool contained_in(Room& r1, Room& r2);
   bool intersects(Room& r1, Room& r2);
 
   std::array<std::vector<Room>, NUM_FLOORS> rooms;

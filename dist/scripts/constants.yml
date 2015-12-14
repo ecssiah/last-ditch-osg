@@ -1,3 +1,6 @@
+# World
+seed: 11223344
+
 # Camera
 fov: 55.0
 near clip: .1

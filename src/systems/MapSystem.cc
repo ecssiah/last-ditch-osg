@@ -1,6 +1,8 @@
 #include "MapSystem.h"
 
+#include <chrono>
 #include <cmath>
+#include <functional>
 #include <random>
 #include <iostream>
 #include "../Constants.h"
@@ -9,9 +11,16 @@ using namespace std;
 using namespace osg;
 using namespace ld;
 
+static mt19937 rng;
+
 MapSystem::MapSystem()
 {
   layout_map();
+
+  if (SEED == -1)
+    rng.seed(std::chrono::high_resolution_clock::now().time_since_epoch().count());
+  else
+    rng.seed(SEED);
 
   printf(" Map System finished\n");
 }
@@ -19,8 +28,6 @@ MapSystem::MapSystem()
 
 void MapSystem::layout_map()
 {
-  static constexpr long SEED = 1111;
-
   for (auto floor = 0; floor < NUM_FLOORS; ++floor)
   {
     master_rooms[floor].push_back(Room(0, 16, 10, 10));
@@ -28,12 +35,12 @@ void MapSystem::layout_map()
 
   for (auto floor = 0; floor < NUM_FLOORS; ++floor)
     for (auto& master : master_rooms[floor])
-      seed_rooms(master, floor, SEED);
+      seed_rooms(master, floor);
 
   for (auto iterations = 0; iterations < 60; ++iterations)
     for (auto floor = 0; floor < NUM_FLOORS; ++floor)
       for (auto& room : rooms[floor])
-	extend_room(room, floor, SEED);
+	extend_room(room, floor);
 
   for (auto floor = 0; floor < NUM_FLOORS; ++floor)
     for (auto& room : rooms[floor])
@@ -45,29 +52,20 @@ void MapSystem::layout_map()
 }
 
 
-void MapSystem::seed_rooms(Room& master, int floor, long seed)
+void MapSystem::seed_rooms(Room& master, int floor)
 {
-  auto n = 0;
-  if (seed == -1)
-  {
-    std::random_device rd;
-    n = rd();
-  }
-  else
-    n = seed;
-
-  std::mt19937 mt(n);
-  std::uniform_int_distribution<int> x_dist(
-    master.x - master.w / 2 + 1, master.x + master.w / 2 - 1);
-  std::uniform_int_distribution<int> y_dist(
-    master.y - master.h / 2 + 1, master.y + master.h / 2 - 1);
-
   for (auto room_num = 0; room_num < 4; ++room_num)
   {
     for (auto timeout = 0; timeout < 100; ++timeout)
     {
-      int x = x_dist(mt);
-      int y = y_dist(mt);
+      std::uniform_int_distribution<> x_dist(
+	master.x - master.w / 2 + 1, master.x + master.w / 2 - 1);
+
+      std::uniform_int_distribution<> y_dist(
+	master.y - master.h / 2 + 1, master.y + master.h / 2 - 1);
+
+      auto x = x_dist(rng);
+      auto y = y_dist(rng);
 
       Room candidate(x, y, 3, 3, &master);
 
@@ -91,25 +89,14 @@ void MapSystem::seed_rooms(Room& master, int floor, long seed)
 }
 
 
-void MapSystem::extend_room(Room& target, int floor, long seed)
+void MapSystem::extend_room(Room& target, int floor)
 {
-  auto n = 0;
-
-  if (seed == -1)
-  {
-    std::random_device rd;
-    n = rd();
-  }
-  else
-    n = seed;
-
-  std::mt19937 mt(n);
-  std::uniform_int_distribution<int> dist(0, 4);
-
   int i = 0;
   while (i++ < 1000)
   {
-    auto direction = dist(mt);
+    std::uniform_int_distribution<> choice(0, 4);
+    auto direction = choice(rng);
+
     Room test_room(target.x, target.y, target.w, target.h);
     const Room* master_room = target.master;
 
@@ -163,7 +150,6 @@ void MapSystem::extend_room(Room& target, int floor, long seed)
       target.w = test_room.w;
       target.h = test_room.h;
 
-      printf("%d %d %d %d\n", target.x, target.y, target.w, target.h);
       break;
     }
   }
@@ -321,21 +307,11 @@ bool MapSystem::is_solid(double x, double y, int floor)
 }
 
 
-bool MapSystem::contained_in(Room& r1, Room& r2)
-{
-  auto contained =
-    r1.x >= r2.x && r1.x + r1.w <= r2.x + r2.w &&
-    r1.y >= r2.y && r1.y + r1.h <= r2.y + r2.h;
-
-  return contained;
-}
-
-
 bool MapSystem::intersects(Room& r1, Room& r2)
 {
   auto intersects =
-    !(r1.x + r1.w <= r2.x + 1 || r2.x + r2.w <= r1.x + 1 ||
-      r1.y + r1.h <= r2.y + 1 || r2.y + r2.h <= r1.y + 1);
+    !(r1.x + r1.w < r2.x + 1 || r2.x + r2.w < r1.x + 1 ||
+      r1.y + r1.h < r2.y + 1 || r2.y + r2.h < r1.y + 1);
 
   return intersects;
 }
