@@ -21,9 +21,11 @@ struct DynamicEntity
       y_rot_speed(USER_Y_ROT_SPEED),
       heading(M_PI),
       pitch(0.0),
-      inactive_time(0.0)
+      inactive_time(0.0),
+      collision_active(true)
   {}
 
+  bool collision_active;
   std::string name;
   osg::ref_ptr<osg::MatrixTransform> xform;
   osg::Vec3 position;

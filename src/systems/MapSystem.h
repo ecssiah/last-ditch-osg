@@ -20,8 +20,8 @@ static constexpr double FLOOR_HEIGHT = 4.0;
 
 class MapSystem
 {
-  void seed_rooms(Room& master, int floor);
-  void extend_room(Room& target, int floor);
+  void seed_rooms(Room& master, int floor, long seed = -1);
+  void extend_room(Room& target, int floor, long seed = -1);
   void layout_map();
   void layout_master(const std::string& type, const Room& master, int floor);
   void layout_master(const std::string& type, int x, int y, int w, int h, int floor);

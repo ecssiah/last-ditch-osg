@@ -19,47 +19,57 @@ MapSystem::MapSystem()
 
 void MapSystem::layout_map()
 {
+  static constexpr long SEED = 1111;
+
   for (auto floor = 0; floor < NUM_FLOORS; ++floor)
   {
     master_rooms[floor].push_back(Room(0, 16, 10, 10));
   }
 
-  for (int floor = 0; floor < NUM_FLOORS; ++floor)
+  for (auto floor = 0; floor < NUM_FLOORS; ++floor)
     for (auto& master : master_rooms[floor])
-      seed_rooms(master, floor);
+      seed_rooms(master, floor, SEED);
 
-  for (int iterations = 0; iterations < 10; ++iterations)
-    for (int floor = 0; floor < NUM_FLOORS; ++floor)
+  for (auto iterations = 0; iterations < 60; ++iterations)
+    for (auto floor = 0; floor < NUM_FLOORS; ++floor)
       for (auto& room : rooms[floor])
-	extend_room(room, floor);
+	extend_room(room, floor, SEED);
 
-  for (int floor = 0; floor < NUM_FLOORS; ++floor)
+  for (auto floor = 0; floor < NUM_FLOORS; ++floor)
     for (auto& room : rooms[floor])
       layout_room("a", room, floor);
 
-  for (int floor = 0; floor < NUM_FLOORS; ++floor)
+  for (auto floor = 0; floor < NUM_FLOORS; ++floor)
     for (auto& master : master_rooms[floor])
       layout_master("a", master, floor);
 }
 
 
-void MapSystem::seed_rooms(Room& master, int floor)
+void MapSystem::seed_rooms(Room& master, int floor, long seed)
 {
-  std::random_device rd;
-  std::mt19937 mt(rd());
-  std::uniform_int_distribution<int> x_dist(
-    master.x - master.w / 2 + 3, master.x + master.w / 2 - 3);
-  std::uniform_int_distribution<int> y_dist(
-    master.y - master.h / 2 + 3, master.y + master.h / 2 - 3);
-
-  for (int room_num = 0; room_num < 4; ++room_num)
+  auto n = 0;
+  if (seed == -1)
   {
-    for (int timeout = 0; timeout < 100; ++timeout)
+    std::random_device rd;
+    n = rd();
+  }
+  else
+    n = seed;
+
+  std::mt19937 mt(n);
+  std::uniform_int_distribution<int> x_dist(
+    master.x - master.w / 2 + 1, master.x + master.w / 2 - 1);
+  std::uniform_int_distribution<int> y_dist(
+    master.y - master.h / 2 + 1, master.y + master.h / 2 - 1);
+
+  for (auto room_num = 0; room_num < 4; ++room_num)
+  {
+    for (auto timeout = 0; timeout < 100; ++timeout)
     {
       int x = x_dist(mt);
       int y = y_dist(mt);
 
-      Room candidate(x, y, 3, 3);
+      Room candidate(x, y, 3, 3, &master);
 
       bool collision = false;
       for (auto& room : rooms[floor])
@@ -81,35 +91,57 @@ void MapSystem::seed_rooms(Room& master, int floor)
 }
 
 
-void MapSystem::extend_room(Room& target, int floor)
+void MapSystem::extend_room(Room& target, int floor, long seed)
 {
-  std::random_device rd;
-  std::mt19937 mt(rd());
+  auto n = 0;
+
+  if (seed == -1)
+  {
+    std::random_device rd;
+    n = rd();
+  }
+  else
+    n = seed;
+
+  std::mt19937 mt(n);
   std::uniform_int_distribution<int> dist(0, 4);
 
   int i = 0;
-  while (i++ < 100000)
+  while (i++ < 1000)
   {
     auto direction = dist(mt);
     Room test_room(target.x, target.y, target.w, target.h);
+    const Room* master_room = target.master;
 
     if (direction == 0)
     {
-      ++test_room.w;
+      if (test_room.x + test_room.w + 1 <= master_room->x + master_room->w)
+      {
+	++test_room.w;
+      }
     }
     else if (direction == 1)
     {
-      ++test_room.h;
+      if (test_room.y + test_room.h + 1 <= master_room->y + master_room->h)
+      {
+	++test_room.h;
+      }
     }
     else if (direction == 2)
     {
-      --test_room.x;
-      ++test_room.w;
+      if (test_room.x - 1 > master_room->x)
+      {
+	--test_room.x;
+	++test_room.w;
+      }
     }
     else if (direction == 3)
     {
-      --test_room.y;
-      ++test_room.h;
+      if (test_room.y - 1 > master_room->y)
+      {
+	--test_room.y;
+	++test_room.h;
+      }
     }
 
     bool collision = false;
@@ -118,15 +150,6 @@ void MapSystem::extend_room(Room& target, int floor)
       if (room == target) continue;
 
       if (intersects(room, test_room))
-      {
-	collision = true;
-	break;
-      }
-    }
-
-    for (auto& master : master_rooms[floor])
-    {
-      if (intersects(test_room, master) && !contained_in(test_room, master))
       {
 	collision = true;
 	break;
@@ -144,13 +167,6 @@ void MapSystem::extend_room(Room& target, int floor)
       break;
     }
   }
-}
-
-
-void MapSystem::layout_room(
-  const std::string& type, const Room& room, int floor)
-{
-  layout_room(type, room.x, room.y, room.w, room.h, floor);
 }
 
 
@@ -192,10 +208,17 @@ void MapSystem::layout_master(
   set_ceil_tile(x_ + w_ / 2, y_ - h_ / 2, floor, type, "floor-edge", 180);
   set_ceil_tile(x_ + w_ / 2, y_ + h_ / 2, floor, type, "floor-edge", 270);
 
-  set_tile(x_, y_ - h_ / 2, floor, type, "door", 0, false);
-  set_tile(x_ - w_ / 2, y_, floor, type, "door", 90, false);
-  set_tile(x_, y_ + h_ / 2, floor, type, "door", 180, false);
-  set_tile(x_ + w_ / 2, y_, floor, type, "door", 270, false);
+  // set_tile(x_, y_ - h_ / 2, floor, type, "door", 0, false);
+  // set_tile(x_ - w_ / 2, y_, floor, type, "door", 90, false);
+  // set_tile(x_, y_ + h_ / 2, floor, type, "door", 180, false);
+  // set_tile(x_ + w_ / 2, y_, floor, type, "door", 270, false);
+}
+
+
+void MapSystem::layout_room(
+  const std::string& type, const Room& room, int floor)
+{
+  layout_room(type, room.x, room.y, room.w, room.h, floor);
 }
 
 
@@ -220,9 +243,9 @@ void MapSystem::layout_room(
     set_ceil_tile(x_ + w_ / 2, y, floor, type, "floor-edge", 270);
   }
 
-  for (auto x = x_ - w_ / 2 + 1; x <= x_ + w_ / 2 - 1; ++x)
-    for (auto y = y_ - h_ / 2 + 1; y <= y_ + w_ / 2 - 1; ++y)
-      set_ceil_tile(x, y, floor, type, "floor");
+  // for (auto x = x_ - w_ / 2 + 1; x <= x_ + w_ / 2 - 1; ++x)
+  //   for (auto y = y_ - h_ / 2 + 1; y <= y_ + w_ / 2 - 1; ++y)
+  //     set_ceil_tile(x, y, floor, type, "floor");
 
   set_tile(x_ - w_ / 2, y_ + h_ / 2, floor, type, "int-corner", 0);
   set_tile(x_ - w_ / 2, y_ - h_ / 2, floor, type, "int-corner", 90);
@@ -234,7 +257,6 @@ void MapSystem::layout_room(
   set_ceil_tile(x_ + w_ / 2, y_ - h_ / 2, floor, type, "floor-edge", 180);
   set_ceil_tile(x_ + w_ / 2, y_ + h_ / 2, floor, type, "floor-edge", 270);
 
-  set_tile(x_ - w_ / 2, y_, floor, type, "int-door", 90, false);
   set_tile(x_, y_, floor, type, "transporter", 0, false);
 }
 

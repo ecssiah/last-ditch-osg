@@ -58,7 +58,7 @@ void PhysicsSystem::simulate(DynamicEntity& user, double dt)
     user.position += velocity * dt;
   }
 
-  scan_collisions(user);
+  if (user.collision_active) scan_collisions(user);
 
   Matrix r, t;
   r.makeRotate(user_heading);
