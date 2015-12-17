@@ -11,16 +11,12 @@ using namespace std;
 using namespace osg;
 using namespace ld;
 
-static mt19937 rng;
+static mt19937 RNG;
 
 MapSystem::MapSystem()
+  : seed(SEED > 0 ? SEED : chrono::high_resolution_clock::now().time_since_epoch().count())
 {
   layout_map();
-
-  if (SEED == -1)
-    rng.seed(std::chrono::high_resolution_clock::now().time_since_epoch().count());
-  else
-    rng.seed(SEED);
 
   printf(" Map System finished\n");
 }
@@ -37,7 +33,7 @@ void MapSystem::layout_map()
     for (auto& master : master_rooms[floor])
       seed_rooms(master, floor);
 
-  for (auto iterations = 0; iterations < 60; ++iterations)
+  for (auto i = 0; i < 1000; ++i)
     for (auto floor = 0; floor < NUM_FLOORS; ++floor)
       for (auto& room : rooms[floor])
 	extend_room(room, floor);
@@ -54,9 +50,11 @@ void MapSystem::layout_map()
 
 void MapSystem::seed_rooms(Room& master, int floor)
 {
+  RNG.seed(seed);
+
   for (auto room_num = 0; room_num < 4; ++room_num)
   {
-    for (auto timeout = 0; timeout < 100; ++timeout)
+    for (auto i = 0; i < 100; ++i)
     {
       std::uniform_int_distribution<> x_dist(
 	master.x - master.w / 2 + 1, master.x + master.w / 2 - 1);
@@ -64,8 +62,8 @@ void MapSystem::seed_rooms(Room& master, int floor)
       std::uniform_int_distribution<> y_dist(
 	master.y - master.h / 2 + 1, master.y + master.h / 2 - 1);
 
-      auto x = x_dist(rng);
-      auto y = y_dist(rng);
+      auto x = x_dist(RNG);
+      auto y = y_dist(RNG);
 
       Room candidate(x, y, 3, 3, &master);
 
@@ -91,42 +89,41 @@ void MapSystem::seed_rooms(Room& master, int floor)
 
 void MapSystem::extend_room(Room& target, int floor)
 {
-  int i = 0;
-  while (i++ < 1000)
+  RNG.seed(seed);
+
+  for (auto i = 0; i < 10000; ++i)
   {
     std::uniform_int_distribution<> choice(0, 4);
-    auto direction = choice(rng);
+    auto direction = choice(RNG);
 
     Room test_room(target.x, target.y, target.w, target.h);
     const Room* master_room = target.master;
 
     if (direction == 0)
     {
-      if (test_room.x + test_room.w + 1 <= master_room->x + master_room->w)
+      if (test_room.x + test_room.w / 2 + 1 < master_room->x + master_room->w / 2)
       {
 	++test_room.w;
       }
     }
     else if (direction == 1)
     {
-      if (test_room.y + test_room.h + 1 <= master_room->y + master_room->h)
+      if (test_room.y + test_room.h / 2 + 1 < master_room->y + master_room->h / 2)
       {
 	++test_room.h;
       }
     }
     else if (direction == 2)
     {
-      if (test_room.x - 1 > master_room->x)
+      if (test_room.x - test_room.w / 2 - 1 > master_room->x - master_room->w / 2)
       {
-	--test_room.x;
 	++test_room.w;
       }
     }
     else if (direction == 3)
     {
-      if (test_room.y - 1 > master_room->y)
+      if (test_room.y - test_room.h / 2 - 1 > master_room->y - master_room->h / 2)
       {
-	--test_room.y;
 	++test_room.h;
       }
     }
@@ -310,8 +307,8 @@ bool MapSystem::is_solid(double x, double y, int floor)
 bool MapSystem::intersects(Room& r1, Room& r2)
 {
   auto intersects =
-    !(r1.x + r1.w < r2.x + 1 || r2.x + r2.w < r1.x + 1 ||
-      r1.y + r1.h < r2.y + 1 || r2.y + r2.h < r1.y + 1);
+    !(r1.x + r1.w <= r2.x || r2.x + r2.w <= r1.x ||
+      r1.y + r1.h <= r2.y || r2.y + r2.h <= r1.y);
 
   return intersects;
 }

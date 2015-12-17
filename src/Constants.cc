@@ -5,7 +5,7 @@
 const YAML::Node constants = YAML::LoadFile("scripts/constants.yml");
 
 // World
-const long SEED = constants["seed"].as<long>();
+const auto SEED = constants["seed"].as<unsigned long>();
 
 // Camera
 const double FOV = constants["fov"].as<double>();

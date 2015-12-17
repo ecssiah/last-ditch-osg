@@ -30,6 +30,8 @@ class MapSystem
   void layout_room(const std::string& type, int x, int y, int w, int h, int floor);
   bool intersects(Room& r1, Room& r2);
 
+  unsigned long seed;
+
   std::array<std::vector<Room>, NUM_FLOORS> rooms;
   std::array<std::vector<Room>, NUM_FLOORS> master_rooms;
   std::array<std::array<std::array<Tile, MAP_SIZE + 1>, MAP_SIZE + 1>, NUM_FLOORS> tiles;
