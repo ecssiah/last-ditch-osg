@@ -103,28 +103,28 @@ void MapSystem::extend_room(Room& target, int floor)
     {
       if (test_room.x + test_room.w / 2 + 1 < master_room->x + master_room->w / 2)
       {
-	++test_room.w;
+	test_room.w += 2;
       }
     }
     else if (direction == 1)
     {
       if (test_room.y + test_room.h / 2 + 1 < master_room->y + master_room->h / 2)
       {
-	++test_room.h;
+	test_room.h += 2;
       }
     }
     else if (direction == 2)
     {
       if (test_room.x - test_room.w / 2 - 1 > master_room->x - master_room->w / 2)
       {
-	++test_room.w;
+	test_room.w += 2;
       }
     }
     else if (direction == 3)
     {
       if (test_room.y - test_room.h / 2 - 1 > master_room->y - master_room->h / 2)
       {
-	++test_room.h;
+	test_room.h += 2;
       }
     }
 
@@ -307,8 +307,10 @@ bool MapSystem::is_solid(double x, double y, int floor)
 bool MapSystem::intersects(Room& r1, Room& r2)
 {
   auto intersects =
-    !(r1.x + r1.w <= r2.x || r2.x + r2.w <= r1.x ||
-      r1.y + r1.h <= r2.y || r2.y + r2.h <= r1.y);
+    !(r1.x + r1.w / 2 <= r2.x - r2.w / 2 ||
+      r2.x + r2.w / 2 <= r1.x - r1.w / 2 ||
+      r1.y + r1.h / 2 <= r2.y - r2.h / 2 ||
+      r2.y + r2.h / 2 <= r1.y - r1.h / 2);
 
   return intersects;
 }
