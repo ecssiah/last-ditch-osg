@@ -28,7 +28,8 @@ class MapSystem
   void layout_master(const std::string& type, int x, int y, int w, int h, int floor);
   void layout_room(const std::string& type, const Room& room, int floor);
   void layout_room(const std::string& type, int x, int y, int w, int h, int floor);
-  bool intersects(Room& r1, Room& r2);
+  bool intersects(const Room& r1, const Room& r2);
+  bool rect_intersects_room(int x1, int x2, int y1, int y2, const Room& room);
 
   unsigned long seed;
 
