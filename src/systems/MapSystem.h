@@ -23,13 +23,18 @@ class MapSystem
 {
   void seed_rooms(Room& master, int floor);
   void extend_room(Room& target, int floor);
+
   void layout_map();
   void layout_master(const std::string& type, const Room& master, int floor);
   void layout_master(const std::string& type, int x, int y, int w, int h, int floor);
   void layout_room(const std::string& type, const Room& room, int floor);
   void layout_room(const std::string& type, int x, int y, int w, int h, int floor);
-  bool intersects(const Room& r1, const Room& r2);
+
+  bool rect_intersects_rect(
+    int r1x1, int r1x2, int r1y1, int r1y2,
+    int r2x1, int r2x2, int r2y1, int r2y2);
   bool rect_intersects_room(int x1, int x2, int y1, int y2, const Room& room);
+  bool room_intersects_room(const Room& r1, const Room& r2);
 
   unsigned long seed;
 
@@ -48,9 +53,11 @@ public:
     int x, int y, int floor,
     const std::string& type, const std::string& name,
     double rotation = 0.0);
+
+  Tile& get_tile(double x, double y, int floor);
   Tile& get_tile(int x, int y, int floor);
   const Tile& get_tile(int x, int y, int floor) const;
-  Tile& get_tile(double x, double y, int floor);
+
   bool is_solid(double x, double y, int floor);
 };
 

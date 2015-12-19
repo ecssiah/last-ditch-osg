@@ -64,12 +64,12 @@ void MapSystem::seed_rooms(Room& master, int floor)
 
       Room candidate(x, y, 3, 3, &master);
 
-      bool collision = false;
+      auto collision = false;
       for (auto& room : rooms[floor])
       {
 	if (room == candidate) continue;
 
-	collision = intersects(candidate, room);
+	collision = room_intersects_room(candidate, room);
 
 	if (collision) break;
       }
@@ -86,11 +86,11 @@ void MapSystem::seed_rooms(Room& master, int floor)
 
 void MapSystem::extend_room(Room& target, int floor)
 {
-  const Room* master_room = target.master;
+  const auto master_room = target.master;
 
   if (target.x + target.w + 1 <= master_room->x + master_room->w)
   {
-    bool collision = false;
+    auto collision = false;
     for (auto& room : rooms[floor])
     {
       if (room == target) continue;
@@ -110,7 +110,7 @@ void MapSystem::extend_room(Room& target, int floor)
 
   if (target.y + target.h + 1 <= master_room->y + master_room->h)
   {
-    bool collision = false;
+    auto collision = false;
     for (auto& room : rooms[floor])
     {
       if (room == target) continue;
@@ -130,7 +130,7 @@ void MapSystem::extend_room(Room& target, int floor)
 
   if (target.x - 1 >= master_room->x)
   {
-    bool collision = false;
+    auto collision = false;
     for (auto& room : rooms[floor])
     {
       if (room == target) continue;
@@ -151,7 +151,7 @@ void MapSystem::extend_room(Room& target, int floor)
 
   if (target.y - 1 >= master_room->y)
   {
-    bool collision = false;
+    auto collision = false;
     for (auto& room : rooms[floor])
     {
       if (room == target) continue;
@@ -169,16 +169,6 @@ void MapSystem::extend_room(Room& target, int floor)
       return;
     }
   }
-}
-
-
-bool MapSystem::rect_intersects_room(int x1, int x2, int y1, int y2, const Room& room)
-{
-  auto intersects =
-    !(x2 <= room.x || x1 >= room.x + room.w ||
-      y2 <= room.y || y1 >= room.y + room.h);
-
-  return intersects;
 }
 
 
@@ -331,11 +321,27 @@ bool MapSystem::is_solid(double x, double y, int floor)
 }
 
 
-bool MapSystem::intersects(const Room& r1, const Room& r2)
+bool MapSystem::rect_intersects_rect(
+  int r1x1, int r1x2, int r1y1, int r1y2,
+  int r2x1, int r2x2, int r2y1, int r2y2)
 {
-  auto intersects =
-    !(r1.x + r1.w <= r2.x || r1.x >= r2.x + r2.w ||
-      r1.y + r1.h <= r2.y || r1.y >= r2.y + r2.h);
+  auto intersects = !(r1x2 <= r2x1 || r1x1 >= r2x2 || r1y2 <= r2y1 || r1y1 >= r2y2);
 
   return intersects;
+}
+
+
+bool MapSystem::rect_intersects_room(int x1, int x2, int y1, int y2, const Room& room)
+{
+  return rect_intersects_rect(
+    x1, x2, y1, y2,
+    room.x, room.y, room.x + room.w, room.y + room.h);
+}
+
+
+bool MapSystem::room_intersects_room(const Room& r1, const Room& r2)
+{
+  return rect_intersects_rect(
+    r1.x, r1.x + r1.w, r1.y, r1.y + r1.h,
+    r2.x, r2.x + r2.w, r2.y, r2.y + r2.h);
 }
