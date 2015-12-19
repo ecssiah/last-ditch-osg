@@ -26,7 +26,7 @@ void MapSystem::layout_map()
 {
   for (auto floor = 0; floor < NUM_FLOORS; ++floor)
   {
-    master_rooms[floor].push_back(Room(0, 16, 10, 10));
+    master_rooms[floor].push_back(Room(-4, 6, 10, 10));
   }
 
   for (auto floor = 0; floor < NUM_FLOORS; ++floor)
@@ -88,60 +88,36 @@ void MapSystem::extend_room(Room& target, int floor)
 {
   const auto master_room = target.master;
 
-  if (target.x + target.w + 1 <= master_room->x + master_room->w)
+  if (target.x + target.w <= master_room->x + master_room->w)
   {
-    auto collision = false;
-    for (auto& room : rooms[floor])
-    {
-      if (room == target) continue;
+    bool area_is_clear = area_clear(
+      target.x, target.x + target.w, target.y, target.y + target.h, floor, target);
 
-      collision = rect_intersects_room(
-	target.x, target.y, target.x + target.w + 1, target.y + target.h, room);
-
-      if (collision) break;
-    }
-
-    if (!collision)
+    if (area_is_clear)
     {
       ++target.w;
       return;
     }
   }
 
-  if (target.y + target.h + 1 <= master_room->y + master_room->h)
+  if (target.y + target.h <= master_room->y + master_room->h)
   {
-    auto collision = false;
-    for (auto& room : rooms[floor])
-    {
-      if (room == target) continue;
+    bool area_is_clear = area_clear(
+      target.x, target.x + target.w, target.y, target.y + target.h, floor, target);
 
-      collision = rect_intersects_room(
-	target.x, target.y, target.x + target.w, target.y + target.h + 1, room);
-
-      if (collision) break;
-    }
-
-    if (!collision)
+    if (area_is_clear)
     {
       ++target.h;
       return;
     }
   }
 
-  if (target.x - 1 >= master_room->x)
+  if (target.x >= master_room->x)
   {
-    auto collision = false;
-    for (auto& room : rooms[floor])
-    {
-      if (room == target) continue;
+    bool area_is_clear = area_clear(
+      target.x, target.x + target.w, target.y, target.y + target.h, floor, target);
 
-      collision = rect_intersects_room(
-	target.x - 1, target.y, target.x + target.w + 1, target.y + target.h, room);
-
-      if (collision) break;
-    }
-
-    if (!collision)
+    if (area_is_clear)
     {
       --target.x;
       ++target.w;
@@ -149,26 +125,35 @@ void MapSystem::extend_room(Room& target, int floor)
     }
   }
 
-  if (target.y - 1 >= master_room->y)
+  if (target.y >= master_room->y)
   {
-    auto collision = false;
-    for (auto& room : rooms[floor])
-    {
-      if (room == target) continue;
+    bool area_is_clear = area_clear(
+      target.x, target.x + target.w, target.y, target.y + target.h, floor, target);
 
-      collision = rect_intersects_room(
-	target.x, target.y - 1, target.x + target.w, target.y + target.h + 1, room);
-
-      if (collision) break;
-    }
-
-    if (!collision)
+    if (area_is_clear)
     {
       --target.y;
       ++target.h;
       return;
     }
   }
+}
+
+
+bool MapSystem::area_clear(int x1, int x2, int y1, int y2, int floor, Room& target)
+{
+  for (auto& room : rooms[floor])
+  {
+    if (room == target) continue;
+    if (rect_intersects_room(x1, x2, y1, y2, room))
+    {
+      printf("rect: %d %d %d %d\n", x1, x2, y1, y2);
+      printf("room: %d %d %d %d\n\n", room.x, room.x + room.w, room.y, room.y + room.h);
+      return false;
+    }
+  }
+
+  return true;
 }
 
 
@@ -209,11 +194,6 @@ void MapSystem::layout_master(
   set_ceil_tile(x_, y_, floor, type, "floor-edge", 90);
   set_ceil_tile(x_ + w_ - 1, y_, floor, type, "floor-edge", 180);
   set_ceil_tile(x_ + w_ - 1, y_ + h_ - 1, floor, type, "floor-edge", 270);
-
-  // set_tile(x_, y_, floor, type, "door", 0, false);
-  // set_tile(x_, y_, floor, type, "door", 90, false);
-  // set_tile(x_, y_ + h_ - 1, floor, type, "door", 180, false);
-  // set_tile(x_ + w_ - 1, y_, floor, type, "door", 270, false);
 }
 
 
@@ -244,10 +224,6 @@ void MapSystem::layout_room(
     set_ceil_tile(x_, y, floor, type, "floor-edge", 90);
     set_ceil_tile(x_ + w_ - 1, y, floor, type, "floor-edge", 270);
   }
-
-  // for (auto x = x_ + 1; x < x_ + w_ - 1 - 1; ++x)
-  //   for (auto y = y_ + 1; y < y_ + h_ - 1 - 1; ++y)
-  //     set_ceil_tile(x, y, floor, type, "floor");
 
   set_tile(x_, y_ + h_ - 1, floor, type, "int-corner", 0);
   set_tile(x_, y_, floor, type, "int-corner", 90);
@@ -325,7 +301,23 @@ bool MapSystem::rect_intersects_rect(
   int r1x1, int r1x2, int r1y1, int r1y2,
   int r2x1, int r2x2, int r2y1, int r2y2)
 {
-  auto intersects = !(r1x2 <= r2x1 || r1x1 >= r2x2 || r1y2 <= r2y1 || r1y1 >= r2y2);
+  auto to_left = r1x2 <= r2x1;
+  auto to_right = r1x1 >= r2x2;
+  auto below = r1y2 <= r2y1;
+  auto above = r1y1 >= r2y2;
+
+  if (to_left) printf("to left\n");
+  else printf("not to left\n");
+  if (to_right) printf("to right\n");
+  else printf("not to right\n");
+  if (above) printf("above\n");
+  else printf("not above\n");
+  if (below) printf("below\n");
+  else printf("not below\n");
+
+  printf("\n");
+
+  auto intersects = !(to_left || to_right || above || below);
 
   return intersects;
 }
