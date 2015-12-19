@@ -88,72 +88,56 @@ void MapSystem::extend_room(Room& target, int floor)
 {
   const auto master_room = target.master;
 
-  if (target.x + target.w <= master_room->x + master_room->w)
-  {
-    bool area_is_clear = area_clear(
-      target.x, target.x + target.w, target.y, target.y + target.h, floor, target);
-
-    if (area_is_clear)
-    {
-      ++target.w;
-      return;
-    }
-  }
-
-  if (target.y + target.h <= master_room->y + master_room->h)
-  {
-    bool area_is_clear = area_clear(
-      target.x, target.x + target.w, target.y, target.y + target.h, floor, target);
-
-    if (area_is_clear)
-    {
-      ++target.h;
-      return;
-    }
-  }
-
-  if (target.x >= master_room->x)
-  {
-    bool area_is_clear = area_clear(
-      target.x, target.x + target.w, target.y, target.y + target.h, floor, target);
-
-    if (area_is_clear)
-    {
-      --target.x;
-      ++target.w;
-      return;
-    }
-  }
-
-  if (target.y >= master_room->y)
-  {
-    bool area_is_clear = area_clear(
-      target.x, target.x + target.w, target.y, target.y + target.h, floor, target);
-
-    if (area_is_clear)
-    {
-      --target.y;
-      ++target.h;
-      return;
-    }
-  }
-}
-
-
-bool MapSystem::area_clear(int x1, int x2, int y1, int y2, int floor, Room& target)
-{
+  auto no_intersection = true;
   for (auto& room : rooms[floor])
   {
     if (room == target) continue;
-    if (rect_intersects_room(x1, x2, y1, y2, room))
+
+    if (room_intersects_room(target, room))
     {
-      printf("rect: %d %d %d %d\n", x1, x2, y1, y2);
-      printf("room: %d %d %d %d\n\n", room.x, room.x + room.w, room.y, room.y + room.h);
-      return false;
+      no_intersection = false;
+      break;
     }
   }
 
-  return true;
+  if (no_intersection)
+  {
+    RNG.seed(seed);
+
+    std::uniform_int_distribution<> dist(0, 4);
+
+    auto choice = dist(RNG);
+    if (choice == 0)
+    {
+      if (target.x + target.w + 1 <= master_room->x + master_room->w)
+      {
+	++target.w;
+      }
+    }
+    else if (choice == 1)
+    {
+      if (target.y + target.h + 1 <= master_room->y + master_room->h)
+      {
+	++target.h;
+      }
+    }
+    else if (choice == 2)
+    {
+      if (target.x - 1 >= master_room->x)
+      {
+	--target.x;
+	++target.w;
+      }
+    }
+    else if (choice == 3)
+    {
+      if (target.y - 1 >= master_room->y)
+      {
+	--target.y;
+	++target.h;
+      }
+    }
+  }
 }
 
 
