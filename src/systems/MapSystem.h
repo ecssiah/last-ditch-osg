@@ -39,8 +39,8 @@ class MapSystem
     const Room& room, bool allow_overlap = true) const;
   bool room_intersects_room(
     const Room& r1, const Room& r2, bool allow_overlap = true) const;
-  bool room_is_clear(Room& test_room, int floor) const;
-  bool room_is_clear(Room& modded_room, Room& original_room, int floor) const;
+  bool room_is_clear(const Room& test_room, int floor) const;
+  bool room_is_clear(const Room& modded_room, const Room& original_room, int floor) const;
 
   std::array<std::vector<Room>, NUM_FLOORS> rooms;
   std::array<std::vector<Room>, NUM_FLOORS> master_rooms;

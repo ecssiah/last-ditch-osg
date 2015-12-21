@@ -28,17 +28,17 @@ void MapSystem::layout_map()
   {
     master_rooms[floor].push_back(Room(-5, 10, 20, 20));
 
-    for (auto& master : master_rooms[floor])
+    for (const auto& master : master_rooms[floor])
       seed_rooms(master, floor);
 
     for (auto i = 0; i < 100; ++i)
       for (auto& room : rooms[floor])
 	extend_room(room, floor);
 
-    for (auto& room : rooms[floor])
+    for (const auto& room : rooms[floor])
       layout_room("a", room, floor);
 
-    for (auto& master : master_rooms[floor])
+    for (const auto& master : master_rooms[floor])
       layout_master("a", master, floor);
   }
 }
@@ -52,13 +52,13 @@ void MapSystem::seed_rooms(const Room& master, int floor)
   {
     for (auto i = 0; i < 10000; ++i)
     {
-      const int min_room_size = 3;
+      const auto min_room_size = 3;
 
       std::uniform_int_distribution<> x_dist(master.x, master.x + master.w - min_room_size);
       std::uniform_int_distribution<> y_dist(master.y, master.y + master.h - min_room_size);
 
-      auto x = x_dist(RNG);
-      auto y = y_dist(RNG);
+      const auto x = x_dist(RNG);
+      const auto y = y_dist(RNG);
 
       Room candidate(x, y, min_room_size, min_room_size, &master);
 
@@ -82,13 +82,9 @@ void MapSystem::extend_room(Room& target, int floor)
     ++test_room.w;
 
     if (room_is_clear(test_room, target, floor))
-    {
       target.w = test_room.w;
-    }
     else
-    {
       --test_room.w;
-    }
   }
 
   if (test_room.y + test_room.h + 1 <= master->y + master->h)
@@ -96,13 +92,9 @@ void MapSystem::extend_room(Room& target, int floor)
     ++test_room.h;
 
     if (room_is_clear(test_room, target, floor))
-    {
       target.h = test_room.h;
-    }
     else
-    {
       --test_room.h;
-    }
   }
 
   if (test_room.x - 1 >= master->x)
@@ -307,9 +299,10 @@ bool MapSystem::room_intersects_room(
 }
 
 
-bool MapSystem::room_is_clear(Room& modded_room, Room& original_room, int floor) const
+bool MapSystem::room_is_clear(
+  const Room& modded_room, const Room& original_room, int floor) const
 {
-  for (auto& room : rooms[floor])
+  for (const auto& room : rooms[floor])
   {
     if (original_room == room) continue;
     if (room_intersects_room(modded_room, room)) return false;
@@ -319,9 +312,9 @@ bool MapSystem::room_is_clear(Room& modded_room, Room& original_room, int floor)
 }
 
 
-bool MapSystem::room_is_clear(Room& test_room, int floor) const
+bool MapSystem::room_is_clear(const Room& test_room, int floor) const
 {
-  for (auto& room : rooms[floor])
+  for (const auto& room : rooms[floor])
   {
     if (test_room == room) continue;
     if (room_intersects_room(test_room, room)) return false;
