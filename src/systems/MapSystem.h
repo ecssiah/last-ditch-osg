@@ -22,16 +22,13 @@ static constexpr double FLOOR_HEIGHT = 4.0;
 
 class MapSystem
 {
+  void layout_map();
+
   void seed_rooms(const Room& master, int floor);
   void extend_room(Room& target, int floor);
 
-  void layout_map();
   void layout_master(const std::string& type, const Room& master, int floor);
   void layout_room(const std::string& type, const Room& room, int floor);
-  void layout_room(const std::string& type, int x, int y, int w, int h, int floor);
-
-  bool room_is_clear(Room& test_room, int floor) const;
-  bool room_is_clear(Room& test_room, Room& target, int floor) const;
 
   bool rect_intersects_rect(
     int r1x1, int r1x2, int r1y1, int r1y2,
@@ -42,6 +39,8 @@ class MapSystem
     const Room& room, bool allow_overlap = true) const;
   bool room_intersects_room(
     const Room& r1, const Room& r2, bool allow_overlap = true) const;
+  bool room_is_clear(Room& test_room, int floor) const;
+  bool room_is_clear(Room& modded_room, Room& original_room, int floor) const;
 
   std::array<std::vector<Room>, NUM_FLOORS> rooms;
   std::array<std::vector<Room>, NUM_FLOORS> master_rooms;

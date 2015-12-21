@@ -74,27 +74,10 @@ void MapSystem::seed_rooms(const Room& master, int floor)
 
 void MapSystem::extend_room(Room& target, int floor)
 {
-  const auto master_room = target.master;
+  const auto master = target.master;
   Room test_room(target.x, target.y, target.w, target.h);
 
-  if (test_room.y - 1 >= master_room->y)
-  {
-    --test_room.y;
-    ++test_room.h;
-
-    if (room_is_clear(test_room, target, floor))
-    {
-      target.y = test_room.y;
-      target.h = test_room.h;
-    }
-    else
-    {
-      ++test_room.y;
-      --test_room.h;
-    }
-  }
-
-  if (test_room.x + test_room.w + 1 <= master_room->x + master_room->w)
+  if (test_room.x + test_room.w + 1 <= master->x + master->w)
   {
     ++test_room.w;
 
@@ -108,7 +91,7 @@ void MapSystem::extend_room(Room& target, int floor)
     }
   }
 
-  if (test_room.y + test_room.h + 1 <= master_room->y + master_room->h)
+  if (test_room.y + test_room.h + 1 <= master->y + master->h)
   {
     ++test_room.h;
 
@@ -122,7 +105,7 @@ void MapSystem::extend_room(Room& target, int floor)
     }
   }
 
-  if (test_room.x - 1 >= master_room->x)
+  if (test_room.x - 1 >= master->x)
   {
     --test_room.x;
     ++test_room.w;
@@ -138,104 +121,95 @@ void MapSystem::extend_room(Room& target, int floor)
       --test_room.w;
     }
   }
+
+  if (test_room.y - 1 >= master->y)
+  {
+    --test_room.y;
+    ++test_room.h;
+
+    if (room_is_clear(test_room, target, floor))
+    {
+      target.y = test_room.y;
+      target.h = test_room.h;
+    }
+    else
+    {
+      ++test_room.y;
+      --test_room.h;
+    }
+  }
 }
 
 
 void MapSystem::layout_master(
   const std::string& type, const Room& master, int floor)
 {
-  for (auto x = master.x + 1; x < master.x + master.w - 1; ++x)
-  {
-    set_tile(x, master.y, floor, type, "wall", 180);
-    set_tile(x, master.y + master.h - 1, floor, type, "wall", 0);
+  const auto mx = master.x, my = master.y;
+  const auto mw = master.w, mh = master.h;
 
-    set_ceil_tile(x, master.y, floor, type, "floor-edge", 180);
-    set_ceil_tile(x, master.y + master.h - 1, floor, type, "floor-edge", 0);
+  for (auto x = mx + 1; x < mx + mw - 1; ++x)
+  {
+    set_tile(x, my, floor, type, "wall", 180);
+    set_tile(x, my + mh - 1, floor, type, "wall", 0);
+
+    set_ceil_tile(x, my, floor, type, "floor-edge", 180);
+    set_ceil_tile(x, my + mh - 1, floor, type, "floor-edge", 0);
   }
 
-  for (auto y = master.y + 1; y < master.y + master.h - 1; ++y)
+  for (auto y = my + 1; y < my + mh - 1; ++y)
   {
-    set_tile(master.x, y, floor, type, "wall", 90);
-    set_tile(master.x + master.w - 1, y, floor, type, "wall", 270);
+    set_tile(mx, y, floor, type, "wall", 90);
+    set_tile(mx + mw - 1, y, floor, type, "wall", 270);
 
-    set_ceil_tile(master.x, y, floor, type, "floor-edge", 90);
-    set_ceil_tile(master.x + master.w - 1, y, floor, type, "floor-edge", 270);
+    set_ceil_tile(mx, y, floor, type, "floor-edge", 90);
+    set_ceil_tile(mx + mw - 1, y, floor, type, "floor-edge", 270);
   }
 
-  set_tile(master.x, master.y + master.h - 1, floor, type, "corner", 0);
-  set_tile(master.x, master.y, floor, type, "corner", 90);
-  set_tile(master.x + master.w - 1, master.y, floor, type, "corner", 180);
-  set_tile(master.x + master.w - 1, master.y + master.h - 1, floor, type, "corner", 270);
+  set_tile(mx, my + mh - 1, floor, type, "corner", 0);
+  set_tile(mx, my, floor, type, "corner", 90);
+  set_tile(mx + mw - 1, my, floor, type, "corner", 180);
+  set_tile(mx + mw - 1, my + mh - 1, floor, type, "corner", 270);
 
-  set_ceil_tile(master.x, master.y + master.h - 1, floor, type, "floor-edge", 0);
-  set_ceil_tile(master.x, master.y, floor, type, "floor-edge", 90);
-  set_ceil_tile(master.x + master.w - 1, master.y, floor, type, "floor-edge", 180);
-  set_ceil_tile(
-    master.x + master.w - 1, master.y + master.h - 1, floor, type, "floor-edge", 270);
-}
-
-
-bool MapSystem::room_is_clear(Room& test_room, Room& target, int floor) const
-{
-  for (auto& room : rooms[floor])
-  {
-    if (target == room) continue;
-    if (room_intersects_room(test_room, room)) return false;
-  }
-
-  return true;
-}
-
-
-bool MapSystem::room_is_clear(Room& test_room, int floor) const
-{
-  for (auto& room : rooms[floor])
-  {
-    if (test_room == room) continue;
-    if (room_intersects_room(test_room, room)) return false;
-  }
-
-  return true;
+  set_ceil_tile(mx, my + mh - 1, floor, type, "floor-edge", 0);
+  set_ceil_tile(mx, my, floor, type, "floor-edge", 90);
+  set_ceil_tile(mx + mw - 1, my, floor, type, "floor-edge", 180);
+  set_ceil_tile(mx + mw - 1, my + mh - 1, floor, type, "floor-edge", 270);
 }
 
 
 void MapSystem::layout_room(
   const std::string& type, const Room& room, int floor)
 {
-  layout_room(type, room.x, room.y, room.w, room.h, floor);
-}
+  const auto rx = room.x, ry = room.y;
+  const auto rw = room.w, rh = room.h;
 
-
-void MapSystem::layout_room(
-  const std::string& type, int x_, int y_, int w_, int h_, int floor)
-{
-  for (auto x = x_ + 1; x < x_ + w_ - 1; ++x)
+  for (auto x = rx + 1; x < rx + rw - 1; ++x)
   {
-    set_tile(x, y_ + h_ - 1, floor, type, "int-wall", 0);
-    set_tile(x, y_, floor, type, "int-wall", 180);
+    set_tile(x, ry + rh - 1, floor, type, "int-wall", 0);
+    set_tile(x, ry, floor, type, "int-wall", 180);
 
-    set_ceil_tile(x, y_ + h_ - 1, floor, type, "floor-edge", 0);
-    set_ceil_tile(x, y_, floor, type, "floor-edge", 180);
+    set_ceil_tile(x, ry + rh - 1, floor, type, "floor-edge", 0);
+    set_ceil_tile(x, ry, floor, type, "floor-edge", 180);
   }
 
-  for (auto y = y_ + 1; y < y_ + h_ - 1; ++y)
+  for (auto y = ry + 1; y < ry + rh - 1; ++y)
   {
-    set_tile(x_, y, floor, type, "int-wall", 90);
-    set_tile(x_ + w_ - 1, y, floor, type, "int-wall", 270);
+    set_tile(rx, y, floor, type, "int-wall", 90);
+    set_tile(rx + rw - 1, y, floor, type, "int-wall", 270);
 
-    set_ceil_tile(x_, y, floor, type, "floor-edge", 90);
-    set_ceil_tile(x_ + w_ - 1, y, floor, type, "floor-edge", 270);
+    set_ceil_tile(rx, y, floor, type, "floor-edge", 90);
+    set_ceil_tile(rx + rw - 1, y, floor, type, "floor-edge", 270);
   }
 
-  set_tile(x_, y_ + h_ - 1, floor, type, "int-corner", 0);
-  set_tile(x_, y_, floor, type, "int-corner", 90);
-  set_tile(x_ + w_ - 1, y_, floor, type, "int-corner", 180);
-  set_tile(x_ + w_ - 1, y_ + h_ - 1, floor, type, "int-corner", 270);
+  set_tile(rx, ry + rh - 1, floor, type, "int-corner", 0);
+  set_tile(rx, ry, floor, type, "int-corner", 90);
+  set_tile(rx + rw - 1, ry, floor, type, "int-corner", 180);
+  set_tile(rx + rw - 1, ry + rh - 1, floor, type, "int-corner", 270);
 
-  set_ceil_tile(x_, y_ + h_ - 1, floor, type, "floor-edge", 0);
-  set_ceil_tile(x_, y_, floor, type, "floor-edge", 90);
-  set_ceil_tile(x_ + w_ - 1, y_, floor, type, "floor-edge", 180);
-  set_ceil_tile(x_ + w_ - 1, y_ + h_ - 1, floor, type, "floor-edge", 270);
+  set_ceil_tile(rx, ry + rh - 1, floor, type, "floor-edge", 0);
+  set_ceil_tile(rx, ry, floor, type, "floor-edge", 90);
+  set_ceil_tile(rx + rw - 1, ry, floor, type, "floor-edge", 180);
+  set_ceil_tile(rx + rw - 1, ry + rh - 1, floor, type, "floor-edge", 270);
 }
 
 
@@ -269,12 +243,12 @@ void MapSystem::set_ceil_tile(
 }
 
 
-Tile& MapSystem::get_tile(int x, int y, int floor)
+Tile& MapSystem::get_tile(int x_, int y_, int floor)
 {
-  auto xx = x + MAP_SIZE / 2;
-  auto yy = y + MAP_SIZE / 2;
+  const auto x = x_ + MAP_SIZE / 2;
+  const auto y = y_ + MAP_SIZE / 2;
 
-  return tiles[floor][xx][yy];
+  return tiles[floor][x][y];
 }
 
 
@@ -284,12 +258,12 @@ const Tile& MapSystem::get_tile(int x, int y, int floor) const
 }
 
 
-Tile& MapSystem::get_tile(double x, double y, int floor)
+Tile& MapSystem::get_tile(double x_, double y_, int floor)
 {
-  auto xx = std::round(x);
-  auto yy = std::round(y);
+  const auto x = std::round(x_);
+  const auto y = std::round(y_);
 
-  return get_tile(xx, yy, floor);
+  return get_tile(x, y, floor);
 }
 
 
@@ -304,26 +278,12 @@ bool MapSystem::rect_intersects_rect(
   int r2x1, int r2x2, int r2y1, int r2y2,
   bool allow_overlap) const
 {
-  bool to_left, to_right, above, below;
+  const auto to_right = allow_overlap ? r1x1 >= r2x2 - 1 : r1x1 > r2x2;
+  const auto to_left= allow_overlap ? r1x2 - 1 <= r2x1 : r1x2 - 1 < r2x1;
+  const auto above = allow_overlap ? r1y1 >= r2y2 - 1 : r1y1 > r2y2 - 1;
+  const auto below = allow_overlap ? r1y2 - 1 <= r2y1 : r1y2 - 1 < r2y1;
 
-  if (allow_overlap)
-  {
-    to_right = r1x1 >= r2x2 - 1;
-    to_left = r1x2 - 1 <= r2x1;
-    above = r1y1 >= r2y2 - 1;
-    below = r1y2 - 1 <= r2y1;
-  }
-  else
-  {
-    to_right = r1x1 > r2x2 - 1;
-    to_left = r1x2 - 1 < r2x1;
-    above = r1y1 > r2y2 - 1;
-    below = r1y2 - 1 < r2y1;
-  }
-
-  auto intersects = !(to_left || to_right || above || below);
-
-  return intersects;
+  return !(to_left || to_right || above || below);
 }
 
 
@@ -344,4 +304,28 @@ bool MapSystem::room_intersects_room(
     r1.x, r1.x + r1.w, r1.y, r1.y + r1.h,
     r2.x, r2.x + r2.w, r2.y, r2.y + r2.h,
     allow_overlap);
+}
+
+
+bool MapSystem::room_is_clear(Room& modded_room, Room& original_room, int floor) const
+{
+  for (auto& room : rooms[floor])
+  {
+    if (original_room == room) continue;
+    if (room_intersects_room(modded_room, room)) return false;
+  }
+
+  return true;
+}
+
+
+bool MapSystem::room_is_clear(Room& test_room, int floor) const
+{
+  for (auto& room : rooms[floor])
+  {
+    if (test_room == room) continue;
+    if (room_intersects_room(test_room, room)) return false;
+  }
+
+  return true;
 }
