@@ -2,7 +2,6 @@
 
 #include <chrono>
 #include <cmath>
-#include <functional>
 #include <random>
 #include <iostream>
 #include "../Constants.h"
@@ -26,7 +25,7 @@ void MapSystem::layout_map()
 {
   for (auto floor = 0; floor < NUM_FLOORS; ++floor)
   {
-    master_rooms[floor].push_back(Room(-4, 6, 10, 10));
+    master_rooms[floor].push_back(Room(-5, 5, 10, 10));
   }
 
   for (auto floor = 0; floor < NUM_FLOORS; ++floor)
@@ -34,7 +33,7 @@ void MapSystem::layout_map()
       seed_rooms(master, floor);
 
   for (auto floor = 0; floor < NUM_FLOORS; ++floor)
-    for (auto i = 0; i < 100; ++i)
+    for (auto i = 0; i < 10; ++i)
       for (auto& room : rooms[floor])
 	extend_room(room, floor);
 
@@ -52,9 +51,9 @@ void MapSystem::seed_rooms(Room& master, int floor)
 {
   RNG.seed(seed);
 
-  for (auto room_num = 0; room_num < 4; ++room_num)
+  for (auto room_num = 0; room_num < ROOMS_PER_FLOOR; ++room_num)
   {
-    for (auto i = 0; i < 100; ++i)
+    for (auto i = 0; i < 10000; ++i)
     {
       std::uniform_int_distribution<> x_dist(master.x, master.x + master.w - 3);
       std::uniform_int_distribution<> y_dist(master.y, master.y + master.h - 3);
@@ -87,55 +86,101 @@ void MapSystem::seed_rooms(Room& master, int floor)
 void MapSystem::extend_room(Room& target, int floor)
 {
   const auto master_room = target.master;
+  Room test_room(target.x, target.y, target.w, target.h);
 
-  auto no_intersection = true;
-  for (auto& room : rooms[floor])
+  if (test_room.x + test_room.w + 1 <= master_room->x + master_room->w)
   {
-    if (room == target) continue;
+    ++test_room.w;
 
-    if (room_intersects_room(target, room))
+    auto collision = false;
+    for (auto& room : rooms[floor])
     {
-      no_intersection = false;
-      break;
+      if (target == room) continue;
+      if (room_intersects_room(test_room, room))
+      {
+	collision = true;
+	break;
+      }
+    }
+
+    if (!collision)
+    {
+      target.w = test_room.w;
+      printf("Right:\n");
+      return;
     }
   }
 
-  if (no_intersection)
+  if (test_room.y + test_room.h + 1 <= master_room->y + master_room->h)
   {
-    RNG.seed(seed);
+    ++test_room.h;
 
-    std::uniform_int_distribution<> dist(0, 4);
+    auto collision = false;
+    for (auto& room : rooms[floor])
+    {
+      if (target == room) continue;
+      if (room_intersects_room(test_room, room))
+      {
+	collision = true;
+	break;
+      }
+    }
 
-    auto choice = dist(RNG);
-    if (choice == 0)
+    if (!collision)
     {
-      if (target.x + target.w + 1 <= master_room->x + master_room->w)
+      target.h = test_room.h;
+      printf("Up:");
+      return;
+    }
+  }
+
+  if (test_room.x - 1 >= master_room->x)
+  {
+    --test_room.x;
+    ++test_room.w;
+
+    auto collision = false;
+    for (auto& room : rooms[floor])
+    {
+      if (target == room) continue;
+      if (room_intersects_room(test_room, room))
       {
-	++target.w;
+	collision = true;
+	break;
       }
     }
-    else if (choice == 1)
+
+    if (!collision)
     {
-      if (target.y + target.h + 1 <= master_room->y + master_room->h)
+      target.x = test_room.x;
+      target.w = test_room.w;
+      printf("Left:\n");
+      return;
+    }
+  }
+
+  if (test_room.y - 1 >= master_room->y)
+  {
+    --test_room.y;
+    ++test_room.h;
+
+    auto collision = false;
+    for (auto& room : rooms[floor])
+    {
+      if (target == room) continue;
+      if (room_intersects_room(test_room, room))
       {
-	++target.h;
+	collision = true;
+	break;
       }
     }
-    else if (choice == 2)
+
+    if (!collision)
     {
-      if (target.x - 1 >= master_room->x)
-      {
-	--target.x;
-	++target.w;
-      }
-    }
-    else if (choice == 3)
-    {
-      if (target.y - 1 >= master_room->y)
-      {
-	--target.y;
-	++target.h;
-      }
+      target.y = test_room.y;
+      target.h = test_room.h;
+      printf("Down:\n");
+      return;
     }
   }
 }
@@ -283,12 +328,28 @@ bool MapSystem::is_solid(double x, double y, int floor)
 
 bool MapSystem::rect_intersects_rect(
   int r1x1, int r1x2, int r1y1, int r1y2,
-  int r2x1, int r2x2, int r2y1, int r2y2)
+  int r2x1, int r2x2, int r2y1, int r2y2,
+  bool allow_overlap)
 {
-  auto to_left = r1x2 <= r2x1;
-  auto to_right = r1x1 >= r2x2;
-  auto below = r1y2 <= r2y1;
-  auto above = r1y1 >= r2y2;
+  bool to_left, to_right, above, below;
+
+  if (allow_overlap)
+  {
+    to_right = r1x1 >= r2x2 - 1;
+    to_left = r1x2 - 1 <= r2x1;
+    above = r1y1 >= r2y2 - 1;
+    below = r1y2 - 1 <= r2y1;
+  }
+  else
+  {
+    to_right = r1x1 > r2x2 - 1;
+    to_left = r1x2 - 1 < r2x1;
+    above = r1y1 > r2y2 - 1;
+    below = r1y2 - 1 < r2y1;
+  }
+
+  printf("%d %d %d %d\n", r1x1, r1x2, r1y1, r1y2);
+  printf("%d %d %d %d\n", r2x1, r2x2, r2y1, r2y2);
 
   if (to_left) printf("to left\n");
   else printf("not to left\n");
@@ -298,7 +359,6 @@ bool MapSystem::rect_intersects_rect(
   else printf("not above\n");
   if (below) printf("below\n");
   else printf("not below\n");
-
   printf("\n");
 
   auto intersects = !(to_left || to_right || above || below);
@@ -307,17 +367,20 @@ bool MapSystem::rect_intersects_rect(
 }
 
 
-bool MapSystem::rect_intersects_room(int x1, int x2, int y1, int y2, const Room& room)
+bool MapSystem::rect_intersects_room(
+  int x1, int x2, int y1, int y2, const Room& room, bool allow_overlap)
 {
   return rect_intersects_rect(
     x1, x2, y1, y2,
-    room.x, room.y, room.x + room.w, room.y + room.h);
+    room.x, room.x + room.w, room.y, room.y + room.h,
+    allow_overlap);
 }
 
 
-bool MapSystem::room_intersects_room(const Room& r1, const Room& r2)
+bool MapSystem::room_intersects_room(const Room& r1, const Room& r2, bool allow_overlap)
 {
   return rect_intersects_rect(
     r1.x, r1.x + r1.w, r1.y, r1.y + r1.h,
-    r2.x, r2.x + r2.w, r2.y, r2.y + r2.h);
+    r2.x, r2.x + r2.w, r2.y, r2.y + r2.h,
+    allow_overlap);
 }
