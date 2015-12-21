@@ -62,17 +62,7 @@ void MapSystem::seed_rooms(Room& master, int floor)
 
       Room candidate(x, y, min_room_size, min_room_size, &master);
 
-      auto collision = false;
-      for (auto& room : rooms[floor])
-      {
-	if (room == candidate) continue;
-
-	collision = room_intersects_room(candidate, room);
-
-	if (collision) break;
-      }
-
-      if (!collision)
+      if (room_is_clear(candidate, floor))
       {
 	rooms[floor].push_back(candidate);
 	break;
@@ -92,22 +82,10 @@ void MapSystem::extend_room(Room& target, int floor)
     --test_room.y;
     ++test_room.h;
 
-    auto collision = false;
-    for (auto& room : rooms[floor])
-    {
-      if (target == room) continue;
-      if (room_intersects_room(test_room, room))
-      {
-	collision = true;
-	break;
-      }
-    }
-
-    if (!collision)
+    if (room_is_clear(test_room, target, floor))
     {
       target.y = test_room.y;
       target.h = test_room.h;
-      return;
     }
     else
     {
@@ -120,21 +98,9 @@ void MapSystem::extend_room(Room& target, int floor)
   {
     ++test_room.w;
 
-    auto collision = false;
-    for (auto& room : rooms[floor])
-    {
-      if (target == room) continue;
-      if (room_intersects_room(test_room, room))
-      {
-	collision = true;
-	break;
-      }
-    }
-
-    if (!collision)
+    if (room_is_clear(test_room, target, floor))
     {
       target.w = test_room.w;
-      return;
     }
     else
     {
@@ -146,21 +112,9 @@ void MapSystem::extend_room(Room& target, int floor)
   {
     ++test_room.h;
 
-    auto collision = false;
-    for (auto& room : rooms[floor])
-    {
-      if (target == room) continue;
-      if (room_intersects_room(test_room, room))
-      {
-	collision = true;
-	break;
-      }
-    }
-
-    if (!collision)
+    if (room_is_clear(test_room, target, floor))
     {
       target.h = test_room.h;
-      return;
     }
     else
     {
@@ -173,22 +127,10 @@ void MapSystem::extend_room(Room& target, int floor)
     --test_room.x;
     ++test_room.w;
 
-    auto collision = false;
-    for (auto& room : rooms[floor])
-    {
-      if (target == room) continue;
-      if (room_intersects_room(test_room, room))
-      {
-	collision = true;
-	break;
-      }
-    }
-
-    if (!collision)
+    if (room_is_clear(test_room, target, floor))
     {
       target.x = test_room.x;
       target.w = test_room.w;
-      return;
     }
     else
     {
@@ -203,6 +145,30 @@ void MapSystem::layout_master(
   const std::string& type, const Room& master, int floor)
 {
   layout_master(type, master.x, master.y, master.w, master.h, floor);
+}
+
+
+bool MapSystem::room_is_clear(Room& test_room, Room& target, int floor)
+{
+  for (auto& room : rooms[floor])
+  {
+    if (target == room) continue;
+    if (room_intersects_room(test_room, room)) return false;
+  }
+
+  return true;
+}
+
+
+bool MapSystem::room_is_clear(Room& test_room, int floor)
+{
+  for (auto& room : rooms[floor])
+  {
+    if (test_room == room) continue;
+    if (room_intersects_room(test_room, room)) return false;
+  }
+
+  return true;
 }
 
 

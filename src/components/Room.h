@@ -11,6 +11,11 @@ struct Room
       master(master_)
   {}
 
+  bool operator==(Room& room)
+  {
+    return x == room.x && y == room.y && w == room.w && h == room.h;
+  }
+
   bool operator==(const Room& room)
   {
     return x == room.x && y == room.y && w == room.w && h == room.h;

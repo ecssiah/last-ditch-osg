@@ -31,7 +31,8 @@ class MapSystem
   void layout_room(const std::string& type, const Room& room, int floor);
   void layout_room(const std::string& type, int x, int y, int w, int h, int floor);
 
-  bool area_clear(int x1, int x2, int y1, int y2, int floor, Room& target);
+  bool room_is_clear(Room& test_room, int floor);
+  bool room_is_clear(Room& test_room, Room& target, int floor);
 
   bool rect_intersects_rect(
     int r1x1, int r1x2, int r1y1, int r1y2,
