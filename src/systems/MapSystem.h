@@ -22,31 +22,32 @@ static constexpr double FLOOR_HEIGHT = 4.0;
 
 class MapSystem
 {
-  void seed_rooms(Room& master, int floor);
+  void seed_rooms(const Room& master, int floor);
   void extend_room(Room& target, int floor);
 
   void layout_map();
   void layout_master(const std::string& type, const Room& master, int floor);
-  void layout_master(const std::string& type, int x, int y, int w, int h, int floor);
   void layout_room(const std::string& type, const Room& room, int floor);
   void layout_room(const std::string& type, int x, int y, int w, int h, int floor);
 
-  bool room_is_clear(Room& test_room, int floor);
-  bool room_is_clear(Room& test_room, Room& target, int floor);
+  bool room_is_clear(Room& test_room, int floor) const;
+  bool room_is_clear(Room& test_room, Room& target, int floor) const;
 
   bool rect_intersects_rect(
     int r1x1, int r1x2, int r1y1, int r1y2,
     int r2x1, int r2x2, int r2y1, int r2y2,
-    bool allow_overlap = true);
+    bool allow_overlap = true) const;
   bool rect_intersects_room(
-    int x1, int x2, int y1, int y2, const Room& room, bool allow_overlap = true);
-  bool room_intersects_room(const Room& r1, const Room& r2, bool allow_overlap = true);
+    int x1, int x2, int y1, int y2,
+    const Room& room, bool allow_overlap = true) const;
+  bool room_intersects_room(
+    const Room& r1, const Room& r2, bool allow_overlap = true) const;
 
   std::array<std::vector<Room>, NUM_FLOORS> rooms;
   std::array<std::vector<Room>, NUM_FLOORS> master_rooms;
-  std::array<std::array<std::array<Tile, MAP_SIZE + 1>, MAP_SIZE + 1>, NUM_FLOORS> tiles;
+  std::array<std::array<std::array<Tile, MAP_SIZE+1>, MAP_SIZE+1>, NUM_FLOORS> tiles;
 
-  unsigned long seed;
+  unsigned long long seed;
 
 public:
   MapSystem();
@@ -64,7 +65,7 @@ public:
   Tile& get_tile(int x, int y, int floor);
   const Tile& get_tile(int x, int y, int floor) const;
 
-  bool is_solid(double x, double y, int floor);
+  bool is_solid(double x, double y, int floor) const;
 };
 
 }

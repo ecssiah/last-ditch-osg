@@ -2,7 +2,7 @@
 #define CONSTANTS_H
 
 // World
-extern const unsigned long SEED;
+extern const unsigned long long SEED;
 
 // Camera
 extern const double FOV;
