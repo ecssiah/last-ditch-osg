@@ -1,5 +1,6 @@
 #include "MapSystem.h"
 
+
 #include <chrono>
 #include <cmath>
 #include <random>
@@ -25,25 +26,21 @@ void MapSystem::layout_map()
 {
   for (auto floor = 0; floor < NUM_FLOORS; ++floor)
   {
-    master_rooms[floor].push_back(Room(-5, 5, 10, 10));
-  }
+    master_rooms[floor].push_back(Room(-5, 10, 20, 20));
 
-  for (auto floor = 0; floor < NUM_FLOORS; ++floor)
     for (auto& master : master_rooms[floor])
       seed_rooms(master, floor);
 
-  for (auto floor = 0; floor < NUM_FLOORS; ++floor)
-    for (auto i = 0; i < 10; ++i)
+    for (auto i = 0; i < 100; ++i)
       for (auto& room : rooms[floor])
 	extend_room(room, floor);
 
-  for (auto floor = 0; floor < NUM_FLOORS; ++floor)
     for (auto& room : rooms[floor])
       layout_room("a", room, floor);
 
-  for (auto floor = 0; floor < NUM_FLOORS; ++floor)
     for (auto& master : master_rooms[floor])
       layout_master("a", master, floor);
+  }
 }
 
 
@@ -55,13 +52,15 @@ void MapSystem::seed_rooms(Room& master, int floor)
   {
     for (auto i = 0; i < 10000; ++i)
     {
-      std::uniform_int_distribution<> x_dist(master.x, master.x + master.w - 3);
-      std::uniform_int_distribution<> y_dist(master.y, master.y + master.h - 3);
+      const int min_room_size = 3;
+
+      std::uniform_int_distribution<> x_dist(master.x, master.x + master.w - min_room_size);
+      std::uniform_int_distribution<> y_dist(master.y, master.y + master.h - min_room_size);
 
       auto x = x_dist(RNG);
       auto y = y_dist(RNG);
 
-      Room candidate(x, y, 3, 3, &master);
+      Room candidate(x, y, min_room_size, min_room_size, &master);
 
       auto collision = false;
       for (auto& room : rooms[floor])
@@ -88,6 +87,35 @@ void MapSystem::extend_room(Room& target, int floor)
   const auto master_room = target.master;
   Room test_room(target.x, target.y, target.w, target.h);
 
+  if (test_room.y - 1 >= master_room->y)
+  {
+    --test_room.y;
+    ++test_room.h;
+
+    auto collision = false;
+    for (auto& room : rooms[floor])
+    {
+      if (target == room) continue;
+      if (room_intersects_room(test_room, room))
+      {
+	collision = true;
+	break;
+      }
+    }
+
+    if (!collision)
+    {
+      target.y = test_room.y;
+      target.h = test_room.h;
+      return;
+    }
+    else
+    {
+      ++test_room.y;
+      --test_room.h;
+    }
+  }
+
   if (test_room.x + test_room.w + 1 <= master_room->x + master_room->w)
   {
     ++test_room.w;
@@ -106,8 +134,11 @@ void MapSystem::extend_room(Room& target, int floor)
     if (!collision)
     {
       target.w = test_room.w;
-      printf("Right:\n");
       return;
+    }
+    else
+    {
+      --test_room.w;
     }
   }
 
@@ -129,8 +160,11 @@ void MapSystem::extend_room(Room& target, int floor)
     if (!collision)
     {
       target.h = test_room.h;
-      printf("Up:");
       return;
+    }
+    else
+    {
+      --test_room.h;
     }
   }
 
@@ -154,33 +188,12 @@ void MapSystem::extend_room(Room& target, int floor)
     {
       target.x = test_room.x;
       target.w = test_room.w;
-      printf("Left:\n");
       return;
     }
-  }
-
-  if (test_room.y - 1 >= master_room->y)
-  {
-    --test_room.y;
-    ++test_room.h;
-
-    auto collision = false;
-    for (auto& room : rooms[floor])
+    else
     {
-      if (target == room) continue;
-      if (room_intersects_room(test_room, room))
-      {
-	collision = true;
-	break;
-      }
-    }
-
-    if (!collision)
-    {
-      target.y = test_room.y;
-      target.h = test_room.h;
-      printf("Down:\n");
-      return;
+      ++test_room.x;
+      --test_room.w;
     }
   }
 }
@@ -347,19 +360,6 @@ bool MapSystem::rect_intersects_rect(
     above = r1y1 > r2y2 - 1;
     below = r1y2 - 1 < r2y1;
   }
-
-  printf("%d %d %d %d\n", r1x1, r1x2, r1y1, r1y2);
-  printf("%d %d %d %d\n", r2x1, r2x2, r2y1, r2y2);
-
-  if (to_left) printf("to left\n");
-  else printf("not to left\n");
-  if (to_right) printf("to right\n");
-  else printf("not to right\n");
-  if (above) printf("above\n");
-  else printf("not above\n");
-  if (below) printf("below\n");
-  else printf("not below\n");
-  printf("\n");
 
   auto intersects = !(to_left || to_right || above || below);
 

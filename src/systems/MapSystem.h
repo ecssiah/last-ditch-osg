@@ -16,7 +16,7 @@ static constexpr int NUM_CHUNKS = 5;
 static constexpr int CHUNK_SIZE = 34;
 static constexpr int MAP_SIZE = CHUNK_SIZE * NUM_CHUNKS;
 static constexpr int NUM_FLOORS = 1;
-static constexpr int ROOMS_PER_FLOOR = 4;
+static constexpr int ROOMS_PER_FLOOR = 8;
 static constexpr double TILE_SIZE = 2.0;
 static constexpr double FLOOR_HEIGHT = 4.0;
 
@@ -41,11 +41,11 @@ class MapSystem
     int x1, int x2, int y1, int y2, const Room& room, bool allow_overlap = true);
   bool room_intersects_room(const Room& r1, const Room& r2, bool allow_overlap = true);
 
-  unsigned long seed;
-
   std::array<std::vector<Room>, NUM_FLOORS> rooms;
   std::array<std::vector<Room>, NUM_FLOORS> master_rooms;
   std::array<std::array<std::array<Tile, MAP_SIZE + 1>, MAP_SIZE + 1>, NUM_FLOORS> tiles;
+
+  unsigned long seed;
 
 public:
   MapSystem();
