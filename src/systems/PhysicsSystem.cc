@@ -46,9 +46,7 @@ void PhysicsSystem::simulate(DynamicEntity& user, double dt)
       user.position = cosine_interp(user.start, user.target, 1);
     }
     else
-    {
       user.position = cosine_interp(user.start, user.target, 1 - user.inactive_time);
-    }
   }
   else
   {
@@ -83,22 +81,21 @@ void PhysicsSystem::simulate(DynamicEntity& user, double dt)
 
 void PhysicsSystem::scan_collisions(DynamicEntity& user)
 {
-  auto floor = (int)std::floor(user.position.z());
+  const auto floor = (int)std::floor(user.position.z());
 
   if (floor < 0 || floor >= NUM_FLOORS) return;
 
-  auto x = (int)std::round(user.position.x());
-  auto y = (int)std::round(user.position.y());
+  const auto px = (int)std::round(user.position.x());
+  const auto py = (int)std::round(user.position.y());
 
-  for (auto xx = x - 1; xx <= x + 1; ++xx)
-    for (auto yy = y - 1; yy <= y + 1; ++yy)
-      if (map_system.get_tile(xx, yy, floor).solid)
-	resolve_collision(user, xx, yy);
+  for (auto x = px - 1; x <= px + 1; ++x)
+    for (auto y = py - 1; y <= py + 1; ++y)
+      if (map_system.get_tile(x, y, floor).solid)
+	resolve_collision(user, x, y);
 }
 
 
-void PhysicsSystem::resolve_collision(
-  DynamicEntity& user, int x, int y)
+void PhysicsSystem::resolve_collision(DynamicEntity& user, int x, int y)
 {
   Vec2d tile_pos(x, y);
   Vec2d user_pos(user.position.x(), user.position.y());
@@ -113,26 +110,26 @@ void PhysicsSystem::resolve_collision(
   else if (nearest.y() > max.y()) nearest.y() = max.y();
 
   Vec2d norm(user_pos - nearest);
-  auto dist = norm.normalize();
-  auto depth = USER_RADIUS - dist;
+  const auto dist = norm.normalize();
+  const auto depth = USER_RADIUS - dist;
 
   if (depth > 0) user.position += Vec3d(norm.x(), norm.y(), 0) * depth;
 }
 
 
-double PhysicsSystem::cosine_interp(double v1, double v2, double t)
+double PhysicsSystem::cosine_interp(double v1, double v2, double t_)
 {
-  auto tt = (1 - cos(M_PI * t)) / 2;
+  const auto t = (1 - cos(M_PI * t_)) / 2;
 
-  return (v1 * (1 - tt) + v2 * tt);
+  return (v1 * (1 - t) + v2 * t);
 }
 
 
 Vec3d PhysicsSystem::cosine_interp(Vec3 v1, Vec3 v2, double t)
 {
-  auto x = cosine_interp(v1.x(), v2.x(), t);
-  auto y = cosine_interp(v1.y(), v2.y(), t);
-  auto z = cosine_interp(v1.z(), v2.z(), t);
+  const auto x = cosine_interp(v1.x(), v2.x(), t);
+  const auto y = cosine_interp(v1.y(), v2.y(), t);
+  const auto z = cosine_interp(v1.z(), v2.z(), t);
 
   return {x, y, z};
 }

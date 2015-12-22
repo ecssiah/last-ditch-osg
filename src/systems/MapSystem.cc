@@ -1,8 +1,6 @@
 #include "MapSystem.h"
 
-
 #include <chrono>
-#include <cmath>
 #include <random>
 #include <iostream>
 #include "../Constants.h"
@@ -16,13 +14,15 @@ static mt19937 RNG;
 MapSystem::MapSystem()
   : seed(SEED > 0 ? SEED : chrono::high_resolution_clock::now().time_since_epoch().count())
 {
+  setup_map();
+
   layout_map();
 
   printf(" Map System finished\n");
 }
 
 
-void MapSystem::layout_map()
+void MapSystem::setup_map()
 {
   for (auto floor = 0; floor < NUM_FLOORS; ++floor)
   {
@@ -34,12 +34,21 @@ void MapSystem::layout_map()
     for (auto i = 0; i < 100; ++i)
       for (auto& room : rooms[floor])
 	extend_room(room, floor);
+  }
+}
 
+
+void MapSystem::layout_map()
+{
+  for (auto floor = 0; floor < NUM_FLOORS; ++floor)
+  {
     for (const auto& room : rooms[floor])
       layout_room("a", room, floor);
 
     for (const auto& master : master_rooms[floor])
       layout_master("a", master, floor);
+
+    layout_doors(floor);
   }
 }
 
@@ -54,8 +63,8 @@ void MapSystem::seed_rooms(const Room& master, int floor)
     {
       const auto min_room_size = 3;
 
-      std::uniform_int_distribution<> x_dist(master.x, master.x + master.w - min_room_size);
-      std::uniform_int_distribution<> y_dist(master.y, master.y + master.h - min_room_size);
+      uniform_int_distribution<> x_dist(master.x, master.x + master.w - min_room_size);
+      uniform_int_distribution<> y_dist(master.y, master.y + master.h - min_room_size);
 
       const auto x = x_dist(RNG);
       const auto y = y_dist(RNG);
@@ -128,6 +137,43 @@ void MapSystem::extend_room(Room& target, int floor)
     {
       ++test_room.y;
       --test_room.h;
+    }
+  }
+}
+
+
+void MapSystem::layout_doors(int floor)
+{
+  RNG.seed(seed);
+
+  uniform_int_distribution<> num_doors_dist(0, 2);
+  auto num_doors(num_doors_dist(RNG));
+
+  for (auto i = 0; i < num_doors; ++i)
+  {
+    for (const auto& room : rooms[floor])
+    {
+      uniform_int_distribution<> direction_dist(0, 3);
+
+      auto direction = direction_dist(RNG);
+      if (direction == 0)
+      {
+	set_tile(
+	  room.x + room.w - 1, room.y + room.h / 2, floor, "a", "door-frame", 270, false);
+      }
+      else if (direction == 1)
+      {
+	set_tile(
+	  room.x + room.w / 2, room.y + room.h - 1, floor, "a", "door-frame", 0, false);
+      }
+      else if (direction == 2)
+      {
+	set_tile(room.x, room.y + room.h / 2, floor, "a", "door-frame", 90, false);
+      }
+      else if (direction == 3)
+      {
+	set_tile(room.x + room.w / 2, room.y, floor, "a", "door-frame", 180, false);
+      }
     }
   }
 }

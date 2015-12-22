@@ -1,6 +1,9 @@
 #ifndef ROOM_H
 #define ROOM_H
 
+namespace ld
+{
+
 struct Room
 {
   Room(int x_, int y_, int w_, int h_, const Room* master_ = nullptr)
@@ -26,5 +29,7 @@ struct Room
 
   const Room* master;
 };
+
+}
 
 #endif /* ROOM_H */
