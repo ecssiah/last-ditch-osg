@@ -16,7 +16,7 @@ struct Region
   {}
 
   int x, y;
-  int w, y;
+  int w, h;
 };
 
 }

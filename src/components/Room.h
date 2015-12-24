@@ -1,6 +1,9 @@
 #ifndef ROOM_H
 #define ROOM_H
 
+#include <vector>
+#include "Region.h"
+
 namespace ld
 {
 
@@ -26,6 +29,8 @@ struct Room
 
   int x, y;
   int w, h;
+
+  std::vector<Region> regions;
 
   const Room* master;
 };

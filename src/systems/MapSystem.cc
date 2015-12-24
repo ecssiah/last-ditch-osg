@@ -24,9 +24,11 @@ MapSystem::MapSystem()
 
 void MapSystem::setup_map()
 {
+  RNG.seed(seed);
+
   for (auto floor = 0; floor < NUM_FLOORS; ++floor)
   {
-    master_rooms[floor].push_back(Room(-5, 10, 20, 20));
+    master_rooms[floor].push_back(Room(-8, 10, 16, 16));
 
     for (const auto& master : master_rooms[floor])
       seed_rooms(master, floor);
@@ -55,19 +57,17 @@ void MapSystem::layout_map()
 
 void MapSystem::seed_rooms(const Room& master, int floor)
 {
-  RNG.seed(seed);
-
   for (auto room_num = 0; room_num < ROOMS_PER_FLOOR; ++room_num)
   {
     for (auto i = 0; i < 10000; ++i)
     {
-      const auto min_room_size = 3;
+      auto min_room_size = 3;
 
       uniform_int_distribution<> x_dist(master.x, master.x + master.w - min_room_size);
       uniform_int_distribution<> y_dist(master.y, master.y + master.h - min_room_size);
 
-      const auto x = x_dist(RNG);
-      const auto y = y_dist(RNG);
+      auto x = x_dist(RNG);
+      auto y = y_dist(RNG);
 
       Room candidate(x, y, min_room_size, min_room_size, &master);
 
@@ -144,8 +144,6 @@ void MapSystem::extend_room(Room& target, int floor)
 
 void MapSystem::layout_doors(int floor)
 {
-  RNG.seed(seed);
-
   uniform_int_distribution<> num_doors_dist(0, 2);
   auto num_doors(num_doors_dist(RNG));
 
@@ -158,21 +156,43 @@ void MapSystem::layout_doors(int floor)
       auto direction = direction_dist(RNG);
       if (direction == 0)
       {
-	set_tile(
-	  room.x + room.w - 1, room.y + room.h / 2, floor, "a", "door-frame", 270, false);
+	auto tx = room.x + room.w - 1;
+	auto ty = room.y + room.h / 2;
+
+	if (tx == room.master->x + room.master->w - 1)
+	  set_tile(tx, ty, floor, "a", "door-frame", 270, false);
+	else
+	  set_tile(tx, ty, floor, "a", "int-door-frame", 270, false);
       }
       else if (direction == 1)
       {
-	set_tile(
-	  room.x + room.w / 2, room.y + room.h - 1, floor, "a", "door-frame", 0, false);
+	auto tx = room.x + room.w / 2;
+	auto ty = room.y + room.h - 1;
+
+	if (ty == room.master->y + room.master->h - 1)
+	  set_tile(tx, ty, floor, "a", "door-frame", 0, false);
+	else
+	  set_tile(tx, ty, floor, "a", "int-door-frame", 0, false);
       }
       else if (direction == 2)
       {
-	set_tile(room.x, room.y + room.h / 2, floor, "a", "door-frame", 90, false);
+	auto tx = room.x;
+	auto ty = room.y + room.h / 2;
+
+	if (tx == room.master->x)
+	  set_tile(tx, ty, floor, "a", "door-frame", 90, false);
+	else
+	  set_tile(tx, ty, floor, "a", "int-door-frame", 90, false);
       }
       else if (direction == 3)
       {
-	set_tile(room.x + room.w / 2, room.y, floor, "a", "door-frame", 180, false);
+	auto tx = room.x + room.w / 2;
+	auto ty = room.y;
+
+	if (ty == room.master->y)
+	  set_tile(tx, ty, floor, "a", "door-frame", 180, false);
+	else
+	  set_tile(tx, ty, floor, "a", "int-door-frame", 180, false);
       }
     }
   }
@@ -180,10 +200,10 @@ void MapSystem::layout_doors(int floor)
 
 
 void MapSystem::layout_master(
-  const std::string& type, const Room& master, int floor)
+  const string& type, const Room& master, int floor)
 {
-  const auto mx = master.x, my = master.y;
-  const auto mw = master.w, mh = master.h;
+  auto mx = master.x, my = master.y;
+  auto mw = master.w, mh = master.h;
 
   for (auto x = mx + 1; x < mx + mw - 1; ++x)
   {
@@ -216,10 +236,10 @@ void MapSystem::layout_master(
 
 
 void MapSystem::layout_room(
-  const std::string& type, const Room& room, int floor)
+  const string& type, const Room& room, int floor)
 {
-  const auto rx = room.x, ry = room.y;
-  const auto rw = room.w, rh = room.h;
+  auto rx = room.x, ry = room.y;
+  auto rw = room.w, rh = room.h;
 
   for (auto x = rx + 1; x < rx + rw - 1; ++x)
   {
@@ -253,7 +273,7 @@ void MapSystem::layout_room(
 
 void MapSystem::set_tile(
   int x, int y, int floor,
-  const std::string& type, const std::string& name,
+  const string& type, const string& name,
   double rotation,
   bool solid)
 {
@@ -269,7 +289,7 @@ void MapSystem::set_tile(
 
 void MapSystem::set_ceil_tile(
   int x, int y, int floor,
-  const std::string& type, const std::string& name,
+  const string& type, const string& name,
   double rotation)
 {
   auto& tile = get_tile(x, y, floor);
@@ -283,8 +303,8 @@ void MapSystem::set_ceil_tile(
 
 Tile& MapSystem::get_tile(int x_, int y_, int floor)
 {
-  const auto x = x_ + MAP_SIZE / 2;
-  const auto y = y_ + MAP_SIZE / 2;
+  auto x = x_ + MAP_SIZE / 2;
+  auto y = y_ + MAP_SIZE / 2;
 
   return tiles[floor][x][y];
 }
@@ -298,8 +318,8 @@ const Tile& MapSystem::get_tile(int x, int y, int floor) const
 
 Tile& MapSystem::get_tile(double x_, double y_, int floor)
 {
-  const auto x = std::round(x_);
-  const auto y = std::round(y_);
+  auto x = std::round(x_);
+  auto y = std::round(y_);
 
   return get_tile(x, y, floor);
 }
@@ -316,10 +336,10 @@ bool MapSystem::rect_intersects_rect(
   int r2x1, int r2x2, int r2y1, int r2y2,
   bool allow_overlap) const
 {
-  const auto to_right = allow_overlap ? r1x1 >= r2x2 - 1 : r1x1 > r2x2;
-  const auto to_left= allow_overlap ? r1x2 - 1 <= r2x1 : r1x2 - 1 < r2x1;
-  const auto above = allow_overlap ? r1y1 >= r2y2 - 1 : r1y1 > r2y2 - 1;
-  const auto below = allow_overlap ? r1y2 - 1 <= r2y1 : r1y2 - 1 < r2y1;
+  auto to_right = allow_overlap ? r1x1 >= r2x2 - 1 : r1x1 > r2x2;
+  auto to_left= allow_overlap ? r1x2 - 1 <= r2x1 : r1x2 - 1 < r2x1;
+  auto above = allow_overlap ? r1y1 >= r2y2 - 1 : r1y1 > r2y2 - 1;
+  auto below = allow_overlap ? r1y2 - 1 <= r2y1 : r1y2 - 1 < r2y1;
 
   return !(to_left || to_right || above || below);
 }

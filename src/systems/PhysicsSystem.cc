@@ -7,6 +7,7 @@
 #include <algorithm>
 #include "../Debug.h"
 
+using namespace std;
 using namespace ld;
 using namespace osg;
 
@@ -81,12 +82,12 @@ void PhysicsSystem::simulate(DynamicEntity& user, double dt)
 
 void PhysicsSystem::scan_collisions(DynamicEntity& user)
 {
-  const auto floor = (int)std::floor(user.position.z());
+  auto floor = (int)std::floor(user.position.z());
 
   if (floor < 0 || floor >= NUM_FLOORS) return;
 
-  const auto px = (int)std::round(user.position.x());
-  const auto py = (int)std::round(user.position.y());
+  auto px = (int)std::round(user.position.x());
+  auto py = (int)std::round(user.position.y());
 
   for (auto x = px - 1; x <= px + 1; ++x)
     for (auto y = py - 1; y <= py + 1; ++y)
@@ -110,8 +111,8 @@ void PhysicsSystem::resolve_collision(DynamicEntity& user, int x, int y)
   else if (nearest.y() > max.y()) nearest.y() = max.y();
 
   Vec2d norm(user_pos - nearest);
-  const auto dist = norm.normalize();
-  const auto depth = USER_RADIUS - dist;
+  auto dist = norm.normalize();
+  auto depth = USER_RADIUS - dist;
 
   if (depth > 0) user.position += Vec3d(norm.x(), norm.y(), 0) * depth;
 }
@@ -119,7 +120,7 @@ void PhysicsSystem::resolve_collision(DynamicEntity& user, int x, int y)
 
 double PhysicsSystem::cosine_interp(double v1, double v2, double t_)
 {
-  const auto t = (1 - cos(M_PI * t_)) / 2;
+  auto t = (1 - cos(M_PI * t_)) / 2;
 
   return (v1 * (1 - t) + v2 * t);
 }
@@ -127,9 +128,9 @@ double PhysicsSystem::cosine_interp(double v1, double v2, double t_)
 
 Vec3d PhysicsSystem::cosine_interp(Vec3 v1, Vec3 v2, double t)
 {
-  const auto x = cosine_interp(v1.x(), v2.x(), t);
-  const auto y = cosine_interp(v1.y(), v2.y(), t);
-  const auto z = cosine_interp(v1.z(), v2.z(), t);
+  auto x = cosine_interp(v1.x(), v2.x(), t);
+  auto y = cosine_interp(v1.y(), v2.y(), t);
+  auto z = cosine_interp(v1.z(), v2.z(), t);
 
   return {x, y, z};
 }
