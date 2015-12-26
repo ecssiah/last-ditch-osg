@@ -226,7 +226,27 @@ void RenderSystem::build_objects()
   {
     for (const auto& door : doors[floor])
     {
+      auto node = osgDB::readNodeFile(
+	"models/" + door.type + "-" + door.name + ".fbx");
 
+      auto state_set = node->getOrCreateStateSet();
+      state_set->setTextureAttributeAndModes(
+	0, textures["buildings"], StateAttribute::ON | StateAttribute::OVERRIDE);
+      state_set->setAttribute(materials["buildings"]);
+
+      auto xform = new MatrixTransform;
+
+      Matrix r, t;
+      r.makeRotate(inDegrees(door.rotation), Vec3(0, 0, 1));
+      t.makeTranslate(
+	Vec3(
+	  TILE_SIZE * door.x,
+	  TILE_SIZE * door.y,
+	  FLOOR_HEIGHT * floor));
+
+      xform->setMatrix(r * t);
+      xform->addChild(node);
+      root->addChild(xform);
     }
   }
 }
