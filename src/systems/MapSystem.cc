@@ -163,13 +163,13 @@ void MapSystem::setup_doors(int floor)
 	{
 	  doors[floor].push_back({tx, ty, "a", "door", 270});
 	  regions[floor].push_back({tx - 1, ty, 3, 1, &doors[floor].back()});
-	  set_tile(tx, ty, floor, "a", "door-frame", 270, false);
+	  set_tile(tx, ty, floor, "a", "door-frame", 270);
 	}
 	else
 	{
 	  doors[floor].push_back({tx, ty, "a", "int-door", 270});
 	  regions[floor].push_back({tx - 1, ty, 3, 1, &doors[floor].back()});
-	  set_tile(tx, ty, floor, "a", "int-door-frame", 270, false);
+	  set_tile(tx, ty, floor, "a", "int-door-frame", 270);
 	}
       }
       else if (direction == 1)
@@ -181,13 +181,13 @@ void MapSystem::setup_doors(int floor)
 	{
 	  doors[floor].push_back({tx, ty, "a", "door", 0});
 	  regions[floor].push_back({tx, ty - 1, 1, 3, &doors[floor].back()});
-	  set_tile(tx, ty, floor, "a", "door-frame", 0, false);
+	  set_tile(tx, ty, floor, "a", "door-frame", 0);
 	}
 	else
 	{
 	  doors[floor].push_back({tx, ty, "a", "int-door", 0});
 	  regions[floor].push_back({tx, ty - 1, 1, 3, &doors[floor].back()});
-	  set_tile(tx, ty, floor, "a", "int-door-frame", 0, false);
+	  set_tile(tx, ty, floor, "a", "int-door-frame", 0);
 	}
       }
       else if (direction == 2)
@@ -199,13 +199,13 @@ void MapSystem::setup_doors(int floor)
 	{
 	  doors[floor].push_back({tx, ty, "a", "door", 90});
 	  regions[floor].push_back({tx - 1, ty, 3, 1, &doors[floor].back()});
-	  set_tile(tx, ty, floor, "a", "door-frame", 90, false);
+	  set_tile(tx, ty, floor, "a", "door-frame", 90);
 	}
 	else
 	{
 	  doors[floor].push_back({tx, ty, "a", "int-door", 90});
 	  regions[floor].push_back({tx - 1, ty, 3, 1, &doors[floor].back()});
-	  set_tile(tx, ty, floor, "a", "int-door-frame", 90, false);
+	  set_tile(tx, ty, floor, "a", "int-door-frame", 90);
 	}
       }
       else if (direction == 3)
@@ -217,13 +217,13 @@ void MapSystem::setup_doors(int floor)
 	{
 	  doors[floor].push_back({tx, ty, "a", "door", 180});
 	  regions[floor].push_back({tx, ty - 1, 1, 3, &doors[floor].back()});
-	  set_tile(tx, ty, floor, "a", "door-frame", 180, false);
+	  set_tile(tx, ty, floor, "a", "door-frame", 180);
 	}
 	else
 	{
 	  doors[floor].push_back({tx, ty, "a", "int-door", 180});
 	  regions[floor].push_back({tx, ty - 1, 1, 3, &doors[floor].back()});
-	  set_tile(tx, ty, floor, "a", "int-door-frame", 180, false);
+	  set_tile(tx, ty, floor, "a", "int-door-frame", 180);
 	}
       }
     }
