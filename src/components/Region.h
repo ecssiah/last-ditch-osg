@@ -1,22 +1,20 @@
 #ifndef REGION_H
 #define REGION_H
 
-#include <osg/Vec3>
+#include "Rect.h"
+#include "UsableObject.h"
 
 namespace ld
 {
 
-struct Region
+struct Region : public Rect
 {
-  Region(int x_, int y_, int w_, int h_)
-    : x(x_),
-      y(y_),
-      w(w_),
-      h(h_)
+  Region(int x, int y, int w, int h, UsableObject* object_ = nullptr)
+    : Rect(x, y, w, h),
+      object(object_)
   {}
 
-  int x, y;
-  int w, h;
+  UsableObject* object;
 };
 
 }

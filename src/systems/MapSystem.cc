@@ -18,7 +18,7 @@ MapSystem::MapSystem()
 
   layout_map();
 
-  printf(" Map System finished\n");
+  printf("Map System ready\n");
 }
 
 
@@ -50,7 +50,7 @@ void MapSystem::layout_map()
     for (const auto& master : master_rooms[floor])
       layout_master("a", master, floor);
 
-    layout_doors(floor);
+    setup_doors(floor);
   }
 }
 
@@ -61,7 +61,7 @@ void MapSystem::seed_rooms(const Room& master, int floor)
   {
     for (auto i = 0; i < 10000; ++i)
     {
-      auto min_room_size = 3;
+      const auto min_room_size = 3;
 
       uniform_int_distribution<> x_dist(master.x, master.x + master.w - min_room_size);
       uniform_int_distribution<> y_dist(master.y, master.y + master.h - min_room_size);
@@ -142,14 +142,14 @@ void MapSystem::extend_room(Room& target, int floor)
 }
 
 
-void MapSystem::layout_doors(int floor)
+void MapSystem::setup_doors(int floor)
 {
-  uniform_int_distribution<> num_doors_dist(0, 2);
-  auto num_doors(num_doors_dist(RNG));
-
-  for (auto i = 0; i < num_doors; ++i)
+  for (const auto& room : rooms[floor])
   {
-    for (const auto& room : rooms[floor])
+    uniform_int_distribution<> num_doors_dist(0, 3);
+    auto num_doors(num_doors_dist(RNG));
+
+    for (auto i = 0; i < num_doors; ++i)
     {
       uniform_int_distribution<> direction_dist(0, 3);
 
@@ -160,9 +160,17 @@ void MapSystem::layout_doors(int floor)
 	auto ty = room.y + room.h / 2;
 
 	if (tx == room.master->x + room.master->w - 1)
+	{
+	  doors[floor].push_back({tx, ty, "a", "door", 270});
+	  regions[floor].push_back({tx - 1, ty, 3, 1, &doors[floor].back()});
 	  set_tile(tx, ty, floor, "a", "door-frame", 270, false);
+	}
 	else
+	{
+	  doors[floor].push_back({tx, ty, "a", "int-door", 270});
+	  regions[floor].push_back({tx - 1, ty, 3, 1, &doors[floor].back()});
 	  set_tile(tx, ty, floor, "a", "int-door-frame", 270, false);
+	}
       }
       else if (direction == 1)
       {
@@ -170,9 +178,17 @@ void MapSystem::layout_doors(int floor)
 	auto ty = room.y + room.h - 1;
 
 	if (ty == room.master->y + room.master->h - 1)
+	{
+	  doors[floor].push_back({tx, ty, "a", "door", 0});
+	  regions[floor].push_back({tx, ty - 1, 1, 3, &doors[floor].back()});
 	  set_tile(tx, ty, floor, "a", "door-frame", 0, false);
+	}
 	else
+	{
+	  doors[floor].push_back({tx, ty, "a", "int-door", 0});
+	  regions[floor].push_back({tx, ty - 1, 1, 3, &doors[floor].back()});
 	  set_tile(tx, ty, floor, "a", "int-door-frame", 0, false);
+	}
       }
       else if (direction == 2)
       {
@@ -180,9 +196,17 @@ void MapSystem::layout_doors(int floor)
 	auto ty = room.y + room.h / 2;
 
 	if (tx == room.master->x)
+	{
+	  doors[floor].push_back({tx, ty, "a", "door", 90});
+	  regions[floor].push_back({tx - 1, ty, 3, 1, &doors[floor].back()});
 	  set_tile(tx, ty, floor, "a", "door-frame", 90, false);
+	}
 	else
+	{
+	  doors[floor].push_back({tx, ty, "a", "int-door", 90});
+	  regions[floor].push_back({tx - 1, ty, 3, 1, &doors[floor].back()});
 	  set_tile(tx, ty, floor, "a", "int-door-frame", 90, false);
+	}
       }
       else if (direction == 3)
       {
@@ -190,9 +214,17 @@ void MapSystem::layout_doors(int floor)
 	auto ty = room.y;
 
 	if (ty == room.master->y)
+	{
+	  doors[floor].push_back({tx, ty, "a", "door", 180});
+	  regions[floor].push_back({tx, ty - 1, 1, 3, &doors[floor].back()});
 	  set_tile(tx, ty, floor, "a", "door-frame", 180, false);
+	}
 	else
+	{
+	  doors[floor].push_back({tx, ty, "a", "int-door", 180});
+	  regions[floor].push_back({tx, ty - 1, 1, 3, &doors[floor].back()});
 	  set_tile(tx, ty, floor, "a", "int-door-frame", 180, false);
+	}
       }
     }
   }

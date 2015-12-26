@@ -16,6 +16,7 @@ namespace ld
 class RenderSystem
 {
   void build_map();
+  void build_objects();
   void setup_materials();
   void setup_material(const std::string& name);
 

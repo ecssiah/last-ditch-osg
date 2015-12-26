@@ -17,7 +17,7 @@ LastDitch::LastDitch()
     physics_system(input, entity_system, map_system),
     camera_system(root, input, entity_system)
 {
-  printf("Complete\n");
+  printf("Last Ditch starting...\n");
 
   while (camera_system.is_running())
   {
@@ -32,8 +32,6 @@ LastDitch::LastDitch()
 int main()
 {
   setbuf(stdout, NULL);
-
-  printf("Last Ditch starting...\n");
 
   LastDitch app;
 }

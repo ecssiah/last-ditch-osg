@@ -47,7 +47,7 @@ CameraSystem::CameraSystem(
 
   viewer.addView(hud_view);
 
-  printf(" Camera System finished\n");
+  printf("Camera System ready\n");
 }
 
 

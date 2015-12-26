@@ -21,7 +21,7 @@ PhysicsSystem::PhysicsSystem(
     entity_system(entity_system_),
     map_system(map_system_)
 {
-  printf(" Physics System finished\n");
+  printf("Physics System ready\n");
 }
 
 

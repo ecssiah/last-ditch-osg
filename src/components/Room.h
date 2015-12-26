@@ -1,19 +1,15 @@
 #ifndef ROOM_H
 #define ROOM_H
 
-#include <vector>
-#include "Region.h"
+#include "Rect.h"
 
 namespace ld
 {
 
-struct Room
+struct Room : public Rect
 {
-  Room(int x_, int y_, int w_, int h_, const Room* master_ = nullptr)
-    : x(x_),
-      y(y_),
-      w(w_),
-      h(h_),
+  Room(int x, int y, int w, int h, const Room* master_ = nullptr)
+    : Rect(x, y, w, h),
       master(master_)
   {}
 
@@ -26,11 +22,6 @@ struct Room
   {
     return x == room.x && y == room.y && w == room.w && h == room.h;
   }
-
-  int x, y;
-  int w, h;
-
-  std::vector<Region> regions;
 
   const Room* master;
 };

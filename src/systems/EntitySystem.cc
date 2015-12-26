@@ -15,5 +15,5 @@ EntitySystem::EntitySystem(RenderSystem& render_system_)
 
   users[user.name] = user;
 
-  printf(" Entity System finished\n");
+  printf("Entity System ready\n");
 }

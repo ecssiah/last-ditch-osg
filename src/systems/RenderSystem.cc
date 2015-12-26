@@ -22,6 +22,7 @@ RenderSystem::RenderSystem(osg::ref_ptr<osg::Group> root_, MapSystem& map_system
   root->addChild(setup_foundation());
 
   build_map();
+  build_objects();
 
   auto name = "kadijah";
   users[name] = setup_character(name);
@@ -47,7 +48,7 @@ RenderSystem::RenderSystem(osg::ref_ptr<osg::Group> root_, MapSystem& map_system
   xform->addChild(ls0);
   root->addChild(xform);
 
-  printf(" Render System finished\n");
+  printf("Render System ready\n");
 }
 
 
@@ -212,6 +213,20 @@ void RenderSystem::build_map()
 	  root->addChild(xform);
 	}
       }
+    }
+  }
+}
+
+
+void RenderSystem::build_objects()
+{
+  const auto& doors = map_system.get_doors();
+
+  for (auto floor = 0; floor < NUM_FLOORS; ++floor)
+  {
+    for (const auto& door : doors[floor])
+    {
+
     }
   }
 }
