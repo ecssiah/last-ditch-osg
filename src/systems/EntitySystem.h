@@ -1,6 +1,7 @@
 #ifndef ENTITYSYSTEM_H
 #define ENTITYSYSTEM_H
 
+#include <string>
 #include <random>
 #include <osg/Node>
 #include "MapSystem.h"
@@ -15,6 +16,8 @@ class EntitySystem
   void update();
   void setup_users();
   void setup_doors();
+  void create_door(
+    int x, int y, int floor, std::string type, std::string name, double rotation);
 
   std::mt19937& rng;
 

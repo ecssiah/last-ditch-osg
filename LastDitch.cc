@@ -1,9 +1,7 @@
 #include "LastDitch.h"
 
 #include <chrono>
-#include <string>
 #include "src/Constants.h"
-#include "src/InputAdapter.h"
 
 using namespace ld;
 using namespace osg;

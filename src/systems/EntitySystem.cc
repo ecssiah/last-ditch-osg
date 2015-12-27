@@ -45,62 +45,48 @@ void EntitySystem::setup_doors()
       {
 	uniform_int_distribution<> direction_dist(0, 3);
 
-	auto direction = direction_dist(rng);
-	if (direction == 0)
+	switch (direction_dist(rng))
+	{
+	case 0:
 	{
 	  auto tx = room.x + room.w - 1;
 	  auto ty = room.y + room.h / 2;
 
+	  if (tx == room.master->x + room.master->w - 1)
+	    create_door(tx, ty, floor, "a", "door", 270);
+	  else
+	    create_door(tx, ty, floor, "a", "int-door", 270);
+
 	  map_system.create_region(tx - 1, ty, 3, 1, floor, &doors[floor].back());
 
-	  if (tx == room.master->x + room.master->w - 1)
-	  {
-	    doors[floor].push_back({tx, ty, "a", "door", 270});
-	    map_system.set_tile(tx, ty, floor, "a", "door-frame", 270);
-	  }
-	  else
-	  {
-	    doors[floor].push_back({tx, ty, "a", "int-door", 270});
-	    map_system.set_tile(tx, ty, floor, "a", "int-door-frame", 270);
-	  }
+	  break;
 	}
-	else if (direction == 1)
+	case 1:
 	{
 	  auto tx = room.x + room.w / 2;
 	  auto ty = room.y + room.h - 1;
 
-	  map_system.create_region(tx, ty - 1, 1, 3, floor, &doors[floor].back());
 
 	  if (ty == room.master->y + room.master->h - 1)
-	  {
-	    doors[floor].push_back({tx, ty, "a", "door", 0});
-	    map_system.set_tile(tx, ty, floor, "a", "door-frame", 0);
-	  }
+	    create_door(tx, ty, floor, "a", "door", 0);
 	  else
-	  {
-	    doors[floor].push_back({tx, ty, "a", "int-door", 0});
-	    map_system.set_tile(tx, ty, floor, "a", "int-door-frame", 0);
-	  }
+	    create_door(tx, ty, floor, "a", "int-door", 0);
+
+	  map_system.create_region(tx, ty - 1, 1, 3, floor, &doors[floor].back());
 	}
-	else if (direction == 2)
+	case 2:
 	{
 	  auto tx = room.x;
 	  auto ty = room.y + room.h / 2;
 
-	  map_system.create_region(tx - 1, ty, 3, 1, floor, &doors[floor].back());
-
 	  if (tx == room.master->x)
-	  {
-	    doors[floor].push_back({tx, ty, "a", "door", 90});
-	    map_system.set_tile(tx, ty, floor, "a", "door-frame", 90);
-	  }
+	    create_door(tx, ty, floor, "a", "door", 90);
 	  else
-	  {
-	    doors[floor].push_back({tx, ty, "a", "int-door", 90});
-	    map_system.set_tile(tx, ty, floor, "a", "int-door-frame", 90);
-	  }
+	    create_door(tx, ty, floor, "a", "int-door", 90);
+
+	  map_system.create_region(tx - 1, ty, 3, 1, floor, &doors[floor].back());
 	}
-	else if (direction == 3)
+	case 3:
 	{
 	  auto tx = room.x + room.w / 2;
 	  auto ty = room.y;
@@ -108,19 +94,24 @@ void EntitySystem::setup_doors()
 	  map_system.create_region(tx, ty - 1, 1, 3, floor, &doors[floor].back());
 
 	  if (ty == room.master->y)
-	  {
-	    doors[floor].push_back({tx, ty, "a", "door", 180});
-	    map_system.set_tile(tx, ty, floor, "a", "door-frame", 180);
-	  }
+	    create_door(tx, ty, floor, "a", "door", 180);
 	  else
-	  {
-	    doors[floor].push_back({tx, ty, "a", "int-door", 180});
-	    map_system.set_tile(tx, ty, floor, "a", "int-door-frame", 180);
-	  }
+	    create_door(tx, ty, floor, "a", "int-door", 180);
+	}
+	default:
+	  break;
 	}
       }
     }
   }
+}
+
+
+void EntitySystem::create_door(
+  int x, int y, int floor, string type, string name, double rotation)
+{
+  doors[floor].push_back({x, y, type, name, rotation});
+  map_system.set_tile(x, y, floor, type, name + "-frame", rotation);
 }
 
 
