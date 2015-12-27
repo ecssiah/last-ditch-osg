@@ -2,6 +2,7 @@
 #define DYNAMICENTITY_H
 
 #include <osg/Node>
+#include <osg/Matrix>
 #include <osg/MatrixTransform>
 #include "../Constants.h"
 
@@ -12,6 +13,7 @@ struct DynamicEntity
 {
   DynamicEntity()
     : name(""),
+      matrix(),
       xform(),
       position(),
       start(),
@@ -27,6 +29,7 @@ struct DynamicEntity
 
   bool collision_active;
   std::string name;
+  osg::Matrixd matrix;
   osg::ref_ptr<osg::MatrixTransform> xform;
   osg::Vec3 position;
   osg::Vec3 start, target;

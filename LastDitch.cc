@@ -1,20 +1,23 @@
 #include "LastDitch.h"
 
+#include <chrono>
 #include <string>
 #include "src/Constants.h"
 #include "src/InputAdapter.h"
 
 using namespace ld;
 using namespace osg;
+using namespace std;
 
 LastDitch::LastDitch()
   : root(new Group),
     input(),
+    rng(SEED > 0 ? SEED : chrono::high_resolution_clock::now().time_since_epoch().count()),
     time_system(),
-    map_system(),
-    render_system(root, map_system),
-    entity_system(render_system),
+    map_system(rng),
+    entity_system(rng, map_system),
     physics_system(input, entity_system, map_system),
+    render_system(root, entity_system, map_system),
     camera_system(root, input, entity_system)
 {
   printf("Last Ditch starting...\n");
@@ -24,6 +27,7 @@ LastDitch::LastDitch()
     auto dt = time_system.tick();
 
     physics_system.update(dt);
+    render_system.update();
     camera_system.update();
   }
 }

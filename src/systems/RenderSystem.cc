@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <osg/Image>
+#include <osg/LightSource>
 #include <osg/MatrixTransform>
 #include <osg/PositionAttitudeTransform>
 #include <osgDB/ReadFile>
@@ -11,8 +12,12 @@
 using namespace ld;
 using namespace osg;
 
-RenderSystem::RenderSystem(osg::ref_ptr<osg::Group> root_, MapSystem& map_system_)
+RenderSystem::RenderSystem(
+  osg::ref_ptr<osg::Group> root_,
+  EntitySystem& entity_system_, MapSystem& map_system_
+)
   : root(root_),
+    entity_system(entity_system_),
     map_system(map_system_)
 {
   osgDB::Registry::instance()->getDataFilePathList().push_back("media/");
@@ -24,9 +29,8 @@ RenderSystem::RenderSystem(osg::ref_ptr<osg::Group> root_, MapSystem& map_system
   build_map();
   build_objects();
 
-  auto name = "kadijah";
-  users[name] = setup_character(name);
-  root->addChild(users[name]);
+  user_xforms["kadijah"] = setup_character("kadijah");
+  root->addChild(user_xforms["kadijah"]);
 
   auto stateset = root->getOrCreateStateSet();
   stateset->setMode(GL_LIGHTING, StateAttribute::ON);
@@ -220,7 +224,7 @@ void RenderSystem::build_map()
 
 void RenderSystem::build_objects()
 {
-  const auto& doors = map_system.get_doors();
+  const auto& doors = entity_system.get_doors();
 
   for (auto floor = 0; floor < NUM_FLOORS; ++floor)
   {
@@ -248,5 +252,17 @@ void RenderSystem::build_objects()
       xform->addChild(node);
       root->addChild(xform);
     }
+  }
+}
+
+
+void RenderSystem::update()
+{
+  for (auto& key_value : user_xforms)
+  {
+    auto username = key_value.first;
+    auto xform = key_value.second;
+
+    xform->setMatrix(entity_system.get_user(username).matrix);
   }
 }

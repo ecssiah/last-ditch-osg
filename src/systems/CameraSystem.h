@@ -5,6 +5,7 @@
 #include <osg/Group>
 #include <osg/PositionAttitudeTransform>
 #include <osg/Timer>
+#include <osgText/Text>
 #include <osgViewer/Viewer>
 #include <osgViewer/CompositeViewer>
 #include "EntitySystem.h"

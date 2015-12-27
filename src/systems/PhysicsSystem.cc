@@ -76,7 +76,7 @@ void PhysicsSystem::simulate(DynamicEntity& user, double dt)
       user.position.y() * TILE_SIZE,
       user.position.z() * FLOOR_HEIGHT));
 
-  user.xform->setMatrix(r * t);
+  user.matrix = r * t;
 }
 
 

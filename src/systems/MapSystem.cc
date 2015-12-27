@@ -9,10 +9,8 @@ using namespace std;
 using namespace osg;
 using namespace ld;
 
-static mt19937 RNG;
-
-MapSystem::MapSystem()
-  : seed(SEED > 0 ? SEED : chrono::high_resolution_clock::now().time_since_epoch().count())
+MapSystem::MapSystem(std::mt19937& rng_)
+  : rng(rng_)
 {
   setup_map();
 
@@ -24,8 +22,6 @@ MapSystem::MapSystem()
 
 void MapSystem::setup_map()
 {
-  RNG.seed(seed);
-
   for (auto floor = 0; floor < NUM_FLOORS; ++floor)
   {
     master_rooms[floor].push_back(Room(-8, 10, 16, 16));
@@ -49,8 +45,6 @@ void MapSystem::layout_map()
 
     for (const auto& master : master_rooms[floor])
       layout_master("a", master, floor);
-
-    setup_doors(floor);
   }
 }
 
@@ -66,8 +60,8 @@ void MapSystem::seed_rooms(const Room& master, int floor)
       uniform_int_distribution<> x_dist(master.x, master.x + master.w - min_room_size);
       uniform_int_distribution<> y_dist(master.y, master.y + master.h - min_room_size);
 
-      auto x = x_dist(RNG);
-      auto y = y_dist(RNG);
+      auto x = x_dist(rng);
+      auto y = y_dist(rng);
 
       Room candidate(x, y, min_room_size, min_room_size, &master);
 
@@ -137,95 +131,6 @@ void MapSystem::extend_room(Room& target, int floor)
     {
       ++test_room.y;
       --test_room.h;
-    }
-  }
-}
-
-
-void MapSystem::setup_doors(int floor)
-{
-  for (const auto& room : rooms[floor])
-  {
-    uniform_int_distribution<> num_doors_dist(0, 3);
-    auto num_doors(num_doors_dist(RNG));
-
-    for (auto i = 0; i < num_doors; ++i)
-    {
-      uniform_int_distribution<> direction_dist(0, 3);
-
-      auto direction = direction_dist(RNG);
-      if (direction == 0)
-      {
-	auto tx = room.x + room.w - 1;
-	auto ty = room.y + room.h / 2;
-
-	if (tx == room.master->x + room.master->w - 1)
-	{
-	  doors[floor].push_back({tx, ty, "a", "door", 270});
-	  regions[floor].push_back({tx - 1, ty, 3, 1, &doors[floor].back()});
-	  set_tile(tx, ty, floor, "a", "door-frame", 270);
-	}
-	else
-	{
-	  doors[floor].push_back({tx, ty, "a", "int-door", 270});
-	  regions[floor].push_back({tx - 1, ty, 3, 1, &doors[floor].back()});
-	  set_tile(tx, ty, floor, "a", "int-door-frame", 270);
-	}
-      }
-      else if (direction == 1)
-      {
-	auto tx = room.x + room.w / 2;
-	auto ty = room.y + room.h - 1;
-
-	if (ty == room.master->y + room.master->h - 1)
-	{
-	  doors[floor].push_back({tx, ty, "a", "door", 0});
-	  regions[floor].push_back({tx, ty - 1, 1, 3, &doors[floor].back()});
-	  set_tile(tx, ty, floor, "a", "door-frame", 0);
-	}
-	else
-	{
-	  doors[floor].push_back({tx, ty, "a", "int-door", 0});
-	  regions[floor].push_back({tx, ty - 1, 1, 3, &doors[floor].back()});
-	  set_tile(tx, ty, floor, "a", "int-door-frame", 0);
-	}
-      }
-      else if (direction == 2)
-      {
-	auto tx = room.x;
-	auto ty = room.y + room.h / 2;
-
-	if (tx == room.master->x)
-	{
-	  doors[floor].push_back({tx, ty, "a", "door", 90});
-	  regions[floor].push_back({tx - 1, ty, 3, 1, &doors[floor].back()});
-	  set_tile(tx, ty, floor, "a", "door-frame", 90);
-	}
-	else
-	{
-	  doors[floor].push_back({tx, ty, "a", "int-door", 90});
-	  regions[floor].push_back({tx - 1, ty, 3, 1, &doors[floor].back()});
-	  set_tile(tx, ty, floor, "a", "int-door-frame", 90);
-	}
-      }
-      else if (direction == 3)
-      {
-	auto tx = room.x + room.w / 2;
-	auto ty = room.y;
-
-	if (ty == room.master->y)
-	{
-	  doors[floor].push_back({tx, ty, "a", "door", 180});
-	  regions[floor].push_back({tx, ty - 1, 1, 3, &doors[floor].back()});
-	  set_tile(tx, ty, floor, "a", "door-frame", 180);
-	}
-	else
-	{
-	  doors[floor].push_back({tx, ty, "a", "int-door", 180});
-	  regions[floor].push_back({tx, ty - 1, 1, 3, &doors[floor].back()});
-	  set_tile(tx, ty, floor, "a", "int-door-frame", 180);
-	}
-      }
     }
   }
 }
@@ -360,6 +265,12 @@ Tile& MapSystem::get_tile(double x_, double y_, int floor)
 bool MapSystem::is_solid(double x, double y, int floor) const
 {
   return get_tile(x, y, floor).solid;
+}
+
+
+void MapSystem::create_region(int x, int y, int w, int h, int floor, UsableObject* object)
+{
+  regions[floor].push_back({x, y, w, h, object});
 }
 
 

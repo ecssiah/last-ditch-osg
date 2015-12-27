@@ -18,7 +18,7 @@ static constexpr int NUM_CHUNKS = 5;
 static constexpr int CHUNK_SIZE = 34;
 static constexpr int MAP_SIZE = CHUNK_SIZE * NUM_CHUNKS;
 static constexpr int NUM_FLOORS = 1;
-static constexpr int ROOMS_PER_FLOOR = 7;
+static constexpr int ROOMS_PER_FLOOR = 8;
 static constexpr double TILE_SIZE = 2.0;
 static constexpr double FLOOR_HEIGHT = 4.0;
 
@@ -28,7 +28,6 @@ class MapSystem
 
   void seed_rooms(const Room& master, int floor);
   void extend_room(Room& target, int floor);
-  void setup_doors(int floor);
 
   void layout_map();
   void layout_master(const std::string& type, const Room& master, int floor);
@@ -46,16 +45,15 @@ class MapSystem
   bool room_is_clear(const Room& test_room, int floor) const;
   bool room_is_clear(const Room& modded_room, const Room& original_room, int floor) const;
 
-  std::array<std::vector<Door>, NUM_FLOORS> doors;
-  std::array<std::vector<Region>, NUM_FLOORS> regions;
   std::array<std::vector<Room>, NUM_FLOORS> rooms;
   std::array<std::vector<Room>, NUM_FLOORS> master_rooms;
+  std::array<std::vector<Region>, NUM_FLOORS> regions;
   std::array<std::array<std::array<Tile, MAP_SIZE+1>, MAP_SIZE+1>, NUM_FLOORS> tiles;
 
-  unsigned long long seed;
+  std::mt19937& rng;
 
 public:
-  MapSystem();
+  MapSystem(std::mt19937& rng);
 
   void set_tile(
     int x, int y, int floor,
@@ -70,9 +68,11 @@ public:
   Tile& get_tile(int x, int y, int floor);
   const Tile& get_tile(int x, int y, int floor) const;
 
-  const std::array<std::vector<Door>, NUM_FLOORS>& get_doors() const { return doors; }
+  const std::array<std::vector<Room>, NUM_FLOORS>& get_rooms() const { return rooms; }
 
   bool is_solid(double x, double y, int floor) const;
+
+  void create_region(int x, int y, int w, int h, int floor, UsableObject* object = nullptr);
 };
 
 }

@@ -3,11 +3,11 @@
 
 #include <osg/Vec2>
 #include <osg/Vec3>
+#include "EntitySystem.h"
+#include "MapSystem.h"
 #include "../Constants.h"
 #include "../components/Input.h"
 #include "../components/DynamicEntity.h"
-#include "../systems/EntitySystem.h"
-#include "../systems/MapSystem.h"
 
 namespace ld
 {
