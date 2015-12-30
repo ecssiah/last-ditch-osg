@@ -3,12 +3,17 @@
 
 struct Input
 {
-  bool forward = false;
-  bool backward = false;
-  bool up = false;
-  bool down = false;
-  bool left = false;
-  bool right = false;
+  Input()
+    : forward(false),
+      backward(false),
+      left(false),
+      right(false),
+      use(false)
+  {}
+
+  bool forward, backward;
+  bool left, right;
+  bool use;
 };
 
 #endif /* INPUT_H */

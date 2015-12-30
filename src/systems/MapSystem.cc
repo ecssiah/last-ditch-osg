@@ -75,17 +75,17 @@ void MapSystem::seed_rooms(const Room& master, int floor)
 }
 
 
-void MapSystem::extend_room(Room& target, int floor)
+void MapSystem::extend_room(Room& room, int floor)
 {
-  const auto master = target.master;
-  Room test_room(target.x, target.y, target.w, target.h);
+  const auto master = room.master;
+  Room test_room(room.x, room.y, room.w, room.h);
 
   if (test_room.x + test_room.w + 1 <= master->x + master->w)
   {
     ++test_room.w;
 
-    if (room_is_clear(test_room, target, floor))
-      target.w = test_room.w;
+    if (room_is_clear(test_room, room, floor))
+      room.w = test_room.w;
     else
       --test_room.w;
   }
@@ -94,8 +94,8 @@ void MapSystem::extend_room(Room& target, int floor)
   {
     ++test_room.h;
 
-    if (room_is_clear(test_room, target, floor))
-      target.h = test_room.h;
+    if (room_is_clear(test_room, room, floor))
+      room.h = test_room.h;
     else
       --test_room.h;
   }
@@ -105,10 +105,10 @@ void MapSystem::extend_room(Room& target, int floor)
     --test_room.x;
     ++test_room.w;
 
-    if (room_is_clear(test_room, target, floor))
+    if (room_is_clear(test_room, room, floor))
     {
-      target.x = test_room.x;
-      target.w = test_room.w;
+      room.x = test_room.x;
+      room.w = test_room.w;
     }
     else
     {
@@ -122,10 +122,10 @@ void MapSystem::extend_room(Room& target, int floor)
     --test_room.y;
     ++test_room.h;
 
-    if (room_is_clear(test_room, target, floor))
+    if (room_is_clear(test_room, room, floor))
     {
-      target.y = test_room.y;
-      target.h = test_room.h;
+      room.y = test_room.y;
+      room.h = test_room.h;
     }
     else
     {

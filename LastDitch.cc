@@ -13,7 +13,7 @@ LastDitch::LastDitch()
     rng(SEED > 0 ? SEED : chrono::high_resolution_clock::now().time_since_epoch().count()),
     time_system(),
     map_system(rng),
-    entity_system(rng, map_system),
+    entity_system(rng, input, map_system),
     physics_system(input, entity_system, map_system),
     render_system(root, entity_system, map_system),
     camera_system(root, input, entity_system)
@@ -24,6 +24,7 @@ LastDitch::LastDitch()
   {
     auto dt = time_system.tick();
 
+    entity_system.update();
     physics_system.update(dt);
     render_system.update();
     camera_system.update();

@@ -69,6 +69,7 @@ public:
   const Tile& get_tile(int x, int y, int floor) const;
 
   const std::array<std::vector<Room>, NUM_FLOORS>& get_rooms() const { return rooms; }
+  const std::array<std::vector<Region>, NUM_FLOORS>& get_regions() const { return regions; }
 
   bool is_solid(double x, double y, int floor) const;
 

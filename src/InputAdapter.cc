@@ -72,11 +72,9 @@ bool InputAdapter::handle_key_down(
     input.backward = true; return false;
   case 'd':
     input.right = true; return false;
+  case 'f':
+    input.use = true; return false;
   case 'e':
-    input.up = true; return false;
-  case 'q':
-    input.down = true; return false;
-  case 'r':
   {
     auto& user = entity_system.get_user("kadijah");
 
@@ -86,7 +84,7 @@ bool InputAdapter::handle_key_down(
 
     return false;
   }
-  case 'f':
+  case 'q':
   {
     auto& user = entity_system.get_user("kadijah");
 
@@ -115,10 +113,6 @@ bool InputAdapter::handle_key_up(
     input.backward = false; return false;
   case 'd':
     input.right = false; return false;
-  case 'e':
-    input.up = false; return false;
-  case 'q':
-    input.down = false; return false;
   default:
     return false;
   }

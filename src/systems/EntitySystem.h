@@ -7,13 +7,13 @@
 #include "MapSystem.h"
 #include "../components/Door.h"
 #include "../components/DynamicEntity.h"
+#include "../components/Input.h"
 
 namespace ld
 {
 
 class EntitySystem
 {
-  void update();
   void setup_users();
   void setup_doors();
   void create_door(
@@ -24,10 +24,13 @@ class EntitySystem
   std::map<std::string, DynamicEntity> users;
   std::array<std::vector<Door>, NUM_FLOORS> doors;
 
+  Input& input;
   MapSystem& map_system;
 
 public:
-  EntitySystem(std::mt19937& rng, MapSystem& map_system);
+  EntitySystem(std::mt19937& rng, Input& input, MapSystem& map_system);
+
+  void update();
 
   DynamicEntity& get_user(const std::string& name) { return users[name]; }
 

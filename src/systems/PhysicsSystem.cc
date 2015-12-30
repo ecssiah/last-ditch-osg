@@ -56,8 +56,6 @@ void PhysicsSystem::simulate(DynamicEntity& user, double dt)
     if (input.backward) direction += Vec3(0, 1, 0);
     if (input.left) direction += Vec3(1, 0, 0);
     if (input.right) direction += Vec3(-1, 0, 0);
-    if (input.up) direction += Vec3(0, 0, 1);
-    if (input.down) direction += Vec3(0, 0, -1);
 
     direction.normalize();
 
